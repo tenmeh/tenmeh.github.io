@@ -1,0 +1,31 @@
+# Render the site and publish it to the gh-pages branch.
+#
+# The publish action pushes to a branch, and a branch has no environment
+# rules. A push of a tag would thus not be rejected here. The site has no
+# R code to run, because each code block in a post is for reading and not
+# for running, so this workflow does not install R.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+name: Publish
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Render and publish
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

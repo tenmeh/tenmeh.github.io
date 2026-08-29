@@ -1,0 +1,218 @@
+---
+title: "Undo for Shiny, and the three problems that make it interesting"
+description: >
+  Shiny has no undo. Adding it means solving three problems: restoring a
+  widget you have never heard of, stopping the echo loop, and a bug that
+  only R's lazy evaluation could produce.
+author: "Tanmay Chanda"
+date: "2026-08-27"
+categories: [R, Shiny, packages]
+
+---
+
+Shiny has bookmarking. It has `reactlog`. It has no undo.
+
+That is strange when you stop to think about it. Undo is in every text
+editor, every drawing program, every spreadsheet. People arrive at a
+dashboard already expecting `Ctrl+Z` to work. Then they change a filter by
+mistake, and there is no way back except to remember what the filter used to
+say.
+
+I wrote **rewind** to close that gap. It is on CRAN now.
+
+```r
+install.packages("rewind")
+```
+
+```r
+library(shiny)
+library(rewind)
+
+server <- function(input, output, session) {
+  rewind_enable()   # this is the whole setup
+
+  output$plot <- renderPlot(plot_for(input$region, input$year))
+}
+```
+
+`Ctrl+Z` now steps backwards through the choices the user made.
+`Ctrl+Shift+Z` and `Ctrl+Y` step forwards. There is a pair of buttons and a
+clickable history rail if you want them.
+
+The package itself is small. The interesting part is not the feature. It is
+the three problems you meet when you try to build it, and I think each one
+is worth reading about even if you never install this.
+
+## Problem one: restoring a widget you have never heard of
+
+To undo, you have to put an old value back into a widget. The obvious way is
+a lookup table:
+
+```r
+sliderInput   -> updateSliderInput
+selectInput   -> updateSelectInput
+dateInput     -> updateDateInput
+# ... and so on, forever
+```
+
+That table is never finished. It breaks the first time somebody uses a
+widget from a package you have never seen. Every input package on CRAN would
+need an entry, and new ones appear all the time.
+
+So rewind does not have one.
+
+Every Shiny input registers an **input binding** against its DOM element.
+That is how Shiny itself talks to widgets. Each binding exposes `setValue()`
+or `receiveMessage()`. The client-side code looks the binding up and calls
+it:
+
+```js
+var binding = $el.data("shiny-input-binding");
+
+if (typeof binding.setValue === "function") {
+  binding.setValue(el, value);
+} else {
+  binding.receiveMessage(el, { value: value });
+}
+```
+
+That is the entire restore path. It works for third-party inputs for free,
+because it uses the same mechanism `updateSliderInput()` uses underneath.
+
+The general lesson: when a framework already has a registry, use the
+registry. Do not build a parallel one you have to maintain.
+
+## Problem two: the echo
+
+Here is the failure mode that kills most attempts at this.
+
+Restoring an input sends the value to the browser. The browser sets the
+widget. The widget reports the new value back to the server. The server sees
+an input change, and records a new history entry.
+
+That is a loop. Undo creates a history entry, which you can then undo, which
+creates another entry.
+
+Two mechanisms stop it, and they overlap on purpose.
+
+**Dedup.** The history refuses to accept a state identical to the current
+one. A restore moves the pointer to state S *before* the echo arrives, so
+when the echo turns up it matches the present exactly and is dropped. This
+handles the common case with no coordination at all.
+
+**An expectation guard.** The controller remembers what it asked the browser
+to apply, and ignores intermediate states until either the echo matches or a
+timeout expires. This covers the case dedup misses: several inputs arriving
+in separate flushes, producing a half-applied state that is not identical to
+anything.
+
+Neither depends on guessing how long the round trip takes. That is what
+makes it reliable rather than usually-correct.
+
+## Problem three: a bug that only R could give you
+
+This one is my favourite, and it is the reason I think this post is worth
+writing for an R audience rather than a JavaScript one.
+
+The capture observer looked like this:
+
+```r
+shiny::observe({
+  ctrl$note(ctrl$snapshot())
+}, domain = session)
+```
+
+`snapshot()` reads every tracked input. Reading them inside `observe()` is
+what registers the reactive dependencies, so the observer re-runs whenever
+anything changes. Standard Shiny.
+
+`note()` begins like this:
+
+```r
+note = function(state) {
+  if (private$.paused) return(invisible(FALSE))
+  # ...
+}
+```
+
+Now put those together with R's lazy argument evaluation.
+
+While capture is paused, `note()` returns at its first line. It never
+touches `state`. R evaluates arguments only when they are used - so
+`ctrl$snapshot()` **never runs**. And if `snapshot()` never runs, nothing
+reads the reactive values, so the observer registers **no dependencies**.
+
+An observer with no dependencies is never invalidated. It never runs again.
+Not after `rewind_resume()`, not ever. A single `rewind_pause()` before the
+first flush silently killed undo for the rest of the session.
+
+The fix is one line, and it looks like it does nothing:
+
+```r
+shiny::observe({
+  state <- ctrl$snapshot()   # forces the reads
+  ctrl$note(state)
+}, domain = session)
+```
+
+Assigning to a local variable forces evaluation, the reads happen
+unconditionally, and the dependencies stay alive across pause and resume.
+
+I find this one interesting because both halves are things R programmers
+know. Lazy evaluation is on page one. Reactive dependencies come from
+reading reactives during execution. It is the interaction that bites, and
+the symptom - "undo stops working, but only sometimes" - points nowhere near
+the cause.
+
+## The practical bit: one drag is one step
+
+Dragging a slider fires dozens of input events. Undoing them one at a time
+would be useless, so changes that land within `coalesce_ms` of each other
+become a single entry. One drag is one undo step, not forty.
+
+When time is the wrong boundary - a "reset filters" button that changes four
+inputs at once - you can say so:
+
+```r
+observeEvent(input$reset, {
+  rewind_step(label = "Reset filters", {
+    updateSelectInput(session, "region", selected = "All")
+    updateSliderInput(session, "year", value = c(2018, 2026))
+    updateCheckboxInput(session, "active_only", value = FALSE)
+  })
+})
+```
+
+One entry, with a label a human wrote.
+
+State you keep yourself is invisible until you register it:
+
+```r
+state <- reactiveValues(pinned = character(0))
+rewind_track(state, fields = "pinned")
+```
+
+Modules work: call `rewind_enable()` once at the top level and inputs inside
+modules are captured under their namespaced names and restored correctly.
+
+## What undo does not do
+
+Undo restores state. It does not undo side effects. If an observer wrote to
+a database when the filter changed, stepping back changes the filter, not
+the database row. That is worth being clear about before you put this in
+front of users who might assume otherwise.
+
+## Try it
+
+```r
+install.packages("rewind")
+shiny::runApp(system.file("examples/demo", package = "rewind"))
+```
+
+- Documentation: <https://tenmeh.github.io/rewind/>
+- Source: <https://github.com/tenmeh/rewind>
+- CRAN: <https://cran.r-project.org/package=rewind>
+
+Issues and pull requests are welcome. I am especially interested in reports
+from anyone running it inside a heavily modularised app, since that is where
+the interesting edge cases will be.

@@ -1,0 +1,30 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "Tanmay Chanda"
+  site-url: https://tenmeh.github.io
+  description: "Notes on R, Shiny, and building things that other people use."
+  navbar:
+    left:
+      - text: Posts
+        href: index.qmd
+      - text: About
+        href: about.qmd
+    right:
+      - icon: github
+        href: https://github.com/tenmeh
+        aria-label: GitHub
+      - icon: rss
+        href: index.xml
+        aria-label: RSS feed
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-depth: 2
+    anchor-sections: true
+    code-copy: true

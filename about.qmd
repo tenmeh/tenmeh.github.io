@@ -1,0 +1,17 @@
+---
+title: "About"
+---
+
+I am Tanmay Chanda. I build R and Shiny applications, mostly for clinical
+reporting.
+
+I write here about the parts of that work that seem worth passing on: the
+problems that were harder than they looked, and the reasons behind a
+decision rather than only the decision.
+
+My R packages:
+
+- [rewind](https://github.com/tenmeh/rewind) - undo and redo for Shiny
+  applications. On CRAN.
+
+Find me on [GitHub](https://github.com/tenmeh).
