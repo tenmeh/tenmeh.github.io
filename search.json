@@ -60,6 +60,13 @@
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "I am Tanmay Chanda. I build R and Shiny applications, mostly for clinical reporting.\nI write here about the parts of that work that seem worth passing on: the problems that were harder than they looked, and the reasons behind a decision rather than only the decision.\nMy R packages:\n\nrewind - undo and redo for Shiny applications. On CRAN.\n\nFind me on GitHub."
+    "text": "I am Tanmay Chanda. I build R and Shiny applications, mostly for clinical reporting.\nI write here about the parts of that work that seem worth passing on: the problems that were harder than they looked, and the reasons behind a decision rather than only the decision.\nMy R packages:\nFind me on GitHub."
+  },
+  {
+    "objectID": "about.html#blogroll",
+    "href": "about.html#blogroll",
+    "title": "About",
+    "section": "Blogroll",
+    "text": "Blogroll\n\nR-bloggers - a collection of blogs about R, and the place where most of the R community reads.\nR Weekly - a weekly list of what happened in R."
   }
 ]
