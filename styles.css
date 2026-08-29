@@ -1,0 +1,24 @@
+/* Small changes to the cosmo theme. The aim is a page that is easy to read
+   for a long article with code in it. */
+
+.quarto-title-block .quarto-title-banner {
+  padding-bottom: 1rem;
+}
+
+/* A narrower column reads better than the full width of a wide screen. */
+main.content {
+  max-width: 46rem;
+}
+
+/* Code is the reason most people are here. Give it room. */
+pre.sourceCode {
+  border-radius: 0.4rem;
+  font-size: 0.86em;
+}
+
+blockquote {
+  border-left: 3px solid #4582ec;
+  background: rgba(69, 130, 236, 0.06);
+  padding: 0.75rem 1rem;
+  border-radius: 0 0.4rem 0.4rem 0;
+}

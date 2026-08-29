@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Tanmay Chanda</title>
+<link>https://tenmeh.github.io/</link>
+<atom:link href="https://tenmeh.github.io/index.xml" rel="self" type="application/rss+xml"/>
+<description>Notes on R, Shiny, and building things that other people use.</description>
+<generator>quarto-1.10.18</generator>
+<lastBuildDate>Thu, 27 Aug 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Undo for Shiny, and the three problems that make it interesting</title>
+  <dc:creator>Tanmay Chanda</dc:creator>
+  <link>https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Shiny has bookmarking. It has <code>reactlog</code>. It has no undo.</p>
+<p>That is strange when you stop to think about it. Undo is in every text editor, every drawing program, every spreadsheet. People arrive at a dashboard already expecting <code>Ctrl+Z</code> to work. Then they change a filter by mistake, and there is no way back except to remember what the filter used to say.</p>
+<p>I wrote <strong>rewind</strong> to close that gap. It is on CRAN now.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">install.packages</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"rewind"</span>)</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(shiny)</span>
+<span id="cb2-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(rewind)</span>
+<span id="cb2-3"></span>
+<span id="cb2-4">server <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(input, output, session) {</span>
+<span id="cb2-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_enable</span>()   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># this is the whole setup</span></span>
+<span id="cb2-6"></span>
+<span id="cb2-7">  output<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>plot <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">renderPlot</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_for</span>(input<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>region, input<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>year))</span>
+<span id="cb2-8">}</span></code></pre></div></div>
+<p><code>Ctrl+Z</code> now steps backwards through the choices the user made. <code>Ctrl+Shift+Z</code> and <code>Ctrl+Y</code> step forwards. There is a pair of buttons and a clickable history rail if you want them.</p>
+<p>The package itself is small. The interesting part is not the feature. It is the three problems you meet when you try to build it, and I think each one is worth reading about even if you never install this.</p>
+<section id="problem-one-restoring-a-widget-you-have-never-heard-of" class="level2">
+<h2 class="anchored" data-anchor-id="problem-one-restoring-a-widget-you-have-never-heard-of">Problem one: restoring a widget you have never heard of</h2>
+<p>To undo, you have to put an old value back into a widget. The obvious way is a lookup table:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">sliderInput   <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">-&gt;</span> updateSliderInput</span>
+<span id="cb3-2">selectInput   <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">-&gt;</span> updateSelectInput</span>
+<span id="cb3-3">dateInput     <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">-&gt;</span> updateDateInput</span>
+<span id="cb3-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># ... and so on, forever</span></span></code></pre></div></div>
+<p>That table is never finished. It breaks the first time somebody uses a widget from a package you have never seen. Every input package on CRAN would need an entry, and new ones appear all the time.</p>
+<p>So rewind does not have one.</p>
+<p>Every Shiny input registers an <strong>input binding</strong> against its DOM element. That is how Shiny itself talks to widgets. Each binding exposes <code>setValue()</code> or <code>receiveMessage()</code>. The client-side code looks the binding up and calls it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">var</span> binding <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> $el<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"shiny-input-binding"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb4-2"></span>
+<span id="cb4-3"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">typeof</span> binding<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">setValue</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">===</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"function"</span>) {</span>
+<span id="cb4-4">  binding<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">setValue</span>(el<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> value)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb4-5">} <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> {</span>
+<span id="cb4-6">  binding<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">receiveMessage</span>(el<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> { <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">value</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span> value })<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb4-7">}</span></code></pre></div></div>
+<p>That is the entire restore path. It works for third-party inputs for free, because it uses the same mechanism <code>updateSliderInput()</code> uses underneath.</p>
+<p>The general lesson: when a framework already has a registry, use the registry. Do not build a parallel one you have to maintain.</p>
+</section>
+<section id="problem-two-the-echo" class="level2">
+<h2 class="anchored" data-anchor-id="problem-two-the-echo">Problem two: the echo</h2>
+<p>Here is the failure mode that kills most attempts at this.</p>
+<p>Restoring an input sends the value to the browser. The browser sets the widget. The widget reports the new value back to the server. The server sees an input change, and records a new history entry.</p>
+<p>That is a loop. Undo creates a history entry, which you can then undo, which creates another entry.</p>
+<p>Two mechanisms stop it, and they overlap on purpose.</p>
+<p><strong>Dedup.</strong> The history refuses to accept a state identical to the current one. A restore moves the pointer to state S <em>before</em> the echo arrives, so when the echo turns up it matches the present exactly and is dropped. This handles the common case with no coordination at all.</p>
+<p><strong>An expectation guard.</strong> The controller remembers what it asked the browser to apply, and ignores intermediate states until either the echo matches or a timeout expires. This covers the case dedup misses: several inputs arriving in separate flushes, producing a half-applied state that is not identical to anything.</p>
+<p>Neither depends on guessing how long the round trip takes. That is what makes it reliable rather than usually-correct.</p>
+</section>
+<section id="problem-three-a-bug-that-only-r-could-give-you" class="level2">
+<h2 class="anchored" data-anchor-id="problem-three-a-bug-that-only-r-could-give-you">Problem three: a bug that only R could give you</h2>
+<p>This one is my favourite, and it is the reason I think this post is worth writing for an R audience rather than a JavaScript one.</p>
+<p>The capture observer looked like this:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">shiny<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">observe</span>({</span>
+<span id="cb5-2">  ctrl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">note</span>(ctrl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">snapshot</span>())</span>
+<span id="cb5-3">}, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">domain =</span> session)</span></code></pre></div></div>
+<p><code>snapshot()</code> reads every tracked input. Reading them inside <code>observe()</code> is what registers the reactive dependencies, so the observer re-runs whenever anything changes. Standard Shiny.</p>
+<p><code>note()</code> begins like this:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">note <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(state) {</span>
+<span id="cb6-2">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (private<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>.paused) <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">return</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">invisible</span>(<span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>))</span>
+<span id="cb6-3">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># ...</span></span>
+<span id="cb6-4">}</span></code></pre></div></div>
+<p>Now put those together with R’s lazy argument evaluation.</p>
+<p>While capture is paused, <code>note()</code> returns at its first line. It never touches <code>state</code>. R evaluates arguments only when they are used - so <code>ctrl$snapshot()</code> <strong>never runs</strong>. And if <code>snapshot()</code> never runs, nothing reads the reactive values, so the observer registers <strong>no dependencies</strong>.</p>
+<p>An observer with no dependencies is never invalidated. It never runs again. Not after <code>rewind_resume()</code>, not ever. A single <code>rewind_pause()</code> before the first flush silently killed undo for the rest of the session.</p>
+<p>The fix is one line, and it looks like it does nothing:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1">shiny<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">observe</span>({</span>
+<span id="cb7-2">  state <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> ctrl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">snapshot</span>()   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># forces the reads</span></span>
+<span id="cb7-3">  ctrl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">note</span>(state)</span>
+<span id="cb7-4">}, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">domain =</span> session)</span></code></pre></div></div>
+<p>Assigning to a local variable forces evaluation, the reads happen unconditionally, and the dependencies stay alive across pause and resume.</p>
+<p>I find this one interesting because both halves are things R programmers know. Lazy evaluation is on page one. Reactive dependencies come from reading reactives during execution. It is the interaction that bites, and the symptom - “undo stops working, but only sometimes” - points nowhere near the cause.</p>
+</section>
+<section id="the-practical-bit-one-drag-is-one-step" class="level2">
+<h2 class="anchored" data-anchor-id="the-practical-bit-one-drag-is-one-step">The practical bit: one drag is one step</h2>
+<p>Dragging a slider fires dozens of input events. Undoing them one at a time would be useless, so changes that land within <code>coalesce_ms</code> of each other become a single entry. One drag is one undo step, not forty.</p>
+<p>When time is the wrong boundary - a “reset filters” button that changes four inputs at once - you can say so:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">observeEvent</span>(input<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>reset, {</span>
+<span id="cb8-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_step</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">label =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Reset filters"</span>, {</span>
+<span id="cb8-3">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">updateSelectInput</span>(session, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"region"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">selected =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"All"</span>)</span>
+<span id="cb8-4">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">updateSliderInput</span>(session, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"year"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">value =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2018</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2026</span>))</span>
+<span id="cb8-5">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">updateCheckboxInput</span>(session, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"active_only"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">value =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span>
+<span id="cb8-6">  })</span>
+<span id="cb8-7">})</span></code></pre></div></div>
+<p>One entry, with a label a human wrote.</p>
+<p>State you keep yourself is invisible until you register it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">state <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">reactiveValues</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">pinned =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">character</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>))</span>
+<span id="cb9-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_track</span>(state, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fields =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pinned"</span>)</span></code></pre></div></div>
+<p>Modules work: call <code>rewind_enable()</code> once at the top level and inputs inside modules are captured under their namespaced names and restored correctly.</p>
+</section>
+<section id="what-undo-does-not-do" class="level2">
+<h2 class="anchored" data-anchor-id="what-undo-does-not-do">What undo does not do</h2>
+<p>Undo restores state. It does not undo side effects. If an observer wrote to a database when the filter changed, stepping back changes the filter, not the database row. That is worth being clear about before you put this in front of users who might assume otherwise.</p>
+</section>
+<section id="try-it" class="level2">
+<h2 class="anchored" data-anchor-id="try-it">Try it</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">install.packages</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"rewind"</span>)</span>
+<span id="cb10-2">shiny<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runApp</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">system.file</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"examples/demo"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">package =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"rewind"</span>))</span></code></pre></div></div>
+<ul>
+<li>Documentation: <a href="https://tenmeh.github.io/rewind/" class="uri">https://tenmeh.github.io/rewind/</a></li>
+<li>Source: <a href="https://github.com/tenmeh/rewind" class="uri">https://github.com/tenmeh/rewind</a></li>
+<li>CRAN: <a href="https://cran.r-project.org/package=rewind" class="uri">https://cran.r-project.org/package=rewind</a></li>
+</ul>
+<p>Issues and pull requests are welcome. I am especially interested in reports from anyone running it inside a heavily modularised app, since that is where the interesting edge cases will be.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>Shiny</category>
+  <category>packages</category>
+  <guid>https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/</guid>
+  <pubDate>Thu, 27 Aug 2026 00:00:00 GMT</pubDate>
+</item>
+</channel>
+</rss>

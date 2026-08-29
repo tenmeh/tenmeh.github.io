@@ -1,0 +1,65 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Posts",
+    "section": "",
+    "text": "Undo for Shiny, and the three problems that make it interesting\n\n\n\nR\n\nShiny\n\npackages\n\n\n\nShiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R’s lazy evaluation could produce.\n\n\n\n\n\nAug 27, 2026\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/2026-08-27-undo-for-shiny/index.html",
+    "href": "posts/2026-08-27-undo-for-shiny/index.html",
+    "title": "Undo for Shiny, and the three problems that make it interesting",
+    "section": "",
+    "text": "Shiny has bookmarking. It has reactlog. It has no undo.\nThat is strange when you stop to think about it. Undo is in every text editor, every drawing program, every spreadsheet. People arrive at a dashboard already expecting Ctrl+Z to work. Then they change a filter by mistake, and there is no way back except to remember what the filter used to say.\nI wrote rewind to close that gap. It is on CRAN now.\nCtrl+Z now steps backwards through the choices the user made. Ctrl+Shift+Z and Ctrl+Y step forwards. There is a pair of buttons and a clickable history rail if you want them.\nThe package itself is small. The interesting part is not the feature. It is the three problems you meet when you try to build it, and I think each one is worth reading about even if you never install this."
+  },
+  {
+    "objectID": "posts/2026-08-27-undo-for-shiny/index.html#problem-one-restoring-a-widget-you-have-never-heard-of",
+    "href": "posts/2026-08-27-undo-for-shiny/index.html#problem-one-restoring-a-widget-you-have-never-heard-of",
+    "title": "Undo for Shiny, and the three problems that make it interesting",
+    "section": "Problem one: restoring a widget you have never heard of",
+    "text": "Problem one: restoring a widget you have never heard of\nTo undo, you have to put an old value back into a widget. The obvious way is a lookup table:\nsliderInput   -&gt; updateSliderInput\nselectInput   -&gt; updateSelectInput\ndateInput     -&gt; updateDateInput\n# ... and so on, forever\nThat table is never finished. It breaks the first time somebody uses a widget from a package you have never seen. Every input package on CRAN would need an entry, and new ones appear all the time.\nSo rewind does not have one.\nEvery Shiny input registers an input binding against its DOM element. That is how Shiny itself talks to widgets. Each binding exposes setValue() or receiveMessage(). The client-side code looks the binding up and calls it:\nvar binding = $el.data(\"shiny-input-binding\");\n\nif (typeof binding.setValue === \"function\") {\n  binding.setValue(el, value);\n} else {\n  binding.receiveMessage(el, { value: value });\n}\nThat is the entire restore path. It works for third-party inputs for free, because it uses the same mechanism updateSliderInput() uses underneath.\nThe general lesson: when a framework already has a registry, use the registry. Do not build a parallel one you have to maintain."
+  },
+  {
+    "objectID": "posts/2026-08-27-undo-for-shiny/index.html#problem-two-the-echo",
+    "href": "posts/2026-08-27-undo-for-shiny/index.html#problem-two-the-echo",
+    "title": "Undo for Shiny, and the three problems that make it interesting",
+    "section": "Problem two: the echo",
+    "text": "Problem two: the echo\nHere is the failure mode that kills most attempts at this.\nRestoring an input sends the value to the browser. The browser sets the widget. The widget reports the new value back to the server. The server sees an input change, and records a new history entry.\nThat is a loop. Undo creates a history entry, which you can then undo, which creates another entry.\nTwo mechanisms stop it, and they overlap on purpose.\nDedup. The history refuses to accept a state identical to the current one. A restore moves the pointer to state S before the echo arrives, so when the echo turns up it matches the present exactly and is dropped. This handles the common case with no coordination at all.\nAn expectation guard. The controller remembers what it asked the browser to apply, and ignores intermediate states until either the echo matches or a timeout expires. This covers the case dedup misses: several inputs arriving in separate flushes, producing a half-applied state that is not identical to anything.\nNeither depends on guessing how long the round trip takes. That is what makes it reliable rather than usually-correct."
+  },
+  {
+    "objectID": "posts/2026-08-27-undo-for-shiny/index.html#problem-three-a-bug-that-only-r-could-give-you",
+    "href": "posts/2026-08-27-undo-for-shiny/index.html#problem-three-a-bug-that-only-r-could-give-you",
+    "title": "Undo for Shiny, and the three problems that make it interesting",
+    "section": "Problem three: a bug that only R could give you",
+    "text": "Problem three: a bug that only R could give you\nThis one is my favourite, and it is the reason I think this post is worth writing for an R audience rather than a JavaScript one.\nThe capture observer looked like this:\nshiny::observe({\n  ctrl$note(ctrl$snapshot())\n}, domain = session)\nsnapshot() reads every tracked input. Reading them inside observe() is what registers the reactive dependencies, so the observer re-runs whenever anything changes. Standard Shiny.\nnote() begins like this:\nnote = function(state) {\n  if (private$.paused) return(invisible(FALSE))\n  # ...\n}\nNow put those together with R’s lazy argument evaluation.\nWhile capture is paused, note() returns at its first line. It never touches state. R evaluates arguments only when they are used - so ctrl$snapshot() never runs. And if snapshot() never runs, nothing reads the reactive values, so the observer registers no dependencies.\nAn observer with no dependencies is never invalidated. It never runs again. Not after rewind_resume(), not ever. A single rewind_pause() before the first flush silently killed undo for the rest of the session.\nThe fix is one line, and it looks like it does nothing:\nshiny::observe({\n  state &lt;- ctrl$snapshot()   # forces the reads\n  ctrl$note(state)\n}, domain = session)\nAssigning to a local variable forces evaluation, the reads happen unconditionally, and the dependencies stay alive across pause and resume.\nI find this one interesting because both halves are things R programmers know. Lazy evaluation is on page one. Reactive dependencies come from reading reactives during execution. It is the interaction that bites, and the symptom - “undo stops working, but only sometimes” - points nowhere near the cause."
+  },
+  {
+    "objectID": "posts/2026-08-27-undo-for-shiny/index.html#the-practical-bit-one-drag-is-one-step",
+    "href": "posts/2026-08-27-undo-for-shiny/index.html#the-practical-bit-one-drag-is-one-step",
+    "title": "Undo for Shiny, and the three problems that make it interesting",
+    "section": "The practical bit: one drag is one step",
+    "text": "The practical bit: one drag is one step\nDragging a slider fires dozens of input events. Undoing them one at a time would be useless, so changes that land within coalesce_ms of each other become a single entry. One drag is one undo step, not forty.\nWhen time is the wrong boundary - a “reset filters” button that changes four inputs at once - you can say so:\nobserveEvent(input$reset, {\n  rewind_step(label = \"Reset filters\", {\n    updateSelectInput(session, \"region\", selected = \"All\")\n    updateSliderInput(session, \"year\", value = c(2018, 2026))\n    updateCheckboxInput(session, \"active_only\", value = FALSE)\n  })\n})\nOne entry, with a label a human wrote.\nState you keep yourself is invisible until you register it:\nstate &lt;- reactiveValues(pinned = character(0))\nrewind_track(state, fields = \"pinned\")\nModules work: call rewind_enable() once at the top level and inputs inside modules are captured under their namespaced names and restored correctly."
+  },
+  {
+    "objectID": "posts/2026-08-27-undo-for-shiny/index.html#what-undo-does-not-do",
+    "href": "posts/2026-08-27-undo-for-shiny/index.html#what-undo-does-not-do",
+    "title": "Undo for Shiny, and the three problems that make it interesting",
+    "section": "What undo does not do",
+    "text": "What undo does not do\nUndo restores state. It does not undo side effects. If an observer wrote to a database when the filter changed, stepping back changes the filter, not the database row. That is worth being clear about before you put this in front of users who might assume otherwise."
+  },
+  {
+    "objectID": "posts/2026-08-27-undo-for-shiny/index.html#try-it",
+    "href": "posts/2026-08-27-undo-for-shiny/index.html#try-it",
+    "title": "Undo for Shiny, and the three problems that make it interesting",
+    "section": "Try it",
+    "text": "Try it\ninstall.packages(\"rewind\")\nshiny::runApp(system.file(\"examples/demo\", package = \"rewind\"))\n\nDocumentation: https://tenmeh.github.io/rewind/\nSource: https://github.com/tenmeh/rewind\nCRAN: https://cran.r-project.org/package=rewind\n\nIssues and pull requests are welcome. I am especially interested in reports from anyone running it inside a heavily modularised app, since that is where the interesting edge cases will be."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "I am Tanmay Chanda. I build R and Shiny applications, mostly for clinical reporting.\nI write here about the parts of that work that seem worth passing on: the problems that were harder than they looked, and the reasons behind a decision rather than only the decision.\nMy R packages:\n\nrewind - undo and redo for Shiny applications. On CRAN.\n\nFind me on GitHub."
+  }
+]
