@@ -2,8 +2,7 @@
 title: "About"
 ---
 
-I am Tanmay Chanda. I build R and Shiny applications, mostly for clinical
-reporting.
+I am Tanmay Chanda. I build R and Shiny applications.
 
 I write here about the parts of that work that seem worth passing on: the
 problems that were harder than they looked, and the reasons behind a
