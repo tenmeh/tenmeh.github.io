@@ -15,3 +15,9 @@ My R packages:
   applications. On CRAN.
 
 Find me on [GitHub](https://github.com/tenmeh).
+
+## Blogroll
+
+- [R-bloggers](https://www.r-bloggers.com/) - a collection of blogs about
+  R, and the place where most of the R community reads.
+- [R Weekly](https://rweekly.org/) - a weekly list of what happened in R.

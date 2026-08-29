@@ -20,6 +20,11 @@ website:
         href: index.xml
         aria-label: RSS feed
 
+  page-footer:
+    left: "Tanmay Chanda"
+    center: "Blogroll: [R-bloggers](https://www.r-bloggers.com/)"
+    right: "Built with [Quarto](https://quarto.org)"
+
 format:
   html:
     theme: cosmo
