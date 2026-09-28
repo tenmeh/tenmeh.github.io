@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Tanmay Chanda">
+<meta name="dcterms.date" content="2026-09-28">
+<meta name="description" content="A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.">
 
-<title>Posts – Tanmay Chanda</title>
+<title>A spinner says wait. A skeleton says what is coming. – Tanmay Chanda</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,32 +29,65 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-74119f4bb4de91c00ce6f93ff1e03a8d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-bca9a01966989c07d63c952f13210c64.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-74119f4bb4de91c00ce6f93ff1e03a8d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-076088dd900c805fcb435aeddcdfc3a0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-0d340fe6d2d040afd2a66377efc0346e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-076088dd900c805fcb435aeddcdfc3a0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-74119f4bb4de91c00ce6f93ff1e03a8d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-bca9a01966989c07d63c952f13210c64.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-74119f4bb4de91c00ce6f93ff1e03a8d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-076088dd900c805fcb435aeddcdfc3a0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-0d340fe6d2d040afd2a66377efc0346e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-076088dd900c805fcb435aeddcdfc3a0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -79,70 +115,12 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-post-list .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-date-modified-sort'] },{ data: ['listing-file-modified-sort'] },{ data: ['listing-reading-time-sort'] },{ data: ['listing-word-count-sort'] }],
-      
-      searchColumns: ["listing-project","listing-website","listing-format","listing-engines","listing-language","listing-freeze","listing-title-block-banner","listing-date-format","listing-title","listing-description","listing-author","listing-date","listing-categories","listing-path","listing-outputHref","listing-date-modified","listing-filename","listing-file-modified","listing-reading-time","listing-word-count"],
-    };
+<link rel="stylesheet" href="../../styles.css">
+</head>
 
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-post-list'] = new List('listing-post-list', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="Tanmay Chanda" href="index.xml" data-external="1"></head>
-
-<body class="nav-fixed home quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -320,11 +298,11 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
     <img src="https://avatars.githubusercontent.com/u/81738153?v=4&amp;s=96" alt="Tanmay Chanda" class="navbar-logo light-content">
     <img src="https://avatars.githubusercontent.com/u/81738153?v=4&amp;s=96" alt="Tanmay Chanda" class="navbar-logo dark-content">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Tanmay Chanda</span>
     </a>
   </div>
@@ -335,11 +313,11 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -350,7 +328,7 @@ window.Quarto = {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img" aria-label="RSS feed">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img" aria-label="RSS feed">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -363,24 +341,63 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">In this post</h2>
+   
+  <ul class="collapse">
+  <li><a href="#does-shiny-have-this" id="toc-does-shiny-have-this" class="nav-link active" data-scroll-target="#does-shiny-have-this">Does Shiny have this?</a></li>
+  <li><a href="#the-idea-the-output-already-knows-its-shape" id="toc-the-idea-the-output-already-knows-its-shape" class="nav-link" data-scroll-target="#the-idea-the-output-already-knows-its-shape">The idea: the output already knows its shape</a></li>
+  <li><a href="#problem-one-the-second-load" id="toc-problem-one-the-second-load" class="nav-link" data-scroll-target="#problem-one-the-second-load">Problem one: the second load</a></li>
+  <li><a href="#problem-two-a-skeleton-that-flashes-is-worse-than-none" id="toc-problem-two-a-skeleton-that-flashes-is-worse-than-none" class="nav-link" data-scroll-target="#problem-two-a-skeleton-that-flashes-is-worse-than-none">Problem two: a skeleton that flashes is worse than none</a></li>
+  <li><a href="#problem-three-the-page-must-not-move" id="toc-problem-three-the-page-must-not-move" class="nav-link" data-scroll-target="#problem-three-the-page-must-not-move">Problem three: the page must not move</a></li>
+  <li><a href="#problem-four-display-none-and-renderplot" id="toc-problem-four-display-none-and-renderplot" class="nav-link" data-scroll-target="#problem-four-display-none-and-renderplot">Problem four: <code>display: none</code> and <code>renderPlot()</code></a></li>
+  <li><a href="#what-bones-cannot-know" id="toc-what-bones-cannot-know" class="nav-link" data-scroll-target="#what-bones-cannot-know">What <code>bones</code> cannot know</a></li>
+  <li><a href="#the-small-things" id="toc-the-small-things" class="nav-link" data-scroll-target="#the-small-things">The small things</a></li>
+  <li><a href="#from-a-reel-to-a-package" id="toc-from-a-reel-to-a-package" class="nav-link" data-scroll-target="#from-a-reel-to-a-package">From a reel to a package</a></li>
+  <li><a href="#try-it" id="toc-try-it" class="nav-link" data-scroll-target="#try-it">Try it</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Posts</h1>
+<h1 class="title">A spinner says wait. A skeleton says what is coming.</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">Shiny</div>
+    <div class="quarto-category">packages</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    <p>A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.</p>
+  </div>
 </div>
 
 
+<div class="quarto-title-meta">
 
-<div class="quarto-title-meta column-page">
-
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Tanmay Chanda </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">28 September 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -390,88 +407,100 @@ window.Quarto = {
 </header>
 
 
-<section id="notes-on-r-shiny-and-building-things-that-other-people-use." class="level1 intro">
-<h1>Notes on R, Shiny, and building things that other people use.</h1>
-<p>The problems that were harder than they looked, and the reasons behind a decision rather than only the decision.</p>
+<p>It started with a reel.</p>
+<p>It was one of those short videos that explain a trick of the web. When a page loads, the site does not show you a spinner. It shows you grey boxes in the shape of the page: a bar where the title will be, a rectangle where the picture will be, three lines where the text will be. Then the real content fills in.</p>
+<p>The point of the video was that this is a kind of trick. The page is not faster. The data takes as long to arrive as before. But the wait feels shorter, because you already see the shape of what is coming. Your eye goes to the place where the title will be. You start to read the page before there is anything on it.</p>
+<p>These grey boxes are called skeleton screens. Once you know about them, you see them everywhere: in social media feeds, in video sites, in almost every large web application.</p>
+<section id="does-shiny-have-this" class="level2">
+<h2 class="anchored" data-anchor-id="does-shiny-have-this">Does Shiny have this?</h2>
+<p>My first thought was about Shiny. A Shiny output that takes two seconds to calculate shows a spinner, or it shows nothing and then jumps into place. So I looked for a skeleton package for Shiny.</p>
+<p>What I found gave me spinners and overlays. They are good packages, and a spinner does one job well: it tells the user that something happens. But that is all it says. It does not say what is coming, or where.</p>
+<p>I did not find a package that gives an output a placeholder in the shape of its content. So I decided to write one.</p>
 </section>
-<div class="home-cols">
-<section id="posts" class="level2 sec home-posts">
-<h2 class="sec anchored" data-anchor-id="posts">Posts</h2>
-<div id="listing-post-list" class="quarto-listing quarto-listing-container-custom">
-
-<div class="kiln-list">
-
-<article class="entry" data-index="0" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1790553600000" data-listing-file-modified-sort="1790600990515" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1336">
-  <a class="stamp" href="./posts/2026-09-28-how-bones-began/index.html" aria-hidden="true" tabindex="-1">
-    <b>28</b>
-    <span>Sep 2026</span>
-  </a>
-  <div class="entry-body">
-    <h3 class="listing-title anchored"><a href="./posts/2026-09-28-how-bones-began/index.html">A spinner says wait. A skeleton says what is coming.</a></h3>
-    
-    <p class="listing-description">A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.
-</p>
-    
-    
-    <div class="pills">
-      
-      <span class="pill">R</span>
-      
-      <span class="pill">Shiny</span>
-      
-      <span class="pill">packages</span>
-      
-    </div>
-    
-  </div>
-</article>
-
-<article class="entry" data-index="1" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1787788800000" data-listing-file-modified-sort="1790600990515" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="966">
-  <a class="stamp" href="./posts/2026-08-27-undo-for-shiny/index.html" aria-hidden="true" tabindex="-1">
-    <b>27</b>
-    <span>Aug 2026</span>
-  </a>
-  <div class="entry-body">
-    <h3 class="listing-title anchored"><a href="./posts/2026-08-27-undo-for-shiny/index.html">Undo for Shiny, and the three problems that make it interesting</a></h3>
-    
-    <p class="listing-description">Shiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R's lazy evaluation could produce.
-</p>
-    
-    
-    <div class="pills">
-      
-      <span class="pill">R</span>
-      
-      <span class="pill">Shiny</span>
-      
-      <span class="pill">packages</span>
-      
-    </div>
-    
-  </div>
-</article>
-
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div>
+<section id="the-idea-the-output-already-knows-its-shape" class="level2">
+<h2 class="anchored" data-anchor-id="the-idea-the-output-already-knows-its-shape">The idea: the output already knows its shape</h2>
+<p>The first design question was the most important one. Where does the shape come from?</p>
+<p>I did not want users to draw their skeletons by hand. A skeleton that you have to describe for each output is work, and work means that nobody does it. But a Shiny output already says a lot about what it will show. <code>plotOutput()</code> will show a chart. <code>DT::DTOutput()</code> will show a DT table, with its search box and its pages. <code>textOutput()</code> will show some lines of text.</p>
+<p>So <code>bones</code> reads the output that you give it, and picks the shape from it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bones)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">withBones</span>(<span class="fu">plotOutput</span>(<span class="st">"chart"</span>)),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">withBones</span>(DT<span class="sc">::</span><span class="fu">DTOutput</span>(<span class="st">"patients"</span>), <span class="at">rows =</span> <span class="dv">10</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The chart gets columns on an axis. The DT table gets the “Show entries” control, the search box, ten rows and the page buttons. A gt table gets a title, a spanner and a source note. A leaflet map gets tiles, roads and pins. And if you do not want to wrap each output, one call wraps them all:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">bones_auto</span>(<span class="fu">fluidPage</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plotOutput</span>(<span class="st">"chart"</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tableOutput</span>(<span class="st">"results"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>That part was fun. The grey boxes themselves were the easy part. The hard part was everything around them.</p>
 </section>
-<section id="packages" class="level2 sec home-packages">
-<h2 class="sec anchored" data-anchor-id="packages">Packages</h2>
-<div class="shelf">
-  <a class="pkg" href="https://tenmeh.github.io/rewind/">
-    <img src="https://tenmeh.github.io/rewind/logo.png" alt="rewind hex logo">
-    <span><b>rewind<em>on CRAN</em></b>Undo and redo for Shiny applications.</span>
-  </a>
-  <a class="pkg" href="https://tenmeh.github.io/bones/">
-    <img src="https://tenmeh.github.io/bones/logo.png" alt="bones hex logo">
-    <span><b>bones<em>on GitHub</em></b>Content-shaped loading placeholders for Shiny outputs.</span>
-  </a>
-</div>
+<section id="problem-one-the-second-load" class="level2">
+<h2 class="anchored" data-anchor-id="problem-one-the-second-load">Problem one: the second load</h2>
+<p>A skeleton is right for the first load. The page is empty, and the user waits for the first answer.</p>
+<p>But a dashboard calculates again and again. The user changes a filter, and the chart calculates again. The obvious answer is to show the skeleton each time. It is the wrong answer.</p>
+<p>When the chart calculates again, the user is often in the middle of reading it. The old chart is still an answer. It is a slightly old answer, and a better one comes a moment later. Grey boxes in its place remove information that the user was reading.</p>
+<p>So <code>bones</code> shows the skeleton on the first load only. When an output calculates again, the old content stays on the screen, dimmed. The user can still read it, and can see that it is out of date.</p>
+<p>There was a second part to this. When several outputs use one slow reactive, Shiny calculates them one after the other. If each output dims only when its own turn comes, the dimming crawls across the page one output at a time, and the outputs that wait look up to date when they are not. So <code>bones</code> dims all of them as soon as they are out of date.</p>
 </section>
-</div>
+<section id="problem-two-a-skeleton-that-flashes-is-worse-than-none" class="level2">
+<h2 class="anchored" data-anchor-id="problem-two-a-skeleton-that-flashes-is-worse-than-none">Problem two: a skeleton that flashes is worse than none</h2>
+<p>Many loads are fast. If the data comes back in 100 ms, a skeleton that appears and disappears in 100 ms is not help. It is a flash, and the eye reads a flash as a fault.</p>
+<p>So the skeleton waits. It appears only after 300 ms, so a fast load shows nothing at all. And when it has appeared, it stays for at least 500 ms, so a load that ends just after the delay does not flash it for one frame.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">withBones</span>(<span class="fu">plotOutput</span>(<span class="st">"chart"</span>), <span class="at">delay =</span> <span class="dv">150</span>, <span class="at">min_time =</span> <span class="dv">400</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>These two numbers made more difference to how the package feels than any of the shapes did.</p>
+</section>
+<section id="problem-three-the-page-must-not-move" class="level2">
+<h2 class="anchored" data-anchor-id="problem-three-the-page-must-not-move">Problem three: the page must not move</h2>
+<p>A skeleton has a second job, and it is as important as the first. It keeps the space of the content, so the page does not jump when the content arrives.</p>
+<p>This is easy when the output sets a height. <code>plotOutput()</code> is 400 px unless you say otherwise. It is harder for a table or a block of text, where the height depends on the data. <code>bones</code> estimates it from the number of rows or lines, and when the content arrives, the content sets the height. If the estimate was too tall, the space closes, and no gap stays under the content.</p>
+<p>An estimate can still be wrong. So when the content arrives, the browser stores its real height. On the next visit, the placeholder keeps that height in place of the estimate, and from the second visit the page does not move at all.</p>
+</section>
+<section id="problem-four-display-none-and-renderplot" class="level2">
+<h2 class="anchored" data-anchor-id="problem-four-display-none-and-renderplot">Problem four: <code>display: none</code> and <code>renderPlot()</code></h2>
+<p>This one is specific to Shiny, and I think it is the most useful thing in this post even if you never use <code>bones</code>.</p>
+<p>The obvious way to hide the content under a skeleton is <code>display: none</code>. It does not work, and the reason is not obvious.</p>
+<p><code>renderPlot()</code> makes its image at the width of the output element. An element with <code>display: none</code> has a width of zero. So a plot that renders while it is hidden gets the wrong size. Shiny keeps that image, and the plot looks broken until something causes a new render.</p>
+<p><code>bones</code> hides the content with <code>visibility: hidden</code> in place of <code>display: none</code>, and puts the skeleton on top of it with absolute position. The output keeps its box, and only the paint is hidden. The plot always renders at the right width, because it always has one.</p>
+<p>If you hide Shiny outputs in your own code, for tabs, for collapsed panels, for anything, this is worth remembering.</p>
+</section>
+<section id="what-bones-cannot-know" class="level2">
+<h2 class="anchored" data-anchor-id="what-bones-cannot-know">What <code>bones</code> cannot know</h2>
+<p>There is one limit that I could not remove. <code>plotOutput()</code> says that a plot will be there. It does not say which plot. <code>renderPlot()</code> decides that later, on the server. So a <code>plotOutput()</code> gets the bar shape unless you say otherwise:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">withBones</span>(<span class="fu">plotOutput</span>(<span class="st">"trend"</span>), <span class="at">type =</span> <span class="st">"line"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">withBones</span>(<span class="fu">plotOutput</span>(<span class="st">"share"</span>), <span class="at">type =</span> <span class="st">"pie"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>An interactive chart is different. A plotly, echarts4r or highcharter output sends a description of its series to the browser. So <code>bones</code> reads the kind of chart from the first value, and the next loads show that shape. With <code>remember</code>, the kind is stored in the browser, and the first skeleton of the next visit has the right shape too.</p>
+</section>
+<section id="the-small-things" class="level2">
+<h2 class="anchored" data-anchor-id="the-small-things">The small things</h2>
+<p>A few decisions that are easy to miss:</p>
+<ul>
+<li>The colours come from the theme of the page. A skeleton takes the tint of a branded bslib theme, and turns light in a dark theme, with no configuration.</li>
+<li>Users who ask their system to reduce motion get no animation. A placeholder that moves is exactly what that setting is for.</li>
+<li>The placeholder is hidden from screen readers. Shiny already tells them that an output is busy, and a second message would only repeat it.</li>
+</ul>
+</section>
+<section id="from-a-reel-to-a-package" class="level2">
+<h2 class="anchored" data-anchor-id="from-a-reel-to-a-package">From a reel to a package</h2>
+<p>The first commit of <code>bones</code> was on 23 September. The live demo on the package site runs in the browser with shinylive, so you can try every shape and option without installing anything.</p>
+<p>A reel about how websites fool you with grey boxes turned into a package that does the same for Shiny. I do not think it is a trick, though. The wait is the same length. But a user who sees the shape of the answer waits in a better way.</p>
+</section>
+<section id="try-it" class="level2">
+<h2 class="anchored" data-anchor-id="try-it">Try it</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("remotes")</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"tenmeh/bones"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>shiny<span class="sc">::</span><span class="fu">runApp</span>(<span class="fu">system.file</span>(<span class="st">"examples/demo"</span>, <span class="at">package =</span> <span class="st">"bones"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Documentation: <a href="https://tenmeh.github.io/bones/" class="uri">https://tenmeh.github.io/bones/</a></li>
+<li>Live demo: <a href="https://tenmeh.github.io/bones/articles/live-demo.html" class="uri">https://tenmeh.github.io/bones/articles/live-demo.html</a></li>
+<li>Source: <a href="https://github.com/tenmeh/bones" class="uri">https://github.com/tenmeh/bones</a></li>
+</ul>
+<p>Issues and pull requests are welcome. I would especially like to hear about outputs that get the wrong shape, because each one is a shape that <code>bones</code> could learn.</p>
 
 
-
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

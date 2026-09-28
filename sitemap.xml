@@ -2,14 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://tenmeh.github.io/about.html</loc>
-    <lastmod>2026-09-28T11:26:57.615Z</lastmod>
+    <lastmod>2026-09-28T13:09:50.515Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-09-28-how-bones-began/index.html</loc>
+    <lastmod>2026-09-28T13:09:50.515Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/index.html</loc>
-    <lastmod>2026-09-28T11:26:57.615Z</lastmod>
+    <lastmod>2026-09-28T13:09:50.515Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/index.html</loc>
-    <lastmod>2026-09-28T11:26:57.616Z</lastmod>
+    <lastmod>2026-09-28T13:09:50.515Z</lastmod>
   </url>
 </urlset>
