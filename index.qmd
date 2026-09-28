@@ -1,14 +1,54 @@
 ---
 title: "Posts"
 listing:
+  id: post-list
   contents: posts
   sort: "date desc"
-  type: default
-  categories: true
+  type: custom
+  template: posts.ejs
+  date-format: "D MMM YYYY"
+  categories: false
   sort-ui: false
   filter-ui: false
   fields: [date, title, description, categories]
   feed: true
 page-layout: full
 title-block-banner: false
+body-classes: home
+toc: false
 ---
+
+::: {.intro}
+# Notes on R, Shiny, and building things that other people use.
+
+The problems that were harder than they looked, and the reasons behind a
+decision rather than only the decision.
+:::
+
+:::: {.home-cols}
+
+::: {.home-posts}
+## Posts {.sec}
+
+::: {#post-list}
+:::
+:::
+
+::: {.home-packages}
+## Packages {.sec}
+
+```{=html}
+<div class="shelf">
+  <a class="pkg" href="https://tenmeh.github.io/rewind/">
+    <img src="https://tenmeh.github.io/rewind/logo.png" alt="rewind hex logo">
+    <span><b>rewind<em>on CRAN</em></b>Undo and redo for Shiny applications.</span>
+  </a>
+  <a class="pkg" href="https://tenmeh.github.io/bones/">
+    <img src="https://tenmeh.github.io/bones/logo.png" alt="bones hex logo">
+    <span><b>bones<em>on GitHub</em></b>Content-shaped loading placeholders for Shiny outputs.</span>
+  </a>
+</div>
+```
+:::
+
+::::

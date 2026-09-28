@@ -1,0 +1,48 @@
+/*-- scss:defaults --*/
+
+// Kiln shapes in Colophon colours. Dark: the charcoal of the rewind logo,
+// warm cream ink, and a lighter rubric as the accent.
+@import url("https://fonts.googleapis.com/css2?family=Recursive:slnt,wght,CASL,CRSV,MONO@-15..0,300..1000,0..1,0..1,0..1&display=swap");
+
+$body-bg: #1f1d1b;
+$body-color: #ece5d6;
+$primary: #f0908a;
+$link-color: #f0908a;
+$text-muted: #a89f8f;
+$border-color: #3d3833;
+
+$navbar-bg: #1f1d1b;
+$navbar-fg: #ece5d6;
+$navbar-hl: #f0908a;
+$footer-bg: #1f1d1b;
+$footer-fg: #a89f8f;
+
+$code-color: #ece5d6;
+$code-bg: #171513;
+$code-block-bg: #171513;
+
+$font-family-sans-serif: Recursive, system-ui, sans-serif;
+$font-family-monospace: Recursive, Consolas, monospace;
+$headings-font-family: Recursive, system-ui, sans-serif;
+$font-size-root: 18px;
+
+/*-- scss:rules --*/
+
+// The shared rules in styles.css read these. Each value passes 4.5:1 on
+// the ground it is used on.
+:root {
+  --k-paper: #1f1d1b;
+  --k-surface: #282523;
+  --k-code: #171513;
+  --k-ink: #ece5d6;
+  --k-muted: #a89f8f;
+  --k-rule: #3d3833;
+  --k-accent: #f0908a;
+  --k-accent-soft: #3e2a27;
+  --k-syn-comment: #9a917f;
+  --k-syn-keyword: #f0908a;
+  --k-syn-string: #a9cf8f;
+  --k-syn-function: #8fb9ee;
+  --k-syn-number: #f0a830;
+  --k-syn-arg: #d2b4f0;
+}

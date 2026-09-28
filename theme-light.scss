@@ -1,0 +1,48 @@
+/*-- scss:defaults --*/
+
+// Kiln shapes in Colophon colours. Light: the bone paper and ink of the
+// bones logo, with a rubric red as the one accent.
+@import url("https://fonts.googleapis.com/css2?family=Recursive:slnt,wght,CASL,CRSV,MONO@-15..0,300..1000,0..1,0..1,0..1&display=swap");
+
+$body-bg: #f4efe4;
+$body-color: #17202a;
+$primary: #9e2a2b;
+$link-color: #9e2a2b;
+$text-muted: #555b66;
+$border-color: #cfc5b1;
+
+$navbar-bg: #f4efe4;
+$navbar-fg: #17202a;
+$navbar-hl: #9e2a2b;
+$footer-bg: #f4efe4;
+$footer-fg: #555b66;
+
+$code-color: #17202a;
+$code-bg: #fbf8f1;
+$code-block-bg: #fbf8f1;
+
+$font-family-sans-serif: Recursive, system-ui, sans-serif;
+$font-family-monospace: Recursive, Consolas, monospace;
+$headings-font-family: Recursive, system-ui, sans-serif;
+$font-size-root: 18px;
+
+/*-- scss:rules --*/
+
+// The shared rules in styles.css read these. Each value passes 4.5:1 on
+// the ground it is used on.
+:root {
+  --k-paper: #f4efe4;
+  --k-surface: #fbf8f1;
+  --k-code: #fbf8f1;
+  --k-ink: #17202a;
+  --k-muted: #555b66;
+  --k-rule: #cfc5b1;
+  --k-accent: #9e2a2b;
+  --k-accent-soft: #f0ddd4;
+  --k-syn-comment: #6b6457;
+  --k-syn-keyword: #9e2a2b;
+  --k-syn-string: #2f6b3b;
+  --k-syn-function: #1f4f8a;
+  --k-syn-number: #8a5300;
+  --k-syn-arg: #6a3f86;
+}

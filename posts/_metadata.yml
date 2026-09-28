@@ -1,3 +1,5 @@
 # Options that apply to every post.
 freeze: true
 title-block-banner: false
+# Dates written out in full, never 09/10/26: many readers are not in the US.
+date-format: "D MMMM YYYY"
