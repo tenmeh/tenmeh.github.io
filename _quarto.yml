@@ -7,6 +7,8 @@ website:
   site-url: https://tenmeh.github.io
   description: "Notes on R, Shiny, and building things that other people use."
   navbar:
+    logo: "https://avatars.githubusercontent.com/u/81738153?v=4&s=96"
+    logo-alt: "Tanmay Chanda"
     left:
       - text: Posts
         href: index.qmd
