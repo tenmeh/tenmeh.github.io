@@ -1,5 +1,6 @@
 ---
 title: "About"
+toc: false
 ---
 
 I am Tanmay Chanda. I build R and Shiny applications.
@@ -10,8 +11,12 @@ decision rather than only the decision.
 
 My R packages:
 
-- [rewind](https://github.com/tenmeh/rewind) - undo and redo for Shiny
-  applications. On CRAN.
+- **rewind** - undo and redo for Shiny applications. On CRAN.
+  [Documentation](https://tenmeh.github.io/rewind/) -
+  [source](https://github.com/tenmeh/rewind).
+- **bones** - content-shaped loading placeholders for Shiny outputs. On
+  GitHub. [Documentation](https://tenmeh.github.io/bones/) -
+  [source](https://github.com/tenmeh/bones).
 
 Find me on [GitHub](https://github.com/tenmeh).
 

@@ -27,9 +27,14 @@ website:
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: [cosmo, theme-light.scss]
+      dark: [cosmo, theme-dark.scss]
+    respect-user-color-scheme: true
+    highlight-style: github
     css: styles.css
     toc: true
+    toc-title: "In this post"
     toc-depth: 2
     anchor-sections: true
     code-copy: true
