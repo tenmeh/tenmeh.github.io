@@ -161,8 +161,18 @@ nav.navbar #quarto-search .aa-DetachedSearchButton:hover {
 
 /* --- Footer ------------------------------------------------------------------ */
 
-.nav-footer {
+/* The rule spans the page, as the navbar's does; the text keeps to the
+   width of the home page's content, so its ends line up with the columns. */
+.footer {
   border-top: 1.5px dashed var(--k-rule);
+}
+
+.nav-footer {
+  max-width: 65rem; /* the home columns' 63rem, plus 1rem padding each side */
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-top: 0;
   font-size: 0.85rem;
   color: var(--k-muted);
 }
@@ -272,9 +282,13 @@ body.home main.content {
 }
 
 .kiln-list .stamp span {
-  margin-top: 0.25rem;
   font-size: 0.7rem;
+  line-height: 1.15;
   color: var(--k-muted);
+}
+
+.kiln-list .stamp b + span {
+  margin-top: 0.25rem;
 }
 
 .kiln-list .listing-title {
@@ -383,9 +397,12 @@ body.home main.content {
   line-height: 1.1;
 }
 
-#title-block-header .description p {
+/* The standfirst sits a step above the body text, not below it. The
+   selector matches Quarto's, which sets it to 0.9em. */
+#title-block-header.quarto-title-block.default .description > p {
   margin-bottom: 0.9rem;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  line-height: 1.5;
   color: var(--k-muted);
 }
 
@@ -453,9 +470,14 @@ div.sourceCode {
   background: var(--k-code);
 }
 
-/* A small language tab above R code. */
-div.sourceCode:has(> pre.sourceCode.r)::before {
-  content: "R";
+/* A small language tab above each code block. */
+div.sourceCode:has(> pre.sourceCode.r)::before { content: "R"; }
+div.sourceCode:has(> pre.sourceCode.js)::before { content: "JavaScript"; }
+div.sourceCode:has(> pre.sourceCode.css)::before { content: "CSS"; }
+div.sourceCode:has(> pre.sourceCode.html)::before { content: "HTML"; }
+div.sourceCode:has(> pre.sourceCode.bash)::before { content: "Shell"; }
+
+div.sourceCode:has(> pre.sourceCode)::before {
   display: block;
   padding: 0.6rem 0 0 1.35rem;
   font-size: 0.72rem;
@@ -583,9 +605,11 @@ blockquote p:last-child {
   text-decoration: none;
 }
 
+/* Colour and the dot mark the current section. Bold would re-wrap the
+   line and shift the list as you scroll. */
 #TOC .nav-link.active {
-  color: var(--k-ink);
-  font-weight: 700;
+  color: var(--k-accent);
+  font-weight: inherit;
 }
 
 /* --- Phone --------------------------------------------------------------------------- */
@@ -631,8 +655,15 @@ blockquote p:last-child {
 
   .kiln-list .stamp {
     width: 3.3rem;
-    height: 3.3rem;
+    height: auto;
+    min-height: 3.3rem;
+    align-self: start;
+    padding: 0.4rem 0;
     border-radius: 0.8rem;
+  }
+
+  .kiln-list .stamp span {
+    font-size: 0.66rem;
   }
 
   .kiln-list .stamp b {
@@ -656,8 +687,27 @@ blockquote p:last-child {
     padding: 0.4rem 1rem 1rem;
   }
 
-  div.sourceCode:has(> pre.sourceCode.r)::before {
+  div.sourceCode:has(> pre.sourceCode)::before {
     padding-left: 1rem;
+  }
+
+  /* Quarto moves the centre item to the end on a phone and pads it with
+     3em. Keep the three in source order, centred and close together. */
+  .nav-footer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 1rem 0 1.4rem;
+  }
+
+  .nav-footer .nav-footer-left,
+  .nav-footer .nav-footer-center,
+  .nav-footer .nav-footer-right {
+    order: 0;
+    flex: none;
+    min-height: 0;
+    margin: 0;
+    text-align: center;
   }
 
   blockquote {
