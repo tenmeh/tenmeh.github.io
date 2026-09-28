@@ -59,16 +59,92 @@ main a.anchorjs-link {
   font-size: 1.2rem;
 }
 
-/* A small accent dot before the name, as in the Kiln mockup. */
-.navbar-brand .navbar-title::before {
-  content: "";
-  display: inline-block;
-  width: 0.7rem;
-  height: 0.7rem;
-  margin-right: 0.55rem;
+/* The GitHub avatar before the name, as a small round photo. */
+.navbar-brand .navbar-logo {
+  max-height: 2rem;
+  width: 2rem;
   border-radius: 50%;
-  background: var(--k-accent);
-  vertical-align: 0.05em;
+  border: 1.5px solid var(--k-rule);
+}
+
+/* The dark mode toggle shows the current mode, as the bones site does: a
+   sun in light mode, a moon in dark mode. The glyphs come from Bootstrap
+   Icons, which Quarto already loads. */
+.quarto-color-scheme-toggle .bi::before {
+  background-image: none !important; /* replaces Quarto's toggle-switch picture */
+  width: auto;
+  height: auto;
+  content: "\f5a1"; /* bi-sun-fill */
+  font-family: "bootstrap-icons";
+  font-size: var(--k-icon);
+  line-height: 1;
+  vertical-align: -0.1em;
+}
+
+body.quarto-dark .quarto-color-scheme-toggle .bi::before {
+  content: "\f494"; /* bi-moon-fill */
+}
+
+/* The icons on the right come from three parts of Quarto: the navbar links
+   (GitHub, RSS), the toggle, and the search button. Each has its own size
+   and padding. Give all four one icon size and one box, so they line up
+   with equal gaps. */
+.navbar {
+  --k-icon: 1.1rem;
+  --k-icon-box: 2.1rem;
+}
+
+.navbar .navbar-nav .nav-link .bi,
+.quarto-color-scheme-toggle .bi {
+  font-size: var(--k-icon);
+  line-height: 1;
+}
+
+/* Quarto sizes the search icon with
+   ".navbar #quarto-search.type-overlay .aa-Autocomplete svg.aa-SubmitIcon",
+   so these selectors add "nav" to beat it. */
+nav.navbar #quarto-search.type-overlay .aa-Autocomplete .aa-DetachedSearchButtonIcon,
+nav.navbar #quarto-search.type-overlay .aa-Autocomplete svg.aa-SubmitIcon {
+  display: block;
+  width: var(--k-icon);
+  height: var(--k-icon);
+  color: inherit;
+  fill: currentColor;
+}
+
+nav.navbar .navbar-nav.ms-auto .nav-link:has(.bi),
+nav.navbar .quarto-navbar-tools .quarto-navigation-tool.quarto-color-scheme-toggle,
+nav.navbar #quarto-search .aa-DetachedSearchButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* One fixed square per icon, so the gaps are equal whatever the width
+     of each glyph. */
+  width: var(--k-icon-box);
+  height: var(--k-icon-box);
+  margin: 0;
+  padding: 0 !important; /* beats Bootstrap's px-1 utility on the toggle, which is !important */
+  border: 0;
+  background: none;
+  /* The icons take the accent colour. It passes 4.5:1 on the navbar in
+     both modes. */
+  color: var(--k-accent);
+}
+
+nav.navbar .navbar-nav.ms-auto .nav-link:has(.bi):hover,
+nav.navbar .quarto-navbar-tools .quarto-navigation-tool.quarto-color-scheme-toggle:hover,
+nav.navbar #quarto-search .aa-DetachedSearchButton:hover {
+  color: var(--k-ink);
+}
+
+/* Only on the full navbar: on a phone, Quarto places the search button
+   with its own margins, and removing them pushes it onto a second row. */
+@media (min-width: 992px) {
+  nav.navbar .quarto-navbar-tools,
+  nav.navbar #quarto-search {
+    margin: 0;
+    padding: 0;
+  }
 }
 
 .navbar .navbar-nav .nav-link {
@@ -519,9 +595,19 @@ blockquote p:last-child {
     font-size: 17px;
   }
 
-  /* The full name fits beside the menu and icons. */
+  /* The avatar, the full name and the icons fit on one row beside the
+     menu button. */
   .navbar-title {
     font-size: 1rem;
+  }
+
+  .navbar-brand .navbar-logo {
+    max-height: 1.6rem;
+    width: 1.6rem;
+  }
+
+  .navbar {
+    --k-icon-box: 1.9rem;
   }
 
   .intro {
