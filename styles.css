@@ -1,24 +1,584 @@
-/* Small changes to the cosmo theme. The aim is a page that is easy to read
-   for a long article with code in it. */
+/* =============================================================================
+   styles.css - tenmeh.github.io
+   Kiln shapes in Colophon colours. The colours are --k-* variables, set by
+   theme-light.scss and theme-dark.scss. One family, Recursive, does all the
+   type: CASL 1 (casual) for headings, CASL 0 for reading, MONO 1 for code.
+   ============================================================================= */
 
-.quarto-title-block .quarto-title-banner {
-  padding-bottom: 1rem;
+/* --- Base -------------------------------------------------------------------- */
+
+body {
+  font-variation-settings: "CASL" 0, "MONO" 0;
+  line-height: 1.68;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* A narrower column reads better than the full width of a wide screen. */
+h1, h2, h3, h4, .navbar-title {
+  font-variation-settings: "CASL" 1, "MONO" 0;
+  letter-spacing: -0.01em;
+  color: var(--k-ink);
+}
+
+h1 { font-weight: 800; }
+h2, h3, h4 { font-weight: 750; }
+
+/* A narrow measure reads better than the full width of a wide screen. */
 main.content {
-  max-width: 46rem;
+  max-width: 44rem;
 }
 
-/* Code is the reason most people are here. Give it room. */
-pre.sourceCode {
-  border-radius: 0.4rem;
-  font-size: 0.86em;
+/* Links in running text get a wavy terracotta line. Navigation, titles and
+   cards opt out below. */
+main a {
+  color: var(--k-accent);
+  text-decoration: underline wavy;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.28em;
+  text-decoration-skip-ink: none;
 }
+
+main a:hover {
+  color: var(--k-accent);
+  text-decoration-thickness: 2px;
+}
+
+/* The section anchor Quarto adds on hover should not carry the wave. */
+main a.anchorjs-link {
+  text-decoration: none;
+}
+
+/* --- Navbar ------------------------------------------------------------------ */
+
+.navbar {
+  border-bottom: 1.5px dashed var(--k-rule);
+}
+
+.navbar-title {
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+/* A small accent dot before the name, as in the Kiln mockup. */
+.navbar-brand .navbar-title::before {
+  content: "";
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  margin-right: 0.55rem;
+  border-radius: 50%;
+  background: var(--k-accent);
+  vertical-align: 0.05em;
+}
+
+.navbar .navbar-nav .nav-link {
+  border-radius: 999px;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+}
+
+.navbar .navbar-nav .nav-link.active {
+  background: var(--k-accent-soft);
+  color: var(--k-accent);
+  font-weight: 600;
+}
+
+/* --- Footer ------------------------------------------------------------------ */
+
+.nav-footer {
+  border-top: 1.5px dashed var(--k-rule);
+  font-size: 0.85rem;
+  color: var(--k-muted);
+}
+
+.nav-footer a {
+  color: var(--k-accent);
+}
+
+/* --- Pills ------------------------------------------------------------------- */
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.pill,
+.quarto-title .quarto-categories .quarto-category {
+  display: inline-block;
+  padding: 0.35rem 0.7rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--k-accent-soft);
+  color: var(--k-accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1;
+  opacity: 1;
+  text-transform: none;
+}
+
+/* --- Home: intro --------------------------------------------------------------- */
+
+/* The page keeps the title "Posts" for the browser tab and the feed. The
+   intro takes its place on the page. */
+body.home #title-block-header {
+  display: none;
+}
+
+body.home main.content {
+  max-width: 68rem;
+}
+
+.intro {
+  padding: 1.5rem 0 2rem;
+}
+
+.intro h1 {
+  max-width: 18ch;
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 5vw, 2.8rem);
+  line-height: 1.08;
+}
+
+.intro p {
+  max-width: 48ch;
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--k-muted);
+}
+
+/* --- Home: posts and packages side by side -------------------------------------- */
+
+.home-cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 17rem;
+  gap: 2.7rem;
+}
+
+.home-cols h2.sec {
+  margin: 0 0 0.7rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  border: 0;
+  padding: 0;
+}
+
+/* One post: the date stamp at the left, the text at the right, a dashed
+   line above. */
+.kiln-list .entry {
+  display: grid;
+  grid-template-columns: 4rem minmax(0, 1fr);
+  gap: 1.2rem;
+  padding: 1.2rem 0;
+  border-top: 1.5px dashed var(--k-rule);
+}
+
+.kiln-list .stamp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  background: var(--k-surface);
+  border: 1px solid var(--k-rule);
+  line-height: 1;
+  text-decoration: none;
+}
+
+.kiln-list .stamp b {
+  font-size: 1.55rem;
+  font-weight: 800;
+  font-variation-settings: "CASL" 1;
+  color: var(--k-accent);
+}
+
+.kiln-list .stamp span {
+  margin-top: 0.25rem;
+  font-size: 0.7rem;
+  color: var(--k-muted);
+}
+
+.kiln-list .listing-title {
+  margin: 0 0 0.45rem;
+  font-size: 1.45rem;
+  line-height: 1.22;
+}
+
+.kiln-list .listing-title a {
+  font-weight: inherit; /* the theme sets links to 400 */
+  color: var(--k-ink);
+  text-decoration: none;
+}
+
+.kiln-list .listing-title a:hover {
+  color: var(--k-accent);
+}
+
+.kiln-list .listing-description {
+  margin: 0 0 0.7rem;
+  font-size: 0.97rem;
+}
+
+/* The packages: hex logos on a shelf, turned a little, like stickers. */
+.shelf {
+  padding: 0.6rem 1.2rem;
+  background: var(--k-surface);
+  border: 1px solid var(--k-rule);
+  border-radius: 14px;
+}
+
+.shelf .pkg {
+  display: grid;
+  grid-template-columns: 4.2rem 1fr;
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.7rem 0;
+  color: var(--k-ink);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  text-decoration: none;
+}
+
+.shelf .pkg + .pkg {
+  border-top: 1.5px dashed var(--k-rule);
+}
+
+.shelf .pkg img {
+  display: block;
+  width: 4.2rem;
+  transform: rotate(-5deg);
+  filter: drop-shadow(0 3px 0 var(--k-rule));
+  transition: transform 0.2s ease;
+}
+
+.shelf .pkg:nth-child(odd) img {
+  transform: rotate(4deg);
+}
+
+.shelf .pkg:hover img {
+  transform: rotate(0deg) scale(1.04);
+}
+
+.shelf .pkg b {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-variation-settings: "CASL" 1;
+}
+
+.shelf .pkg:hover b {
+  color: var(--k-accent);
+}
+
+.shelf .pkg em {
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--k-accent-soft);
+  color: var(--k-accent);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 600;
+  vertical-align: 0.18em;
+}
+
+/* --- Post: title block ---------------------------------------------------------- */
+
+/* Pills above the title, as in the mockup. */
+.quarto-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.quarto-title .quarto-categories {
+  order: -1;
+  display: flex;
+  gap: 0.45rem;
+  margin: 0 0 0.9rem;
+  padding: 0;
+}
+
+#title-block-header.quarto-title-block.default .quarto-title h1.title {
+  margin-bottom: 1rem;
+  font-size: clamp(2rem, 4.6vw, 2.7rem);
+  line-height: 1.1;
+}
+
+#title-block-header .description p {
+  margin-bottom: 0.9rem;
+  font-size: 1.1rem;
+  color: var(--k-muted);
+}
+
+/* Author and date as one byline, "Tanmay Chanda . 27 August 2026", not a
+   grid with headings. */
+#title-block-header.quarto-title-block.default .quarto-title-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--k-muted);
+}
+
+#title-block-header .quarto-title-meta > div {
+  display: flex;
+  align-items: baseline;
+}
+
+#title-block-header.quarto-title-block.default .quarto-title-meta-heading {
+  display: none;
+}
+
+#title-block-header.quarto-title-block.default .quarto-title-meta-contents,
+#title-block-header .quarto-title-meta p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--k-muted);
+}
+
+#title-block-header .quarto-title-meta > div + div::before {
+  content: "\00B7";
+  margin-right: 0.5rem;
+}
+
+/* --- Post: text ------------------------------------------------------------------ */
+
+main h2 {
+  margin-top: 2.2rem;
+  font-size: 1.6rem;
+  line-height: 1.25;
+  border-bottom: 0;
+}
+
+main h3 {
+  font-size: 1.25rem;
+}
+
+/* Inline code: the code ground, rounded. */
+main :not(pre) > code {
+  padding: 0.1em 0.4em;
+  border-radius: 6px;
+  background: var(--k-code);
+  color: var(--k-ink);
+  font-size: 0.88em;
+  font-variation-settings: "MONO" 1, "CASL" 0;
+}
+
+/* --- Post: code blocks ------------------------------------------------------------ */
+
+div.sourceCode {
+  margin: 1.5rem 0;
+  border: 0;
+  border-radius: 14px;
+  background: var(--k-code);
+}
+
+/* A small language tab above R code. */
+div.sourceCode:has(> pre.sourceCode.r)::before {
+  content: "R";
+  display: block;
+  padding: 0.6rem 0 0 1.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-variation-settings: "CASL" 1;
+  color: var(--k-muted);
+}
+
+pre.sourceCode {
+  padding: 0.5rem 1.35rem 1.1rem;
+  font-size: 0.86rem;
+  line-height: 1.62;
+  color: var(--k-ink);
+  font-variation-settings: "MONO" 1, "CASL" 0;
+  /* ligatures off, so that <- never turns into an arrow */
+  font-variant-ligatures: none;
+}
+
+pre.sourceCode code {
+  font-variation-settings: "MONO" 1, "CASL" 0;
+  font-variant-ligatures: none;
+}
+
+.code-copy-button {
+  color: var(--k-muted);
+}
+
+/* Syntax colours. The selectors beat the ones Quarto writes for the
+   highlight style, so both modes take the Colophon colours. */
+div.sourceCode code span.co {
+  color: var(--k-syn-comment);
+  font-style: italic;
+  /* comments are casual italic, like notes in the margin */
+  font-variation-settings: "MONO" 1, "CASL" 1;
+}
+
+div.sourceCode code span.kw,
+div.sourceCode code span.cf,
+div.sourceCode code span.cn { color: var(--k-syn-keyword); font-weight: 400; }
+div.sourceCode code span.st { color: var(--k-syn-string); }
+div.sourceCode code span.fu { color: var(--k-syn-function); }
+div.sourceCode code span.dv,
+div.sourceCode code span.fl { color: var(--k-syn-number); }
+div.sourceCode code span.at { color: var(--k-syn-arg); }
+div.sourceCode code span.ot,
+div.sourceCode code span.sc,
+div.sourceCode code span.op { color: var(--k-ink); }
+
+/* --- Post: quotes ------------------------------------------------------------------ */
 
 blockquote {
-  border-left: 3px solid #4582ec;
-  background: rgba(69, 130, 236, 0.06);
-  padding: 0.75rem 1rem;
-  border-radius: 0 0.4rem 0.4rem 0;
+  position: relative;
+  margin: 1.5rem 0;
+  padding: 1.1rem 1.35rem 1.1rem 3.6rem;
+  border: 1px solid var(--k-rule);
+  border-radius: 14px;
+  background: var(--k-surface);
+  color: var(--k-ink);
+  font-size: 1.05rem;
+}
+
+blockquote::before {
+  content: "\201C";
+  position: absolute;
+  left: 1.1rem;
+  top: 0.35rem;
+  font-size: 3.3rem;
+  font-weight: 800;
+  line-height: 1;
+  font-variation-settings: "CASL" 1;
+  color: var(--k-accent);
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Post: table of contents -------------------------------------------------------- */
+
+#TOC {
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--k-rule);
+  border-radius: 14px;
+  background: var(--k-surface);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+#TOC #toc-title {
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  font-variation-settings: "CASL" 1;
+}
+
+#TOC ul {
+  border-left: 0;
+  padding-left: 0;
+}
+
+#TOC li {
+  position: relative;
+  padding-left: 1rem;
+}
+
+#TOC li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.8rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--k-rule);
+}
+
+#TOC li:has(> a.active)::before {
+  background: var(--k-accent);
+}
+
+#TOC .nav-link {
+  border-left: 0 !important; /* Quarto draws its own active bar; the dot replaces it */
+  padding-left: 0 !important;
+  color: var(--k-ink);
+  text-decoration: none;
+}
+
+#TOC .nav-link.active {
+  color: var(--k-ink);
+  font-weight: 700;
+}
+
+/* --- Phone --------------------------------------------------------------------------- */
+
+@media (max-width: 767.98px) {
+  body {
+    font-size: 17px;
+  }
+
+  /* The full name fits beside the menu and icons. */
+  .navbar-title {
+    font-size: 1rem;
+  }
+
+  .intro {
+    padding: 0.5rem 0 1.5rem;
+  }
+
+  .home-cols {
+    grid-template-columns: 1fr;
+    gap: 1.6rem;
+  }
+
+  /* Packages above the posts on a phone. */
+  .home-cols .home-packages {
+    order: -1;
+  }
+
+  .kiln-list .entry {
+    grid-template-columns: 3.3rem minmax(0, 1fr);
+    gap: 0.8rem;
+  }
+
+  .kiln-list .stamp {
+    width: 3.3rem;
+    height: 3.3rem;
+    border-radius: 0.8rem;
+  }
+
+  .kiln-list .stamp b {
+    font-size: 1.25rem;
+  }
+
+  .kiln-list .listing-title {
+    font-size: 1.2rem;
+  }
+
+  .shelf .pkg {
+    grid-template-columns: 3.4rem 1fr;
+  }
+
+  .shelf .pkg img {
+    width: 3.4rem;
+  }
+
+  pre.sourceCode {
+    font-size: 0.82rem;
+    padding: 0.4rem 1rem 1rem;
+  }
+
+  div.sourceCode:has(> pre.sourceCode.r)::before {
+    padding-left: 1rem;
+  }
+
+  blockquote {
+    padding: 1rem 1rem 1rem 2.8rem;
+  }
+
+  blockquote::before {
+    left: 0.7rem;
+    font-size: 2.7rem;
+  }
 }

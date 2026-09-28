@@ -20,6 +20,7 @@
 
 
 
+
 <p>Shiny has bookmarking. It has <code>reactlog</code>. It has no undo.</p>
 <p>That is strange when you stop to think about it. Undo is in every text editor, every drawing program, every spreadsheet. People arrive at a dashboard already expecting <code>Ctrl+Z</code> to work. Then they change a filter by mistake, and there is no way back except to remember what the filter used to say.</p>
 <p>I wrote <strong>rewind</strong> to close that gap. It is on CRAN now.</p>

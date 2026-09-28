@@ -1,10 +1,38 @@
 [
   {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "I am Tanmay Chanda. I build R and Shiny applications.\nI write here about the parts of that work that seem worth passing on: the problems that were harder than they looked, and the reasons behind a decision rather than only the decision.\nMy R packages:\nFind me on GitHub."
+  },
+  {
+    "objectID": "about.html#blogroll",
+    "href": "about.html#blogroll",
+    "title": "About",
+    "section": "Blogroll",
+    "text": "Blogroll\n\nR-bloggers - a collection of blogs about R, and the place where most of the R community reads.\nR Weekly - a weekly list of what happened in R."
+  },
+  {
     "objectID": "index.html",
     "href": "index.html",
     "title": "Posts",
     "section": "",
-    "text": "Undo for Shiny, and the three problems that make it interesting\n\n\n\nR\n\nShiny\n\npackages\n\n\n\nShiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R’s lazy evaluation could produce.\n\n\n\n\n\nAug 27, 2026\n\n\n\n\n\nNo matching items"
+    "text": "The problems that were harder than they looked, and the reasons behind a decision rather than only the decision."
+  },
+  {
+    "objectID": "index.html#posts",
+    "href": "index.html#posts",
+    "title": "Posts",
+    "section": "Posts",
+    "text": "Posts\n\n\n\n\n\n  \n    27\n    Aug 2026\n  \n  \n    Undo for Shiny, and the three problems that make it interesting\n    \n    Shiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R's lazy evaluation could produce.\n\n    \n    \n    \n      \n      R\n      \n      Shiny\n      \n      packages\n      \n    \n    \n  \n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "index.html#packages",
+    "href": "index.html#packages",
+    "title": "Posts",
+    "section": "Packages",
+    "text": "Packages\n\n  \n    \n    rewindon CRANUndo and redo for Shiny applications.\n  \n  \n    \n    boneson GitHubContent-shaped loading placeholders for Shiny outputs."
   },
   {
     "objectID": "posts/2026-08-27-undo-for-shiny/index.html",
@@ -54,19 +82,5 @@
     "title": "Undo for Shiny, and the three problems that make it interesting",
     "section": "Try it",
     "text": "Try it\ninstall.packages(\"rewind\")\nshiny::runApp(system.file(\"examples/demo\", package = \"rewind\"))\n\nDocumentation: https://tenmeh.github.io/rewind/\nSource: https://github.com/tenmeh/rewind\nCRAN: https://cran.r-project.org/package=rewind\n\nIssues and pull requests are welcome. I am especially interested in reports from anyone running it inside a heavily modularised app, since that is where the interesting edge cases will be."
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "I am Tanmay Chanda. I build R and Shiny applications.\nI write here about the parts of that work that seem worth passing on: the problems that were harder than they looked, and the reasons behind a decision rather than only the decision.\nMy R packages:\nFind me on GitHub."
-  },
-  {
-    "objectID": "about.html#blogroll",
-    "href": "about.html#blogroll",
-    "title": "About",
-    "section": "Blogroll",
-    "text": "Blogroll\n\nR-bloggers - a collection of blogs about R, and the place where most of the R community reads.\nR Weekly - a weekly list of what happened in R."
   }
 ]
