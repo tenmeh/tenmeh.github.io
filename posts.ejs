@@ -2,7 +2,8 @@
 <%
 // The post list on the home page. Each post gets a rounded date stamp at
 // the left. The listing's date-format is "D MMM YYYY", so the date splits
-// into the day and the month with the year. The raw html fence stops
+// into the day, the month and the year, one line each, so that the stamp
+// never wraps on a narrow screen. The raw html fence stops
 // pandoc reading the indented lines as code blocks.
 %>
 <div class="kiln-list">
@@ -11,7 +12,8 @@
 <article class="entry" <%= metadataAttrs(item) %>>
   <a class="stamp" href="<%- item.path %>" aria-hidden="true" tabindex="-1">
     <b><%= parts[0] %></b>
-    <span><%= parts.slice(1).join(" ") %></span>
+    <span><%= parts[1] %></span>
+    <span><%= parts[2] %></span>
   </a>
   <div class="entry-body">
     <h3 class="listing-title"><a href="<%- item.path %>"><%= item.title %></a></h3>
