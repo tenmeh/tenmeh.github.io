@@ -3,11 +3,13 @@ project:
   output-dir: _site
   # Draws cover.png for the site and for each post. See scripts/covers.mjs.
   pre-render: node scripts/covers.mjs
-  # The preview videos are used by the post list and by the posts, and the
-  # list names them in a script, so Quarto would not find them itself.
+  # The posts name their video and their hero by absolute URL, so that the
+  # feed works in other sites, and the list names the hero in a template.
+  # Quarto follows neither, so the files are listed here.
   resources:
     - posts/*/preview.mp4
     - posts/*/preview.jpg
+    - posts/*/hero.svg
 
 website:
   title: "Tanmay Chanda"

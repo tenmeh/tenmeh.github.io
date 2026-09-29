@@ -48,6 +48,12 @@ main a.anchorjs-link {
   text-decoration: none;
 }
 
+/* A bare URL has no spaces to break at, so on a phone it would push the page
+   wider than the screen. */
+main a.uri {
+  overflow-wrap: anywhere;
+}
+
 /* --- Navbar ------------------------------------------------------------------ */
 
 .navbar {
@@ -312,60 +318,61 @@ body.home main.content {
   font-size: 0.97rem;
 }
 
-/* A post with a cover has a third column, the thumbnail. On a page too
-   narrow for it, it goes under the text instead, as the phone rules below
-   also do. */
-.kiln-list .entry.has-thumb {
-  grid-template-columns: 4rem minmax(0, 1fr) 15rem;
+/* On a screen with a pointer, the stamp of a post with a hero swaps the
+   date for the hero, cropped to its centre square, and turns a little, as
+   the hex stickers below do. The stamp keeps its place in the grid, so the
+   list does not move. */
+.kiln-list .stamp-hero {
+  display: none;
 }
 
-/* The cover at rest. The preview video lies over it and shows only while
-   it plays, so the card never has a black or empty frame. */
-.kiln-list .thumb {
-  position: relative;
-  display: block;
-  align-self: start;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border: 1px solid var(--k-rule);
-  border-radius: 12px;
-  background: var(--k-surface);
-  text-decoration: none;
-  transition: border-color 0.2s ease;
-}
-
-.kiln-list .thumb img,
-.kiln-list .thumb video {
-  position: absolute;
-  inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.kiln-list .thumb video {
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.kiln-list .entry.is-previewing .thumb video {
-  opacity: 1;
-}
-
-.kiln-list .entry:hover .thumb,
-.kiln-list .entry:focus-within .thumb {
-  border-color: var(--k-accent);
-}
-
-@media (max-width: 1099.98px) {
-  .kiln-list .entry.has-thumb {
-    grid-template-columns: 4rem minmax(0, 1fr);
+@media (hover: hover) and (min-width: 768px) {
+  .kiln-list .stamp {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .kiln-list .thumb {
-    grid-column: 1 / -1;
-    max-width: 30rem;
+  .kiln-list .stamp b,
+  .kiln-list .stamp span {
+    transition: opacity 0.15s ease;
+  }
+
+  .kiln-list .stamp-hero {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .kiln-list .entry:hover .stamp,
+  .kiln-list .entry:focus-within .stamp {
+    z-index: 1;
+    border-color: var(--k-accent);
+    box-shadow: 0 3px 0 var(--k-rule);
+    transform: rotate(-4deg) scale(1.3);
+  }
+
+  .kiln-list .entry:hover .stamp-hero,
+  .kiln-list .entry:focus-within .stamp-hero {
+    opacity: 1;
+  }
+
+  .kiln-list .entry:hover .stamp:has(.stamp-hero) > :is(b, span),
+  .kiln-list .entry:focus-within .stamp:has(.stamp-hero) > :is(b, span) {
+    opacity: 0;
+  }
+}
+
+@media (hover: hover) and (min-width: 768px) and (prefers-reduced-motion: reduce) {
+  .kiln-list .entry:hover .stamp,
+  .kiln-list .entry:focus-within .stamp {
+    transform: none;
   }
 }
 
@@ -495,9 +502,31 @@ body.home main.content {
   margin-right: 0.5rem;
 }
 
-/* --- Post: preview video ---------------------------------------------------------- */
+/* --- Post: hero and demo video ------------------------------------------------------ */
 
-/* Under the title block, as a card like the code blocks and the quotes. */
+/* The hero is drawn on its own card, so the image needs a rule and round
+   corners and nothing else. It goes under the title block. */
+.post-hero {
+  margin: 1.6rem 0 2rem;
+}
+
+.post-hero img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0; /* Quarto gives a figure image a bottom margin */
+  border: 1px solid var(--k-rule);
+  border-radius: 14px;
+}
+
+/* The hero has a fixed light ground in both modes, so in dark mode it is
+   toned down a little to keep it from glaring. */
+body.quarto-dark .post-hero img {
+  filter: brightness(0.92);
+}
+
+/* The demo video sits where the author put it, as a card like the code
+   blocks and the quotes. */
 .post-preview {
   margin: 1.6rem 0 2rem;
   overflow: hidden;
@@ -759,18 +788,11 @@ blockquote p:last-child {
     font-size: 1.2rem;
   }
 
-  .kiln-list .entry.has-thumb {
-    grid-template-columns: 3.3rem minmax(0, 1fr);
-  }
-
-  /* Under the text, as wide as the entry, so the video is big enough to
-     see. */
-  .kiln-list .thumb {
-    max-width: none;
-    border-radius: 10px;
-  }
-
   .post-preview {
+    margin: 1.2rem 0 1.6rem;
+  }
+
+  .post-hero {
     margin: 1.2rem 0 1.6rem;
   }
 

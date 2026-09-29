@@ -9,6 +9,8 @@ date: "2026-08-27"
 categories: [R, Shiny, packages]
 package: rewind
 image-alt: "Cover card with the post title, the date and the rewind hex logo."
+hero: hero.svg
+hero-alt: "The rewind hex logo, alive: the two rewind arrows nudge backwards, the hex spins back once, and a knob walks back along a dotted path and then forward again."
 preview: preview.mp4
 preview-alt: >
   A recreated Shiny app with Undo and Redo buttons. The year slider is dragged from 2024 to 2020 and the region is changed to East. Ctrl+Z puts the region back, Ctrl+Z again puts the whole drag back in one step, and Ctrl+Shift+Z redoes it.
@@ -47,6 +49,9 @@ clickable history rail if you want them.
 The package itself is small. The interesting part is not the feature. It is
 the three problems you meet when you try to build it, and I think each one
 is worth reading about even if you never install this.
+
+::: {.demo-video}
+:::
 
 ## Problem one: restoring a widget you have never heard of
 
