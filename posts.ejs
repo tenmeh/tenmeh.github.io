@@ -6,25 +6,26 @@
 // never wraps on a narrow screen. The raw html fence stops
 // pandoc reading the indented lines as code blocks.
 //
-// A post with a cover gets a 16:9 thumbnail at the right. Quarto gives the
-// cover as a path from the site root, but gives "preview" as written in the
-// front matter, so the video path is built from the folder of the post.
-// The script in _includes/list-previews.html plays the video over the cover
-// when the pointer rests on the entry.
+// A post with a "hero" in its front matter hides the animated hero in its
+// stamp. It shows in place of the date while the pointer rests on the entry.
+// Quarto gives "hero" as written in the front matter, so the path is built
+// from the folder of the post.
 %>
 <div class="kiln-list">
 <% for (const item of items) { %>
 <%
 const parts = (item.date || "").split(" ");
 const folder = (item.outputHref || "").replace(/[^/]*$/, "");
-const cover = /^(https?:)?\/\//.test(item.image || "") ? item.image : (item.image || "").replace(/^\//, "");
-const video = item.preview ? folder + item.preview : "";
+const hero = item.hero ? folder + item.hero : "";
 %>
-<article class="entry<%= cover ? " has-thumb" : "" %>" <%= metadataAttrs(item) %>>
+<article class="entry" <%= metadataAttrs(item) %>>
   <a class="stamp" href="<%- item.path %>" aria-hidden="true" tabindex="-1">
     <b><%= parts[0] %></b>
     <span><%= parts[1] %></span>
     <span><%= parts[2] %></span>
+    <% if (hero) { %>
+    <img class="stamp-hero" src="<%- hero %>" alt="" width="800" height="320" loading="lazy">
+    <% } %>
   </a>
   <div class="entry-body">
     <h3 class="listing-title"><a href="<%- item.path %>"><%= item.title %></a></h3>
@@ -39,14 +40,6 @@ const video = item.preview ? folder + item.preview : "";
     </div>
     <% } %>
   </div>
-  <% if (cover) { %>
-  <a class="thumb" href="<%- item.path %>" aria-hidden="true" tabindex="-1">
-    <img src="<%- cover %>" alt="" width="1200" height="630" loading="lazy">
-    <% if (video) { %>
-    <video src="<%- video %>" muted loop playsinline preload="none"></video>
-    <% } %>
-  </a>
-  <% } %>
 </article>
 <% } %>
 </div>

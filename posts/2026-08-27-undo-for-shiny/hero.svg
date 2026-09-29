@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" width="800" height="320" role="img">
+<title>The rewind logo, alive: the arrows nudge backwards and the hex spins back once, while a knob retraces its steps and steps forward again.</title>
+<style>
+svg{display:block}
+.sway,.spin,.chev,.tw,.fl,.shadow,.knob,.hop,.dd,.undo,.dotp{transform-box:view-box;transform-origin:0 0}
+.sway{animation:sway 5.6s ease-in-out infinite}
+.shadow{transform-box:fill-box;transform-origin:center;opacity:.14;animation:shadow 5.6s ease-in-out infinite}
+.spin{animation:spin 5.6s infinite}
+.chev{animation:nudge 1.4s cubic-bezier(.3,0,.2,1) infinite}
+.chev.b{animation-name:nudgeb;animation-delay:-.2s}
+.knob{animation:kx 5.6s cubic-bezier(.45,0,.25,1) infinite}
+.slide{animation:ks 5.6s cubic-bezier(.45,0,.25,1) infinite}
+.hop{animation:hop 5.6s infinite}
+.dotp{transform-box:fill-box;transform-origin:50% 50%;animation:5.6s infinite}
+.d0{animation-name:d0}.d1{animation-name:d1}.d2{animation-name:d2}.d3{animation-name:d3}
+.dd{animation:drift 5.6s ease-in-out infinite}
+.undo{transform-box:fill-box;transform-origin:center;animation:turn 5.6s infinite}
+.tw{transform-box:fill-box;transform-origin:center;animation:tw 2.8s ease-in-out infinite}
+.fl{animation:fl 2.8s ease-in-out infinite}
+.knob{transform:translateX(104px)}.slide{transform:translateX(64px)}
+.d0,.d1{transform:scale(1)}.d2,.d3{transform:scale(0)}
+@keyframes sway{0%{transform:translateY(0) rotate(-4deg)}25%{transform:translateY(-8px) rotate(0deg)}50%{transform:translateY(0) rotate(4deg)}75%{transform:translateY(-8px) rotate(0deg)}100%{transform:translateY(0) rotate(-4deg)}}
+@keyframes shadow{0%,50%,100%{transform:scaleX(1);opacity:.14}25%,75%{transform:scaleX(.86);opacity:.09}}
+@keyframes spin{0%,36%{transform:rotate(0)}39%{transform:rotate(9deg);animation-timing-function:cubic-bezier(.55,0,.2,1)}53%{transform:rotate(-370deg);animation-timing-function:cubic-bezier(.3,0,.3,1)}58%,100%{transform:rotate(-360deg)}}
+@keyframes nudge{0%,100%{transform:translateX(0)}40%{transform:translateX(-3px)}}
+@keyframes nudgeb{0%,100%{transform:translateX(0)}40%{transform:translateX(-7px)}}
+@keyframes drift{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes turn{0%,36%{transform:rotate(0)}39%{transform:rotate(12deg);animation-timing-function:cubic-bezier(.55,0,.2,1)}53%{transform:rotate(-372deg);animation-timing-function:cubic-bezier(.3,0,.3,1)}58%,100%{transform:rotate(-360deg)}}
+@keyframes kx{0%{transform:translateX(0px)}6%{transform:translateX(0px)}11%{transform:translateX(52px)}12%{transform:translateX(52px)}17%{transform:translateX(104px)}18%{transform:translateX(104px)}23%{transform:translateX(156px)}24%{transform:translateX(156px)}29%{transform:translateX(208px)}38%{transform:translateX(208px)}42%{transform:translateX(156px)}42.5%{transform:translateX(156px)}46.5%{transform:translateX(104px)}47%{transform:translateX(104px)}51%{transform:translateX(52px)}51.5%{transform:translateX(52px)}55.5%{transform:translateX(0px)}64%{transform:translateX(0px)}69%{transform:translateX(52px)}70%{transform:translateX(52px)}75%{transform:translateX(104px)}84%{transform:translateX(104px)}92%{transform:translateX(0px)}100%{transform:translateX(0px)}}
+@keyframes ks{0%{transform:translateX(0px)}6%{transform:translateX(0px)}11%{transform:translateX(32px)}12%{transform:translateX(32px)}17%{transform:translateX(64px)}18%{transform:translateX(64px)}23%{transform:translateX(96px)}24%{transform:translateX(96px)}29%{transform:translateX(128px)}38%{transform:translateX(128px)}42%{transform:translateX(96px)}42.5%{transform:translateX(96px)}46.5%{transform:translateX(64px)}47%{transform:translateX(64px)}51%{transform:translateX(32px)}51.5%{transform:translateX(32px)}55.5%{transform:translateX(0px)}64%{transform:translateX(0px)}69%{transform:translateX(32px)}70%{transform:translateX(32px)}75%{transform:translateX(64px)}84%{transform:translateX(64px)}92%{transform:translateX(0px)}100%{transform:translateX(0px)}}
+@keyframes hop{0%{transform:translateY(0)}6%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}8.5%{transform:translateY(-15px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}11%{transform:translateY(0)}12%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}14.5%{transform:translateY(-15px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}17%{transform:translateY(0)}18%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}20.5%{transform:translateY(-15px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}23%{transform:translateY(0)}24%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}26.5%{transform:translateY(-15px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}29%{transform:translateY(0)}38%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}40%{transform:translateY(-12px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}42%{transform:translateY(0)}42.5%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}44.5%{transform:translateY(-12px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}46.5%{transform:translateY(0)}47%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}49%{transform:translateY(-12px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}51%{transform:translateY(0)}51.5%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}53.5%{transform:translateY(-12px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}55.5%{transform:translateY(0)}64%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}66.5%{transform:translateY(-15px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}69%{transform:translateY(0)}70%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}72.5%{transform:translateY(-15px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}75%{transform:translateY(0)}84%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.7,.3,1)}88%{transform:translateY(-15px);animation-timing-function:cubic-bezier(.6,0,.9,.5)}92%{transform:translateY(0)}100%{transform:translateY(0)}}
+@keyframes d0{0%{transform:scale(0)}6%{transform:scale(0);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}8%{transform:scale(1)}54%{transform:scale(1);animation-timing-function:ease-in}55.5%{transform:scale(0)}64%{transform:scale(0);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}66%{transform:scale(1)}90%{transform:scale(1);animation-timing-function:ease-in}91.5%{transform:scale(0)}100%{transform:scale(0)}}
+@keyframes d1{0%{transform:scale(0)}12%{transform:scale(0);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}14%{transform:scale(1)}49.5%{transform:scale(1);animation-timing-function:ease-in}51%{transform:scale(0)}70%{transform:scale(0);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}72%{transform:scale(1)}87%{transform:scale(1);animation-timing-function:ease-in}88.5%{transform:scale(0)}100%{transform:scale(0)}}
+@keyframes d2{0%{transform:scale(0)}18%{transform:scale(0);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}20%{transform:scale(1)}45%{transform:scale(1);animation-timing-function:ease-in}46.5%{transform:scale(0)}100%{transform:scale(0)}}
+@keyframes d3{0%{transform:scale(0)}24%{transform:scale(0);animation-timing-function:cubic-bezier(.34,1.56,.64,1)}26%{transform:scale(1)}40.5%{transform:scale(1);animation-timing-function:ease-in}42%{transform:scale(0)}100%{transform:scale(0)}}
+@keyframes tw{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none !important}}</style>
+<rect width="800" height="320" rx="20" fill="#FBF8F1"/>
+<circle cx="400" cy="160" r="138" fill="#F8E6C2"/>
+
+<g fill="none" stroke="#CFC5B1" stroke-width="4" stroke-linecap="round">
+<path d="M30 252H256" stroke-dasharray="1 10"/>
+<path d="M40 100H168" stroke-width="8"/>
+<path d="M544 292q50-26 100 0t100 0" stroke-dasharray="1 10"/>
+</g>
+<g fill="#555B66"><circle cx="40" cy="124" r="3"/><circle cx="72" cy="124" r="3"/><circle cx="104" cy="124" r="3"/><circle cx="136" cy="124" r="3"/><circle cx="168" cy="124" r="3"/></g>
+<g transform="translate(40 100)"><g class="slide"><circle r="12" fill="#FBF8F1" stroke="#17202A" stroke-width="4"/></g></g>
+
+<g fill="none" stroke="#555B66" stroke-width="3"><circle cx="40" cy="252" r="7"/><circle cx="92" cy="252" r="7"/><circle cx="144" cy="252" r="7"/><circle cx="196" cy="252" r="7"/></g>
+<g transform="translate(40 252)"><circle class="dotp d0" r="8" fill="#F0A830" stroke="#17202A" stroke-width="3.5"/></g><g transform="translate(92 252)"><circle class="dotp d1" r="8" fill="#F0A830" stroke="#17202A" stroke-width="3.5"/></g><g transform="translate(144 252)"><circle class="dotp d2" r="8" fill="#F0A830" stroke="#17202A" stroke-width="3.5"/></g><g transform="translate(196 252)"><circle class="dotp d3" r="8" fill="#F0A830" stroke="#17202A" stroke-width="3.5"/></g>
+<g transform="translate(40 252)"><g class="knob"><g class="hop"><g transform="translate(0 -1)"><circle r="11" fill="#17202A"/><circle r="4.5" fill="#F0A830"/></g></g></g></g>
+
+<g transform="translate(580 70)"><g class="dd">
+<rect width="160" height="40" rx="12" fill="#FBF8F1" stroke="#17202A" stroke-width="4"/>
+<rect x="16" y="15" width="70" height="10" rx="5" fill="#CFC5B1"/>
+<path d="M128 15l10 10l10-10" fill="none" stroke="#17202A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</g></g>
+<g transform="translate(655 205) scale(-1 1)"><g class="undo" fill="none" stroke="#9E2A2B" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M0 -24A24 24 0 1 0 24 0"/><path d="M15 6L24 -4L33 6"/></g></g>
+<g transform="translate(238 44)"><g class="tw" style="animation-delay:0s;stroke:#F0A830" fill="none" stroke-width="4" stroke-linecap="round"><path d="M-7 0H7M0 -7V7"/></g></g><g transform="translate(566 250)"><g class="tw" style="animation-delay:-1.4s;stroke:#9E2A2B" fill="none" stroke-width="4" stroke-linecap="round"><path d="M-8.4 0H8.4M0 -8.4V8.4"/></g></g><g transform="translate(214 196)"><g class="tw" style="animation-delay:-0.7s;stroke:#F0A830" fill="none" stroke-width="4" stroke-linecap="round"><path d="M-7 0H7M0 -7V7"/></g></g><g transform="translate(766 130)"><g class="tw" style="animation-delay:-2.1s;stroke:#17202A" fill="none" stroke-width="4" stroke-linecap="round"><path d="M-7 0H7M0 -7V7"/></g></g>
+<g transform="translate(262 128)"><circle class="fl" style="animation-delay:0s" r="6" fill="#9E2A2B"/></g><g transform="translate(548 44)"><circle class="fl" style="animation-delay:-1.4s" r="5" fill="#F0A830"/></g><g transform="translate(30 40)"><circle class="fl" style="animation-delay:-0.7s" r="5" fill="#F0A830"/></g><g transform="translate(770 262)"><circle class="fl" style="animation-delay:-2s" r="6" fill="#17202A"/></g>
+
+<ellipse class="shadow" cx="400" cy="310" rx="92" ry="7" fill="#17202A"/>
+<g transform="translate(400 160)"><g class="sway"><g class="spin"><g transform="scale(2.4) translate(-50 -58)">
+<path d="M50 2 L98 30 L98 86 L50 114 L2 86 L2 30 Z" fill="#1F1D1B"/>
+<path d="M50 2 L98 30 L98 86 L50 114 L2 86 L2 30 Z" fill="none" stroke="#F0A830" stroke-width="3" stroke-linejoin="round"/>
+<g transform="translate(50 58) scale(1.25) translate(-50 -51)" fill="#F0A830">
+<path class="chev b" d="M48 32L27 51L48 70Z"/><path class="chev" d="M73 32L52 51L73 70Z"/>
+</g></g></g></g></g>
+</svg>

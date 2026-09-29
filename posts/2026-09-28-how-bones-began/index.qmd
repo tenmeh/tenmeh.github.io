@@ -9,6 +9,8 @@ date: "2026-09-28"
 categories: [R, Shiny, packages]
 package: bones
 image-alt: "Cover card with the post title, the date and the bones hex logo."
+hero: hero.svg
+hero-alt: "The bones hex logo, alive: the bone bounces, a teal wave sweeps across the grey lines under it, and grey placeholders around it fill in with real content."
 preview: preview.mp4
 preview-alt: >
   A recreated Shiny dashboard. Grey placeholders in the shape of a bar chart and a table wave while the outputs load, then the real chart and table take their place. When the region changes, the old content stays and is dimmed until the new data arrives.
@@ -83,6 +85,9 @@ ui <- bones_auto(fluidPage(
 
 That part was fun. The grey boxes themselves were the easy part. The hard
 part was everything around them.
+
+::: {.demo-video}
+:::
 
 ## Problem one: the second load
 

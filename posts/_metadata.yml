@@ -6,6 +6,6 @@ date-format: "D MMMM YYYY"
 # The cover is drawn from the front matter by scripts/covers.mjs, into the
 # folder of each post. The path is relative to each post.
 image: cover.png
-# Shows the "preview" video of a post under its title.
+# Puts the hero and the demo video of a post into its page.
 filters:
   - ../_filters/post-preview.lua

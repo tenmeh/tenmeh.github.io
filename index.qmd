@@ -13,15 +13,12 @@ listing:
   categories: false
   sort-ui: false
   filter-ui: false
-  fields: [date, title, description, categories, image, preview]
+  fields: [date, title, description, categories, hero]
   feed: true
 page-layout: full
 title-block-banner: false
 body-classes: home
 toc: false
-format:
-  html:
-    include-after-body: _includes/list-previews.html
 ---
 
 ::: {.intro}
