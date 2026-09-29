@@ -118,6 +118,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="Undo for Shiny, and the three problems that make it interesting – Tanmay Chanda">
+<meta property="og:description" content="Shiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R’s lazy evaluation could produce.">
+<meta property="og:image" content="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/cover.png">
+<meta property="og:site_name" content="Tanmay Chanda">
+<meta property="og:image:height" content="630">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:alt" content="Cover card with the post title, the date and the rewind hex logo.">
+<meta name="twitter:title" content="Undo for Shiny, and the three problems that make it interesting – Tanmay Chanda">
+<meta name="twitter:description" content="Shiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R’s lazy evaluation could produce.">
+<meta name="twitter:image" content="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image-height" content="630">
+<meta name="twitter:image-width" content="1200">
+<meta name="twitter:image:alt" content="Cover card with the post title, the date and the rewind hex logo.">
 </head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -403,6 +417,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<figure class="post-preview figure">
+<video src="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/preview.mp4" poster="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/preview.jpg" aria-label="A recreated Shiny app with Undo and Redo buttons. The year slider is dragged from 2024 to 2020 and the region is changed to East. Ctrl+Z puts the region back, Ctrl+Z again puts the whole drag back in one step, and Ctrl+Shift+Z redoes it." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
+<figcaption>A short recreation of what this post describes, made in a browser.</figcaption>
+</figure>
+<script>
+(function () {
+  var video = document.currentScript.previousElementSibling.querySelector("video");
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  video.controls = false;
+  var started = video.play();
+  if (started && started.catch) started.catch(function () { video.controls = true; });
+})();
+</script>
 <p>Shiny has bookmarking. It has <code>reactlog</code>. It has no undo.</p>
 <p>That is strange when you stop to think about it. Undo is in every text editor, every drawing program, every spreadsheet. People arrive at a dashboard already expecting <code>Ctrl+Z</code> to work. Then they change a filter by mistake, and there is no way back except to remember what the filter used to say.</p>
 <p>I wrote <strong>rewind</strong> to close that gap. It is on CRAN now.</p>

@@ -118,6 +118,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="A spinner says wait. A skeleton says what is coming. – Tanmay Chanda">
+<meta property="og:description" content="A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.">
+<meta property="og:image" content="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/cover.png">
+<meta property="og:site_name" content="Tanmay Chanda">
+<meta property="og:image:height" content="630">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:alt" content="Cover card with the post title, the date and the bones hex logo.">
+<meta name="twitter:title" content="A spinner says wait. A skeleton says what is coming. – Tanmay Chanda">
+<meta name="twitter:description" content="A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.">
+<meta name="twitter:image" content="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/cover.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image-height" content="630">
+<meta name="twitter:image-width" content="1200">
+<meta name="twitter:image:alt" content="Cover card with the post title, the date and the bones hex logo.">
 </head>
 
 <body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
@@ -407,6 +421,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<figure class="post-preview figure">
+<video src="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/preview.mp4" poster="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/preview.jpg" aria-label="A recreated Shiny dashboard. Grey placeholders in the shape of a bar chart and a table wave while the outputs load, then the real chart and table take their place. When the region changes, the old content stays and is dimmed until the new data arrives." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
+<figcaption>A short recreation of what this post describes, made in a browser.</figcaption>
+</figure>
+<script>
+(function () {
+  var video = document.currentScript.previousElementSibling.querySelector("video");
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  video.controls = false;
+  var started = video.play();
+  if (started && started.catch) started.catch(function () { video.controls = true; });
+})();
+</script>
 <p>It started with a reel.</p>
 <p>It was one of those short videos that explain a trick of the web. When a page loads, the site does not show you a spinner. It shows you grey boxes in the shape of the page: a bar where the title will be, a rectangle where the picture will be, three lines where the text will be. Then the real content fills in.</p>
 <p>The point of the video was that this is a kind of trick. The page is not faster. The data takes as long to arrive as before. But the wait feels shorter, because you already see the shape of what is coming. Your eye goes to the place where the title will be. You start to read the page before there is anything on it.</p>
