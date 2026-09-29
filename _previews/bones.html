@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>bones preview scene</title>
+<!-- The scene for the video of the bones post. The markup and the classes of
+     the wrappers are what withBones() writes, and bones.css is the real one,
+     so the skeleton is drawn by the package and not copied by hand. Only the
+     clock is new: renderAt(ms) sets the classes that bones.js would set at
+     that time. record.mjs steps the clock and takes a picture of each frame. -->
+<link rel="stylesheet" href="bones.css">
+<link rel="stylesheet" href="app.css">
+<style>
+  /* What a bslib page gives bones: its text colour, its page colour, and the
+     rounding of its controls. bones.css reads these variables. */
+  :root {
+    --bs-body-color: #212529;
+    --bs-body-bg: #fff;
+    --bs-border-radius: 0.375rem;
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 32px;
+    margin: 14px 14px 0;
+  }
+
+  .top h1 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .top .field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 172px;
+  }
+
+  .top .field label {
+    margin: 0;
+  }
+
+  .top .sel {
+    position: relative;
+    flex: 1;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 12px;
+    margin: 14px 14px 0;
+  }
+
+  .card {
+    border: 1px solid rgba(0, 0, 0, 0.175);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .card-head {
+    padding: 6px 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.175);
+    background: rgba(0, 0, 0, 0.03);
+    font-weight: 600;
+  }
+
+  .card-body {
+    height: 200px;
+    padding: 10px;
+  }
+
+  /* The real chart, as a plot image would show it. Its columns have the same
+     padding and gap as the columns of the skeleton, so each bar arrives where
+     its placeholder was. */
+  .rc {
+    display: flex;
+    flex-direction: column;
+    height: 176px;
+  }
+
+  .rc-plot {
+    position: relative;
+    display: flex;
+    flex: 1 1 auto;
+    align-items: flex-end;
+    gap: 4%;
+    padding: 0 2%;
+  }
+
+  .rc-plot i {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e9ecef;
+  }
+
+  .rc-plot b {
+    position: relative;
+    flex: 1 1 0;
+    border-radius: 2px 2px 0 0;
+    background: #4e79a7;
+  }
+
+  .rc-axis {
+    height: 1px;
+    background: #6c757d;
+  }
+
+  .rc-x {
+    display: flex;
+    gap: 4%;
+    padding: 3px 2% 0;
+    color: #6c757d;
+    font-size: 9px;
+    line-height: 1.2;
+  }
+
+  .rc-x span {
+    flex: 1 1 0;
+    text-align: center;
+  }
+
+  /* The real table, as tableOutput() draws it. */
+  .rt {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+
+  .rt th,
+  .rt td {
+    height: 24px;
+    padding: 0 4px;
+    border-bottom: 1px solid #dee2e6;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .rt th {
+    border-bottom-width: 2px;
+    font-weight: 600;
+  }
+
+  .rt .n {
+    text-align: right;
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="top">
+    <h1>Sales overview</h1>
+    <div class="field">
+      <label>Region</label>
+      <div class="sel" id="region"><span id="region-val">North</span>
+        <div class="sel-menu" id="menu" hidden>
+          <div>North</div><div>South</div><div>East</div><div>West</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-head">Revenue by month</div>
+      <div class="card-body">
+        <div class="bones-wrap bones-anim-wave" id="chart-wrap" data-bones-type="plot"
+             data-bones-stale="true" style="--bones-reserve: 176px; --bones-delay: 0ms;">
+          <div class="bones-skeleton bones-skeleton-plot bones-skeleton-chart" aria-hidden="true">
+            <div class="bones-plot-area" id="skel-cols"></div>
+            <div class="bones-axis"></div>
+          </div>
+          <div class="bones-content">
+            <div class="rc">
+              <div class="rc-plot" id="rc-plot"></div>
+              <div class="rc-axis"></div>
+              <div class="rc-x"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">Top customers</div>
+      <div class="card-body">
+        <div class="bones-wrap bones-anim-wave" id="table-wrap" data-bones-type="table"
+             data-bones-stale="true" style="--bones-reserve: 168px; --bones-delay: 0ms;">
+          <div class="bones-skeleton bones-skeleton-table" aria-hidden="true" id="skel-rows"></div>
+          <div class="bones-content">
+            <table class="rt">
+              <thead><tr><th>Customer</th><th class="n">Orders</th><th class="n">Revenue</th></tr></thead>
+              <tbody id="rt-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="caption"></div>
+  <svg id="cursor"></svg>
+  <div id="ripple"></div>
+  <div id="veil"></div>
+</div>
+
+<script src="scene.js"></script>
+<script>
+  const DURATION = 9000;
+  window.DURATION = DURATION;
+  window.POSTER_MS = 2300; // the skeleton, with its caption
+
+  // The shape of skel_bar() in bones: the same eight columns, and the widths
+  // of table_rows() for 5 rows of 3 columns.
+  const SKELETON_COLUMNS = [45, 72, 58, 88, 64, 40, 76, 52];
+  document.getElementById("skel-cols").innerHTML = SKELETON_COLUMNS
+    .map((h) => `<div class="bones-bar bones-bar-column" style="height: ${h}%;"></div>`).join("");
+
+  const widths = ["100%", "80%", "92%", "70%"];
+  const row = (strong) => `<div class="bones-row">${[0, 1, 2]
+    .map((j) => `<div class="bones-bar${strong ? " bones-bar-strong" : ""}" style="width: ${widths[j]};"></div>`)
+    .join("")}</div>`;
+  document.getElementById("skel-rows").innerHTML = row(true) + [1, 2, 3, 4, 5, 6].map(() => row(false)).join("");
+
+  document.querySelector(".rc-x").innerHTML =
+    ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"].map((m) => `<span>${m}</span>`).join("");
+
+  // What the two outputs show for each region.
+  const DATA = {
+    North: {
+      revenue: [42, 58, 51, 76, 63, 47, 69, 55],
+      customers: [["Acme Corp", 128, "48,210"], ["Globex", 96, "39,870"], ["Initech", 84, "31,455"],
+                  ["Umbrella", 71, "27,120"], ["Hooli", 55, "19,880"], ["Pied Piper", 42, "14,530"]],
+    },
+    East: {
+      revenue: [61, 49, 72, 58, 84, 70, 52, 80],
+      customers: [["Stark Ind.", 142, "61,300"], ["Wayne Ent.", 118, "52,740"], ["Soylent", 90, "35,010"],
+                  ["Wonka", 66, "24,650"], ["Tyrell", 49, "17,320"], ["Cyberdyne", 38, "12,900"]],
+    },
+  };
+
+  // Where the pointer goes: the select, and the East line of its menu.
+  const centre = (el) => {
+    const r = el.getBoundingClientRect();
+    return [r.left + r.width / 2, r.top + r.height / 2];
+  };
+  const [selX, selY] = centre(document.getElementById("region"));
+  document.getElementById("menu").hidden = false;
+  const [eastX, eastY] = centre(document.querySelectorAll("#menu div")[2]);
+  document.getElementById("menu").hidden = true;
+
+  let drawn = {};
+  function drawChart(region) {
+    if (drawn.chart === region) return;
+    drawn.chart = region;
+    const grid = [25, 50, 75, 100].map((p) => `<i style="bottom: ${p}%;"></i>`).join("");
+    const bars = DATA[region].revenue.map((v) => `<b style="height: ${v}%;"></b>`).join("");
+    document.getElementById("rc-plot").innerHTML = grid + bars;
+  }
+  function drawTable(region) {
+    if (drawn.table === region) return;
+    drawn.table = region;
+    document.getElementById("rt-body").innerHTML = DATA[region].customers
+      .map(([name, n, rev]) => `<tr><td>${name}</td><td class="n">${n}</td><td class="n">$${rev}</td></tr>`).join("");
+  }
+
+  // The state of one wrapper at a time, as bones.js would set it. The
+  // skeleton waits (the app has not asked yet) until `shows`. The value
+  // comes at `loads`. The output calculates again from `stale` to `again`.
+  function setWrap(wrap, ms, { shows, loads, stale, again }) {
+    const skeleton = wrap.querySelector(".bones-skeleton");
+    const loaded = ms >= loads;
+    const isStale = ms >= stale && ms < again;
+    wrap.classList.toggle("bones-loaded", loaded);
+    wrap.classList.toggle("bones-has-loaded", loaded);
+    wrap.classList.toggle("bones-stale", isStale);
+    skeleton.style.display = ms < shows && !loaded ? "none" : "";
+  }
+
+  window.renderAt = function (ms) {
+    const east = ms >= 6150;
+    document.getElementById("region-val").textContent = east ? "East" : "North";
+    const sel = document.getElementById("region");
+    const open = ms >= 5400 && ms < 6100;
+    sel.classList.toggle("open", open);
+    document.getElementById("menu").hidden = !open;
+    document.querySelectorAll("#menu div").forEach((d) => d.classList.toggle("hot", d.textContent === "East" && ms >= 5950));
+
+    drawChart(ms >= 7600 ? "East" : "North");
+    drawTable(ms >= 7900 ? "East" : "North");
+    setWrap(document.getElementById("chart-wrap"), ms, { shows: 500, loads: 3000, stale: 6300, again: 7600 });
+    setWrap(document.getElementById("table-wrap"), ms, { shows: 500, loads: 3400, stale: 6300, again: 7900 });
+
+    setCaption(ms, [
+      [500, 3000, "First load: the skeleton has the shape of the output"],
+      [3500, 4900, "Then the real output takes its place"],
+      [6300, 7850, "Recalculating: the old content stays, dimmed"],
+    ]);
+    setCursor(ms,
+      [[4500, 470, 190], [5200, selX, selY], [5650, selX, selY], [6050, eastX, eastY], [6250, eastX, eastY], [6800, 575, 190]],
+      [5400, 6100]);
+    setVeil(ms, DURATION);
+    freezeAnimations(ms);
+  };
+
+  window.renderAt(0);
+</script>
+</body>
+</html>

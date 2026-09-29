@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rewind preview scene</title>
+<!-- The scene for the video of the rewind post: the app of the rewind README,
+     with rewind_buttons(), a Region select, a Year slider and a plot. The
+     buttons have the markup that rewind_buttons() writes, and the button rules
+     are from inst/www/rewind.css of the rewind package (MIT, Copyright (c)
+     2026 Tanmay Chanda). renderAt(ms) sets the state of the app at that time,
+     as the history of rewind would: one drag of the slider is one step, and
+     each change waits for the quiet period before it is a step. -->
+<link rel="stylesheet" href="app.css">
+<style>
+  /* From rewind.css. */
+  .rewind-buttons { display: inline-flex; gap: 0.25rem; }
+  .rewind-buttons .btn { display: inline-flex; align-items: center; gap: 0.35em; }
+  .rewind-buttons .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+  .rewind-buttons .rewind-label { font-size: 0.95em; }
+  .rewind-buttons .rewind-icon { flex: none; }
+
+  /* Bootstrap 3, which fluidPage() uses, at the size of this scene. */
+  .btn {
+    padding: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    font: inherit;
+    line-height: 1.4;
+    cursor: pointer;
+  }
+  .btn-default { border-color: #ccc; background: #fff; color: #333; }
+
+  .well {
+    position: absolute;
+    left: 14px;
+    top: 14px;
+    width: 220px;
+    padding: 12px;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    background: #f5f5f5;
+  }
+
+  .well .field { margin-top: 12px; }
+  .well .field label { color: #333; }
+  .well .sel { background: #fff; }
+
+  /* The year slider, in the look of the Shiny skin of ionRangeSlider. */
+  .irs { position: relative; height: 50px; margin: 0 -2px; }
+  .irs-line {
+    position: absolute; left: 0; right: 0; top: 24px; height: 8px;
+    border: 1px solid #ccc; border-radius: 8px; background: #ddd;
+  }
+  .irs-bar {
+    position: absolute; left: 0; top: 24px; height: 8px;
+    border: 1px solid #428bca; border-radius: 8px 0 0 8px; background: #428bca;
+  }
+  .irs-handle {
+    position: absolute; top: 20px; width: 16px; height: 16px; margin-left: -8px;
+    border: 1px solid #428bca; border-radius: 50%; background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  .irs-single, .irs-min, .irs-max {
+    position: absolute; top: 0; padding: 1px 5px; border-radius: 3px;
+    font-size: 10px; line-height: 1.3; white-space: nowrap;
+  }
+  .irs-single { background: #428bca; color: #fff; transform: translateX(-50%); }
+  .irs-min, .irs-max { background: #e1e4e9; color: #999; }
+  .irs-min { left: 0; }
+  .irs-max { right: 0; }
+  .irs-grid { position: absolute; left: 0; right: 0; top: 36px; height: 14px; }
+  .irs-grid i { position: absolute; top: 0; width: 1px; height: 4px; background: #bbb; }
+  .irs-grid span {
+    position: absolute; top: 4px; font-size: 8.5px; line-height: 1; color: #999;
+    transform: translateX(-50%);
+  }
+
+  .main { position: absolute; left: 250px; top: 14px; width: 376px; height: 290px; }
+  .main svg { display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="well">
+    <div class="rewind-buttons">
+      <button type="button" class="btn btn-default rewind-undo" disabled title="Undo (Ctrl+Z)" aria-label="Undo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="rewind-icon" aria-hidden="true" focusable="false"><path d="M5.5 3 2.5 6l3 3"/><path d="M2.5 6h7a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span class="rewind-label">Undo</span>
+      </button>
+      <button type="button" class="btn btn-default rewind-redo" disabled title="Redo (Ctrl+Shift+Z or Ctrl+Y)" aria-label="Redo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="rewind-icon" aria-hidden="true" focusable="false"><path d="M10.5 3 13.5 6l-3 3"/><path d="M13.5 6h-7a3.5 3.5 0 0 0 0 7H10"/></svg>
+        <span class="rewind-label">Redo</span>
+      </button>
+    </div>
+
+    <div class="field">
+      <label>Region</label>
+      <div class="sel" id="region"><span id="region-val">North</span>
+        <div class="sel-menu" id="menu" hidden>
+          <div>North</div><div>South</div><div>East</div><div>West</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Year</label>
+      <div class="irs" id="irs">
+        <span class="irs-min">2018</span><span class="irs-max">2026</span>
+        <span class="irs-single" id="irs-single">2024</span>
+        <span class="irs-line"></span>
+        <span class="irs-bar" id="irs-bar"></span>
+        <span class="irs-handle" id="irs-handle"></span>
+        <div class="irs-grid" id="irs-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main" id="plot"></div>
+
+  <div id="caption"></div>
+  <div id="keys"></div>
+  <svg id="cursor"></svg>
+  <div id="ripple"></div>
+  <div id="veil"></div>
+</div>
+
+<script src="scene.js"></script>
+<script>
+  const DURATION = 9000;
+  window.DURATION = DURATION;
+  window.POSTER_MS = 4950; // Ctrl+Z, with both buttons in use
+
+  const Y0 = 2018, Y1 = 2026;
+
+  // The slider: the value 2018 is at the left end of the line and 2026 at the
+  // right end, with the handle centred on the value.
+  const irs = document.getElementById("irs");
+  const box = irs.getBoundingClientRect();
+  const TRACK_X0 = box.left + 8;
+  const TRACK_W = box.width - 16;
+  const xOf = (year) => TRACK_X0 + ((year - Y0) / (Y1 - Y0)) * TRACK_W;
+  const HANDLE_Y = box.top + 28;
+
+  document.getElementById("irs-grid").innerHTML = Array.from({ length: Y1 - Y0 + 1 }, (_, i) => {
+    const left = ((xOf(Y0 + i) - box.left) / box.width) * 100;
+    return `<i style="left: ${left}%;"></i>` + (i % 2 === 0 ? `<span style="left: ${left}%;">${Y0 + i}</span>` : "");
+  }).join("");
+
+  const center = (el) => {
+    const r = el.getBoundingClientRect();
+    return [r.left + r.width / 2, r.top + r.height / 2];
+  };
+  const [selX, selY] = center(document.getElementById("region"));
+  const menuItems = [...document.querySelectorAll("#menu div")];
+  document.getElementById("menu").hidden = false;
+  const [eastX, eastY] = center(menuItems[2]);
+  document.getElementById("menu").hidden = true;
+
+  // The plot depends on both inputs: the region sets the shape of the year,
+  // and the year sets how high the months are.
+  const SHAPE = {
+    North: [55, 60, 68, 74, 80, 86, 90, 88, 82, 74, 66, 60],
+    East: [82, 74, 66, 58, 52, 50, 58, 70, 84, 92, 96, 90],
+  };
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  function plotSvg(region, year) {
+    const W = 376, H = 290, L = 34, R = 366, T = 56, B = 258;
+    const f = 0.45 + 0.07 * (year - 2018);
+    const slot = (R - L) / 12;
+    const y = (v) => B - (v / 100) * (B - T);
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="Recursive Preview, Arial, sans-serif">`;
+    s += `<rect width="${W}" height="${H}" fill="#fff"/>`;
+    s += `<text x="${L}" y="22" font-size="13" font-weight="800" fill="#212529">Monthly revenue</text>`;
+    s += `<text x="${L}" y="38" font-size="10.5" fill="#6c757d">${region}, ${year}</text>`;
+    for (const g of [0, 25, 50, 75, 100]) {
+      s += `<line x1="${L}" x2="${R}" y1="${y(g)}" y2="${y(g)}" stroke="${g === 0 ? "#6c757d" : "#e9ecef"}"/>`;
+      s += `<text x="${L - 6}" y="${y(g) + 3}" font-size="9" fill="#6c757d" text-anchor="end">${g}</text>`;
+    }
+    SHAPE[region].forEach((v, i) => {
+      const h = v * f;
+      s += `<rect x="${L + i * slot + slot * 0.16}" y="${y(h)}" width="${slot * 0.68}" height="${B - y(h)}" rx="1.5" fill="#4e79a7"/>`;
+      s += `<text x="${L + i * slot + slot / 2}" y="${B + 13}" font-size="9" fill="#6c757d" text-anchor="middle">${MONTHS[i]}</text>`;
+    });
+    return s + "</svg>";
+  }
+
+  // The keys that the user presses, drawn at the bottom right.
+  function setKeys(ms, shows) {
+    const el = document.getElementById("keys");
+    const hit = shows.find((k) => ms >= k.from && ms < k.to);
+    if (!hit) {
+      el.style.opacity = 0;
+      return;
+    }
+    const down = ms >= hit.press[0] && ms < hit.press[1];
+    const html = hit.keys.map((k) => `<kbd class="${down ? "down" : ""}">${k}</kbd>`).join("<i>+</i>");
+    if (el.dataset.html !== html) {
+      el.dataset.html = html;
+      el.innerHTML = html;
+    }
+    el.style.opacity = pulse(ms, hit.from, hit.to, 120);
+  }
+
+  // A soft ring on a control that rewind has put back, so the eye finds it.
+  const ring = (ms, t0) => {
+    const p = clamp((ms - t0) / 900);
+    return ms >= t0 && p < 1 ? `0 0 0 3px rgba(158, 42, 43, ${0.55 * (1 - p)})` : "";
+  };
+
+  let shown = "";
+  window.renderAt = function (ms) {
+    // The inputs. The drag runs from 1200 to 2200. The change of region is
+    // an ordinary click. The three key presses move through the history.
+    const dragging = track(ms, [[1200, xOf(2024)], [2200, xOf(2020)]]);
+    const dragYear = Math.round(Y0 + ((dragging - TRACK_X0) / TRACK_W) * (Y1 - Y0));
+    let year = ms < 1200 ? 2024 : dragYear;
+    let region = ms >= 3650 ? "East" : "North";
+    if (ms >= 4750) region = "North";
+    if (ms >= 5950) year = 2024;
+    if (ms >= 7150) year = 2020;
+
+    // The history. A change is a step after the quiet period of 400 ms.
+    const index = stepAt(ms, [[0, 0], [2600, 1], [4100, 2], [4750, 1], [5950, 0], [7150, 1]]);
+    const max = stepAt(ms, [[0, 0], [2600, 1], [4100, 2]]);
+    document.querySelector(".rewind-undo").disabled = index === 0;
+    document.querySelector(".rewind-redo").disabled = index >= max;
+
+    // Region select.
+    document.getElementById("region-val").textContent = region;
+    const open = ms >= 3100 && ms < 3600;
+    document.getElementById("region").classList.toggle("open", open);
+    document.getElementById("menu").hidden = !open;
+    menuItems.forEach((d) => d.classList.toggle("hot", d.textContent === "East" && ms >= 3450));
+    document.getElementById("region").style.boxShadow = open ? "" : ring(ms, 4750);
+
+    // Year slider.
+    const x = xOf(year) - box.left;
+    document.getElementById("irs-handle").style.left = `${x}px`;
+    document.getElementById("irs-handle").style.boxShadow =
+      ring(ms, 5950) || ring(ms, 7150) || "0 1px 3px rgba(0, 0, 0, 0.3)";
+    document.getElementById("irs-bar").style.width = `${x}px`;
+    const single = document.getElementById("irs-single");
+    single.textContent = year;
+    single.style.left = `${x}px`;
+    const bubble = single.getBoundingClientRect();
+    for (const cls of ["irs-min", "irs-max"]) {
+      const el = document.querySelector(`.${cls}`);
+      const r = el.getBoundingClientRect();
+      el.style.visibility = bubble.left < r.right + 2 && bubble.right > r.left - 2 ? "hidden" : "";
+    }
+
+    const key = `${region} ${year}`;
+    if (key !== shown) {
+      shown = key;
+      document.getElementById("plot").innerHTML = plotSvg(region, year);
+    }
+
+    setCaption(ms, [
+      [900, 2900, "One drag is one step"],
+      [2950, 4350, "Changing Region is another step"],
+      [4450, 5700, "Ctrl+Z steps back: Region is North again"],
+      [5750, 6900, "Ctrl+Z again: the whole drag goes back in one step"],
+      [6950, 8300, "Ctrl+Shift+Z steps forward again"],
+    ]);
+    setKeys(ms, [
+      { from: 4500, to: 5350, keys: ["Ctrl", "Z"], press: [4650, 4900] },
+      { from: 5800, to: 6550, keys: ["Ctrl", "Z"], press: [5900, 6150] },
+      { from: 6950, to: 7900, keys: ["Ctrl", "Shift", "Z"], press: [7100, 7350] },
+    ]);
+    setCursor(ms, [
+      [500, 470, 250], [1000, xOf(2024), HANDLE_Y], [1200, xOf(2024), HANDLE_Y],
+      [2200, xOf(2020), HANDLE_Y], [2450, xOf(2020), HANDLE_Y],
+      [3000, selX, selY], [3100, selX, selY], [3450, eastX, eastY], [3700, eastX, eastY],
+      [4200, 470, 250],
+    ], [1100, 3100, 3600]);
+    setVeil(ms, DURATION);
+    freezeAnimations(ms);
+  };
+
+  window.renderAt(0);
+</script>
+</body>
+</html>

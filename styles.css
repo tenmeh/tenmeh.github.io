@@ -312,6 +312,63 @@ body.home main.content {
   font-size: 0.97rem;
 }
 
+/* A post with a cover has a third column, the thumbnail. On a page too
+   narrow for it, it goes under the text instead, as the phone rules below
+   also do. */
+.kiln-list .entry.has-thumb {
+  grid-template-columns: 4rem minmax(0, 1fr) 15rem;
+}
+
+/* The cover at rest. The preview video lies over it and shows only while
+   it plays, so the card never has a black or empty frame. */
+.kiln-list .thumb {
+  position: relative;
+  display: block;
+  align-self: start;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid var(--k-rule);
+  border-radius: 12px;
+  background: var(--k-surface);
+  text-decoration: none;
+  transition: border-color 0.2s ease;
+}
+
+.kiln-list .thumb img,
+.kiln-list .thumb video {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.kiln-list .thumb video {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.kiln-list .entry.is-previewing .thumb video {
+  opacity: 1;
+}
+
+.kiln-list .entry:hover .thumb,
+.kiln-list .entry:focus-within .thumb {
+  border-color: var(--k-accent);
+}
+
+@media (max-width: 1099.98px) {
+  .kiln-list .entry.has-thumb {
+    grid-template-columns: 4rem minmax(0, 1fr);
+  }
+
+  .kiln-list .thumb {
+    grid-column: 1 / -1;
+    max-width: 30rem;
+  }
+}
+
 /* The packages: hex logos on a shelf, turned a little, like stickers. */
 .shelf {
   padding: 0.6rem 1.2rem;
@@ -436,6 +493,34 @@ body.home main.content {
 #title-block-header .quarto-title-meta > div + div::before {
   content: "\00B7";
   margin-right: 0.5rem;
+}
+
+/* --- Post: preview video ---------------------------------------------------------- */
+
+/* Under the title block, as a card like the code blocks and the quotes. */
+.post-preview {
+  margin: 1.6rem 0 2rem;
+  overflow: hidden;
+  border: 1px solid var(--k-rule);
+  border-radius: 14px;
+  background: var(--k-surface);
+}
+
+.post-preview video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: #fff;
+}
+
+.post-preview figcaption {
+  margin: 0;
+  padding: 0.55rem 1rem;
+  border-top: 1.5px dashed var(--k-rule);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--k-muted);
 }
 
 /* --- Post: text ------------------------------------------------------------------ */
@@ -672,6 +757,21 @@ blockquote p:last-child {
 
   .kiln-list .listing-title {
     font-size: 1.2rem;
+  }
+
+  .kiln-list .entry.has-thumb {
+    grid-template-columns: 3.3rem minmax(0, 1fr);
+  }
+
+  /* Under the text, as wide as the entry, so the video is big enough to
+     see. */
+  .kiln-list .thumb {
+    max-width: none;
+    border-radius: 10px;
+  }
+
+  .post-preview {
+    margin: 1.2rem 0 1.6rem;
   }
 
   .shelf .pkg {

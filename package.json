@@ -1,0 +1,14 @@
+{
+  "name": "tenmeh-github-io",
+  "private": true,
+  "type": "module",
+  "description": "Build tools for the blog: generated cover images.",
+  "scripts": {
+    "covers": "node scripts/covers.mjs"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "opentype.js": "^1.3.4",
+    "yaml": "^2.5.0"
+  }
+}
