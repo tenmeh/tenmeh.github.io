@@ -1,0 +1,792 @@
+/* Vendored, unchanged, from inst/www/bones.css of the bones package:
+   https://github.com/tenmeh/bones (MIT, Copyright (c) 2026 Tanmay Chanda,
+   the author of this blog). The recorded preview of the bones post uses it,
+   so the skeleton in the video is the real one. Copy the file again when
+   bones changes its look. */
+
+/* bones - content-shaped loading placeholders for Shiny outputs */
+
+/* --- Colours ----------------------------------------------------------------
+
+   The colours come from the theme of the page. They are the text colour of
+   Bootstrap (--bs-body-color) mixed with transparency, so a skeleton takes
+   the tint of a bslib theme, and turns light on a dark theme, with no
+   bones_defaults() call. On a page with no such variable, such as
+   fluidPage() with Bootstrap 3, the text colour falls back to a mid grey.
+
+   The colours are set on each wrapper, and on each skeleton that has no
+   wrapper. They are NOT set on :root. A value on :root is resolved one time,
+   at the root, so a dark card inside a light page would get the colours of
+   the light page. On each element, the colours follow the theme of the part
+   of the page where the element is.
+
+   They are NOT set on a skeleton inside a wrapper. A declaration on the
+   skeleton itself would be stronger than the values that it gets from the
+   style attribute of its wrapper, which is where bones_defaults() puts
+   them.
+
+   The first block is for browsers with no color-mix(): plain greys that
+   work on light and on dark themes. */
+:root {
+  --bones-speed: 1.4s;
+  --bones-delay: 300ms;
+}
+
+.bones-wrap,
+.bones-skeleton:not(.bones-wrap > .bones-skeleton) {
+  --bones-color: rgba(128, 128, 128, 0.18);
+  --bones-highlight: rgba(128, 128, 128, 0.34);
+  --bones-stripe: rgba(128, 128, 128, 0.07);
+  --bones-sweep: rgba(255, 255, 255, 0.45);
+  --bones-radius: 0.28rem;
+}
+
+@supports (color: color-mix(in srgb, red 50%, transparent)) {
+  .bones-wrap,
+  .bones-skeleton:not(.bones-wrap > .bones-skeleton) {
+    /* The same lightness as the greys above on a white page with dark
+       text: 10%, 19% and 4% of the text colour. */
+    --bones-color: color-mix(in srgb, var(--bs-body-color, #808080) 10%, transparent);
+    --bones-highlight: color-mix(in srgb, var(--bs-body-color, #808080) 19%, transparent);
+    --bones-stripe: color-mix(in srgb, var(--bs-body-color, #808080) 4%, transparent);
+    /* The band of the sweep animation: the colour of the page, half clear.
+       On a light page that is a band of light. */
+    --bones-sweep: color-mix(in srgb, var(--bs-body-bg, #ffffff) 55%, transparent);
+    /* Round the bars a little less than the theme rounds its controls. */
+    --bones-radius: calc(var(--bs-border-radius, 0.375rem) * 0.75);
+  }
+
+  /* On a dark page the colour of the page is dark, so its band would be a
+     shadow. The band of light there comes from the text colour, which is
+     light. data-bs-theme is on the page or on one part of it, such as a
+     card, so each part gets the band of its own theme. */
+  [data-bs-theme="dark"] .bones-wrap,
+  [data-bs-theme="dark"] .bones-skeleton:not(.bones-wrap > .bones-skeleton) {
+    --bones-sweep: color-mix(in srgb, var(--bs-body-color, #dee2e6) 16%, transparent);
+  }
+}
+
+.bones-wrap {
+  position: relative;
+}
+
+/* Keep the space of the content until the content arrives for the first
+   time. Then let the content set the height. withBones() puts the estimate
+   in --bones-reserve.
+
+   The test is bones-has-loaded, not bones-loaded. With stale = FALSE, a
+   recalculation removes bones-loaded. The old content still has its box,
+   hidden, so it keeps the space. A reserve at that time would make a
+   wrapper with short content grow, and then shrink when the value arrives:
+   the page would move two times on each recalculation. */
+.bones-wrap:not(.bones-has-loaded) {
+  min-height: var(--bones-reserve, 0);
+}
+
+/* The skeleton is on top of the content. It does not replace the content,
+   so the output element has its real size from the start. With
+   `display: none`, Shiny would read a width of zero, and a plot would get
+   the wrong size. */
+.bones-skeleton {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+}
+
+/* Only inside a wrapper. A skeleton from bones_skeleton() on its own must
+   take space in its container like any other element. */
+.bones-wrap > .bones-skeleton {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;  /* a tall shape must not cover the content below */
+  pointer-events: none;
+}
+
+.bones-content {
+  visibility: hidden;
+}
+
+.bones-wrap.bones-loaded > .bones-skeleton {
+  display: none;
+}
+
+.bones-wrap.bones-loaded > .bones-content {
+  visibility: visible;
+}
+
+/* The output calculates again, and the old content stays on the screen. */
+.bones-wrap.bones-stale > .bones-content {
+  opacity: 0.45;
+  /* The dimming starts only after --bones-delay. A recalculation that ends
+     before then never dims the content, so a fast one does not flicker.
+     The content comes back at once: the rule above has no transition. */
+  transition: opacity 120ms ease var(--bones-delay);
+}
+
+/* --- No flicker --------------------------------------------------------------
+
+   The skeleton appears only after --bones-delay. A load that ends before
+   then never shows a skeleton, so a fast output does not flash one.
+
+   An animation starts again each time an element changes from
+   display: none to shown. The skeleton is display: none while the wrapper
+   is loaded, so this delay applies again on each recalculation with
+   stale = FALSE, and not only on the first load. bones.js reads the start
+   of this animation to know when the skeleton became visible, for
+   min_time. */
+.bones-wrap:not(.bones-loaded) > .bones-skeleton {
+  animation: bones-appear 1ms linear var(--bones-delay) both;
+}
+
+/* The pulse is also an animation, so the two go in one declaration. */
+.bones-wrap.bones-anim-pulse:not(.bones-loaded) > .bones-skeleton {
+  animation:
+    bones-appear 1ms linear var(--bones-delay) both,
+    bones-pulse var(--bones-speed) ease-in-out var(--bones-delay) infinite;
+}
+
+@keyframes bones-appear {
+  from { visibility: hidden; }
+  to   { visibility: visible; }
+}
+
+/* Shiny also dims an output while it calculates. Inside a stale wrapper,
+   both rules would apply together, and the content would almost disappear.
+   This rule thus turns off the dimming of Shiny, and the rule above applies.
+
+   Only inside a stale wrapper. An output inside a wrapped uiOutput() does
+   not change the state of that wrapper, so the wrapper is not stale while
+   that output calculates. The dimming of Shiny is then the only sign that
+   the output updates, and it must stay. */
+.bones-wrap.bones-stale .shiny-bound-output.recalculating {
+  opacity: 1;
+}
+
+/* --- bars ---------------------------------------------------------------- */
+
+.bones-bar {
+  height: 0.75rem;
+  border-radius: var(--bones-radius);
+  background-color: var(--bones-color);
+  flex: none;
+}
+
+.bones-bar-strong {
+  background-color: var(--bones-highlight);
+}
+
+/* --- your own placeholder ------------------------------------------------ */
+
+/* withBones(skeleton = ): the tags at the top level stack with a gap. Inside
+   a tag of its own, the app sets the layout. */
+.bones-skeleton-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* bones_block(shape = "circle"), such as an avatar. */
+.bones-block-circle {
+  border-radius: 50%;
+}
+
+/* --- table --------------------------------------------------------------- */
+
+.bones-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.bones-row > .bones-bar {
+  flex: 1 1 0;
+}
+
+/* --- plot ---------------------------------------------------------------- */
+
+/* Each chart shape: "plot", and the shapes such as "line" and "scatter". */
+.bones-skeleton-chart {
+  justify-content: flex-end;
+  gap: 0;
+}
+
+/* flex-grow, not height: 100%. The area and the axis under it thus share
+   the height of the skeleton, and do not go outside it. */
+.bones-plot-area {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 4%;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0 2%;
+}
+
+.bones-bar-column {
+  flex: 1 1 0;
+  height: 50%;
+  border-radius: var(--bones-radius) var(--bones-radius) 0 0;
+}
+
+.bones-axis {
+  height: 2px;
+  margin-top: 0.4rem;
+  border-radius: 1px;
+  background-color: var(--bones-highlight);
+}
+
+/* --- map ------------------------------------------------------------------- */
+
+/* Tiles: a grid of faint lines on a faint ground. The coast and the roads
+   are an SVG that fills the map. The pins and the zoom buttons are bars. */
+.bones-map {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: calc(var(--bones-radius) * 2);
+  background-color: var(--bones-stripe);
+  background-image:
+    linear-gradient(var(--bones-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bones-color) 1px, transparent 1px);
+  background-size: 25% 25%;
+}
+
+.bones-svg-road {
+  fill: none;
+  stroke: var(--bones-color);
+  stroke-width: 6px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* The zoom buttons of leaflet, at the top left. */
+.bones-map-zoom {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bones-map-zoom-button {
+  width: 1.6rem;
+  height: 1.6rem;
+  background-color: var(--bones-highlight);
+}
+
+/* A pin: a square with three round corners, turned so that the sharp corner
+   points down, at the place that the pin marks. */
+.bones-pin {
+  position: absolute;
+  width: 1.4rem;
+  height: 1.4rem;
+  border-radius: 50% 50% 50% 0;
+  transform: translate(-50%, -100%) rotate(-45deg);
+  background-color: var(--bones-highlight);
+}
+
+/* --- network ---------------------------------------------------------------- */
+
+.bones-network {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.bones-svg-edge {
+  stroke: var(--bones-color);
+  stroke-width: 2px;
+  vector-effect: non-scaling-stroke;
+}
+
+.bones-svg-node {
+  fill: var(--bones-highlight);
+}
+
+/* --- timeline --------------------------------------------------------------- */
+
+/* Four rows of items. skel_timeline() in R sets the place of each item. */
+.bones-timeline {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.bones-timeline-item {
+  position: absolute;
+  height: 18%;
+  max-height: 2rem;
+}
+
+.bones-timeline-ticks {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 0.4rem;
+}
+
+/* --- word cloud ------------------------------------------------------------- */
+
+/* Words of different sizes, wrapped around the centre. */
+.bones-wordcloud {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  gap: 0.45rem 0.7rem;
+  padding: 0 8%;
+}
+
+.bones-word {
+  border-radius: calc(var(--bones-radius) * 1.5);
+}
+
+/* --- DT ------------------------------------------------------------------ */
+
+.bones-dt,
+.bones-dt-table,
+.bones-rt,
+.bones-gt {
+  display: flex;
+  flex-direction: column;
+}
+
+.bones-dt {
+  gap: 0.5rem;
+}
+
+.bones-dt-top,
+.bones-dt-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 0;
+}
+
+.bones-dt-length,
+.bones-dt-search,
+.bones-dt-pages {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.bones-dt-select {
+  width: 3rem;
+  height: 1.6rem;
+}
+
+.bones-dt-input {
+  width: 9rem;
+  height: 1.6rem;
+  border: 1px solid var(--bones-highlight);
+  border-radius: var(--bones-radius);
+}
+
+.bones-dt-page {
+  width: 1.8rem;
+  height: 1.6rem;
+}
+
+/* DT rows are 40px tall and striped. */
+.bones-dt-row {
+  padding: 0.9rem 0.5rem;
+}
+
+/* DT shades the 2nd, 4th and 6th body rows. The header is child 1, so
+   these are the odd children after it. */
+.bones-dt-row:nth-child(odd):not(.bones-dt-head) {
+  background-color: var(--bones-stripe);
+}
+
+.bones-dt-head {
+  border-bottom: 2px solid var(--bones-highlight);
+}
+
+/* --- reactable ----------------------------------------------------------- */
+
+/* reactable rows are 38px tall, with a thin line under each one. */
+.bones-rt-row {
+  padding: 0.8rem 0.5rem;
+  border-bottom: 1px solid var(--bones-color);
+}
+
+.bones-rt-head {
+  border-bottom: 2px solid var(--bones-highlight);
+}
+
+.bones-rt-pages {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.4rem;
+  padding-top: 0.6rem;
+}
+
+.bones-rt-button {
+  width: 1.8rem;
+  height: 1.6rem;
+}
+
+/* --- gt ------------------------------------------------------------------ */
+
+.bones-gt-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.6rem 0 0.9rem;
+  border-bottom: 2px solid var(--bones-highlight);
+}
+
+.bones-gt-spanner-row,
+.bones-gt-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0 0.3rem;
+}
+
+.bones-gt-spanner-row {
+  padding-top: 0.6rem;
+}
+
+/* The stub is the column of row labels, on the left. It is wider. */
+.bones-gt-stub,
+.bones-gt-corner {
+  flex: 1.6 1 0;
+}
+
+.bones-gt-cell {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.bones-gt-spanner {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--bones-highlight);
+}
+
+/* gt rows are about 38px tall. */
+.bones-gt-row {
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--bones-color);
+}
+
+.bones-gt-labels {
+  border-bottom: 2px solid var(--bones-highlight);
+}
+
+.bones-gt-note {
+  padding: 0.6rem 0.3rem;
+  border-top: 1px solid var(--bones-highlight);
+}
+
+/* --- rhandsontable ------------------------------------------------------- */
+
+/* A grid of 24px rows. skel_rhandsontable() in R sets the columns. */
+.bones-hot {
+  display: grid;
+  grid-auto-rows: 24px;
+  align-content: start;
+  border-top: 1px solid var(--bones-color);
+  border-left: 1px solid var(--bones-color);
+}
+
+.bones-hot > div {
+  display: flex;
+  align-items: center;
+  padding: 0 0.35rem;
+  border-right: 1px solid var(--bones-color);
+  border-bottom: 1px solid var(--bones-color);
+}
+
+.bones-hot-corner,
+.bones-hot-colhead,
+.bones-hot-rowhead {
+  justify-content: center;
+  background-color: var(--bones-stripe);
+}
+
+/* --- histogram ----------------------------------------------------------- */
+
+/* The columns of a histogram touch, as the bins do. */
+.bones-plot-area-tight {
+  gap: 2px;
+}
+
+/* --- scatter ------------------------------------------------------------- */
+
+/* The dots have their own position in the plot area, so the area is not a
+   flex row. */
+.bones-plot-area-free {
+  display: block;
+}
+
+.bones-dot {
+  position: absolute;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  background-color: var(--bones-highlight);
+  transform: translate(-50%, 50%);
+}
+
+/* --- line and area ------------------------------------------------------- */
+
+/* The SVG fills the plot area. Its view box does not keep its aspect ratio,
+   so non-scaling-stroke keeps the line the same width at each size. */
+.bones-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.bones-svg-line {
+  fill: none;
+  stroke: var(--bones-highlight);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.bones-svg-fill {
+  fill: var(--bones-color);
+  stroke: none;
+}
+
+/* --- pie ----------------------------------------------------------------- */
+
+.bones-pie {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0 1rem;
+}
+
+.bones-pie-disc {
+  height: 80%;
+  width: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.bones-pie-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1 1 auto;
+  max-width: 12rem;
+}
+
+.bones-pie-key {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bones-pie-swatch {
+  width: 0.75rem;
+  border-radius: 2px;
+}
+
+/* --- heatmap ------------------------------------------------------------- */
+
+/* skel_heatmap() in R sets the number of columns in the style attribute. */
+.bones-heatmap {
+  display: grid;
+  grid-auto-rows: 1fr;
+  gap: 3px;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.bones-heat-cell {
+  height: auto;
+  border-radius: 2px;
+  background-color: var(--bones-highlight);
+}
+
+/* --- cards --------------------------------------------------------------- */
+
+.bones-cards {
+  display: flex;
+  gap: 0.75rem;
+  height: 100%;
+}
+
+.bones-card {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: calc(var(--bones-radius) * 2);
+  border: 1px solid var(--bones-color);
+}
+
+/* --- value boxes --------------------------------------------------------- */
+
+.bones-values {
+  display: flex;
+  gap: 1rem;
+  height: 100%;
+}
+
+.bones-value {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* --- animation ----------------------------------------------------------- */
+
+.bones-anim-wave .bones-bar,
+.bones-anim-wave .bones-axis {
+  background-image: linear-gradient(
+    90deg,
+    var(--bones-color) 25%,
+    var(--bones-highlight) 37%,
+    var(--bones-color) 63%
+  );
+  background-size: 400% 100%;
+  animation: bones-wave var(--bones-speed) ease-in-out infinite;
+}
+
+@keyframes bones-wave {
+  0%   { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* The second selector is for a skeleton from bones_skeleton(), which has
+   the animation class on itself, not on a wrapper. */
+.bones-anim-pulse .bones-skeleton,
+.bones-skeleton.bones-anim-pulse {
+  animation: bones-pulse var(--bones-speed) ease-in-out infinite;
+}
+
+/* A gradient background does not move along an SVG stroke, so the line and
+   the area pulse in the wave animation. */
+.bones-anim-wave .bones-svg {
+  animation: bones-pulse var(--bones-speed) ease-in-out infinite;
+}
+
+@keyframes bones-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+
+/* Cascade: each mark lights up a little after the one before, so a ripple
+   runs through the shape: along the bars of a chart, the cells of a row, or
+   the lines of text. It animates the colour, not the opacity: a heatmap cell
+   sets its own opacity inline, and an opacity animation would replace it.
+
+   The delays repeat every 8 marks. They are negative, so each mark starts
+   in the middle of its cycle, and the ripple shows at once. */
+.bones-anim-cascade .bones-bar {
+  animation: bones-cascade var(--bones-speed) ease-in-out infinite;
+}
+.bones-anim-cascade .bones-bar:nth-child(8n + 2) { animation-delay: calc(var(--bones-speed) * -0.875); }
+.bones-anim-cascade .bones-bar:nth-child(8n + 3) { animation-delay: calc(var(--bones-speed) * -0.75); }
+.bones-anim-cascade .bones-bar:nth-child(8n + 4) { animation-delay: calc(var(--bones-speed) * -0.625); }
+.bones-anim-cascade .bones-bar:nth-child(8n + 5) { animation-delay: calc(var(--bones-speed) * -0.5); }
+.bones-anim-cascade .bones-bar:nth-child(8n + 6) { animation-delay: calc(var(--bones-speed) * -0.375); }
+.bones-anim-cascade .bones-bar:nth-child(8n + 7) { animation-delay: calc(var(--bones-speed) * -0.25); }
+.bones-anim-cascade .bones-bar:nth-child(8n + 8) { animation-delay: calc(var(--bones-speed) * -0.125); }
+
+@keyframes bones-cascade {
+  0%, 100% { background-color: var(--bones-color); }
+  50%      { background-color: var(--bones-highlight); }
+}
+
+/* Sweep: one band of light crosses the whole placeholder, over every mark
+   at once. In the wave, each bar has its own band. The sweep is a layer on
+   top of the placeholder, so it also crosses the lines, dots and nodes of
+   an SVG shape. The band has the colour of the page, so it is light on a
+   light page and dark on a dark page. */
+/* Only the skeleton of the wrapper itself (">"), or a skeleton that has
+   the class itself. A bones_skeleton() in the content of a wrapper is not
+   positioned, so a band on it would cover the whole wrapper, and cross the
+   page next to it. */
+.bones-wrap.bones-anim-sweep > .bones-skeleton::after,
+.bones-skeleton.bones-anim-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    var(--bones-sweep) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%);
+  animation: bones-sweep var(--bones-speed) ease-in-out infinite;
+}
+
+/* A skeleton from bones_skeleton() is in the flow of the page, so it holds
+   the band itself. In a wrapper, the skeleton is positioned already. */
+.bones-skeleton.bones-anim-sweep {
+  position: relative;
+  overflow: hidden;
+}
+
+@keyframes bones-sweep {
+  100% { transform: translateX(100%); }
+}
+
+/* The SVG shapes pulse in the cascade, as they do in the wave. */
+.bones-anim-cascade .bones-svg {
+  animation: bones-pulse var(--bones-speed) ease-in-out infinite;
+}
+
+/* A user who asks the system to reduce motion does not want a placeholder
+   that moves. Show a still placeholder instead. */
+@media (prefers-reduced-motion: reduce) {
+  .bones-anim-wave .bones-bar,
+  .bones-anim-wave .bones-axis,
+  .bones-anim-pulse .bones-skeleton,
+  .bones-skeleton.bones-anim-pulse,
+  .bones-anim-wave .bones-svg,
+  .bones-anim-cascade .bones-bar,
+  .bones-anim-cascade .bones-svg {
+    animation: none;
+    background-image: none;
+  }
+
+  .bones-wrap.bones-anim-sweep > .bones-skeleton::after,
+  .bones-skeleton.bones-anim-sweep::after {
+    animation: none;
+    display: none;
+  }
+
+  /* No fade, but the same delay: a fast recalculation still must not dim
+     the content for a moment. */
+  .bones-wrap.bones-stale > .bones-content {
+    transition: opacity 0s linear var(--bones-delay);
+  }
+
+  /* The skeleton still waits for the delay, but does not pulse. */
+  .bones-wrap.bones-anim-pulse:not(.bones-loaded) > .bones-skeleton {
+    animation: bones-appear 1ms linear var(--bones-delay) both;
+  }
+}

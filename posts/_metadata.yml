@@ -3,3 +3,9 @@ freeze: true
 title-block-banner: false
 # Dates written out in full, never 09/10/26: many readers are not in the US.
 date-format: "D MMMM YYYY"
+# The cover is drawn from the front matter by scripts/covers.mjs, into the
+# folder of each post. The path is relative to each post.
+image: cover.png
+# Shows the "preview" video of a post under its title.
+filters:
+  - ../_filters/post-preview.lua

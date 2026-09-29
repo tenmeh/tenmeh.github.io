@@ -7,6 +7,11 @@ description: >
 author: "Tanmay Chanda"
 date: "2026-08-27"
 categories: [R, Shiny, packages]
+package: rewind
+image-alt: "Cover card with the post title, the date and the rewind hex logo."
+preview: preview.mp4
+preview-alt: >
+  A recreated Shiny app with Undo and Redo buttons. The year slider is dragged from 2024 to 2020 and the region is changed to East. Ctrl+Z puts the region back, Ctrl+Z again puts the whole drag back in one step, and Ctrl+Shift+Z redoes it.
 
 ---
 

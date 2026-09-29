@@ -1,5 +1,8 @@
 ---
 title: "Posts"
+# The listing would otherwise lend the cover of its first post to this page.
+image: cover.png
+image-alt: "Tanmay Chanda. Notes on R, Shiny, and building things that other people use."
 listing:
   id: post-list
   contents: posts
@@ -10,12 +13,15 @@ listing:
   categories: false
   sort-ui: false
   filter-ui: false
-  fields: [date, title, description, categories]
+  fields: [date, title, description, categories, image, preview]
   feed: true
 page-layout: full
 title-block-banner: false
 body-classes: home
 toc: false
+format:
+  html:
+    include-after-body: _includes/list-previews.html
 ---
 
 ::: {.intro}
