@@ -417,19 +417,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<figure class="post-preview figure">
-<video src="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/preview.mp4" poster="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/preview.jpg" aria-label="A recreated Shiny app with Undo and Redo buttons. The year slider is dragged from 2024 to 2020 and the region is changed to East. Ctrl+Z puts the region back, Ctrl+Z again puts the whole drag back in one step, and Ctrl+Shift+Z redoes it." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
-<figcaption>A short recreation of what this post describes, made in a browser.</figcaption>
-</figure>
-<script>
-(function () {
-  var video = document.currentScript.previousElementSibling.querySelector("video");
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  video.controls = false;
-  var started = video.play();
-  if (started && started.catch) started.catch(function () { video.controls = true; });
-})();
-</script>
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/hero.svg" alt="The rewind hex logo, alive: the two rewind arrows nudge backwards, the hex spins back once, and a knob walks back along a dotted path and then forward again." width="800" height="320" class="figure-img"></figure>
 <p>Shiny has bookmarking. It has <code>reactlog</code>. It has no undo.</p>
 <p>That is strange when you stop to think about it. Undo is in every text editor, every drawing program, every spreadsheet. People arrive at a dashboard already expecting <code>Ctrl+Z</code> to work. Then they change a filter by mistake, and there is no way back except to remember what the filter used to say.</p>
 <p>I wrote <strong>rewind</strong> to close that gap. It is on CRAN now.</p>
@@ -444,6 +432,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>Ctrl+Z</code> now steps backwards through the choices the user made. <code>Ctrl+Shift+Z</code> and <code>Ctrl+Y</code> step forwards. There is a pair of buttons and a clickable history rail if you want them.</p>
 <p>The package itself is small. The interesting part is not the feature. It is the three problems you meet when you try to build it, and I think each one is worth reading about even if you never install this.</p>
+<figure class="post-preview figure">
+<video src="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/preview.mp4" poster="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/preview.jpg" aria-label="A recreated Shiny app with Undo and Redo buttons. The year slider is dragged from 2024 to 2020 and the region is changed to East. Ctrl+Z puts the region back, Ctrl+Z again puts the whole drag back in one step, and Ctrl+Shift+Z redoes it." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
+<figcaption>A short recreation of what this post describes, made in a browser.</figcaption>
+</figure>
+<script>
+(function () {
+  var video = document.currentScript.previousElementSibling.querySelector("video");
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  video.controls = false;
+  var started = video.play();
+  if (started && started.catch) started.catch(function () { video.controls = true; });
+})();
+</script>
 <section id="problem-one-restoring-a-widget-you-have-never-heard-of" class="level2">
 <h2 class="anchored" data-anchor-id="problem-one-restoring-a-widget-you-have-never-heard-of">Problem one: restoring a widget you have never heard of</h2>
 <p>To undo, you have to put an old value back into a widget. The obvious way is a lookup table:</p>

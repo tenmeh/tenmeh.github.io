@@ -89,9 +89,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-description','listing-categories','listing-image','listing-preview',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-date-modified-sort'] },{ data: ['listing-file-modified-sort'] },{ data: ['listing-reading-time-sort'] },{ data: ['listing-word-count-sort'] }],
+      valueNames: ['listing-date','listing-title','listing-description','listing-categories','listing-hero',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-date-modified-sort'] },{ data: ['listing-file-modified-sort'] },{ data: ['listing-reading-time-sort'] },{ data: ['listing-word-count-sort'] }],
       
-      searchColumns: ["listing-project","listing-website","listing-format","listing-engines","listing-language","listing-freeze","listing-title-block-banner","listing-date-format","listing-image","listing-filters","listing-title","listing-description","listing-author","listing-date","listing-categories","listing-package","listing-image-alt","listing-preview","listing-preview-alt","listing-path","listing-outputHref","listing-date-modified","listing-filename","listing-file-modified","listing-reading-time","listing-word-count"],
+      searchColumns: ["listing-project","listing-website","listing-format","listing-engines","listing-language","listing-freeze","listing-title-block-banner","listing-date-format","listing-image","listing-filters","listing-title","listing-description","listing-author","listing-date","listing-categories","listing-package","listing-image-alt","listing-hero","listing-hero-alt","listing-preview","listing-preview-alt","listing-path","listing-outputHref","listing-date-modified","listing-filename","listing-file-modified","listing-reading-time","listing-word-count"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -415,11 +415,14 @@ window.Quarto = {
 
 <div class="kiln-list">
 
-<article class="entry has-thumb" data-index="0" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1790553600000" data-listing-file-modified-sort="1790695592428" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1336">
+<article class="entry" data-index="0" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1790553600000" data-listing-file-modified-sort="1790697269162" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1337">
   <a class="stamp" href="./posts/2026-09-28-how-bones-began/index.html" aria-hidden="true" tabindex="-1">
     <b>28</b>
     <span>Sep</span>
     <span>2026</span>
+    
+    <img class="stamp-hero" src="posts/2026-09-28-how-bones-began/hero.svg" alt="" width="800" height="320" loading="lazy">
+    
   </a>
   <div class="entry-body">
     <h3 class="listing-title anchored"><a href="./posts/2026-09-28-how-bones-began/index.html">A spinner says wait. A skeleton says what is coming.</a></h3>
@@ -439,21 +442,16 @@ window.Quarto = {
     </div>
     
   </div>
-  
-  <a class="thumb" href="./posts/2026-09-28-how-bones-began/index.html" aria-hidden="true" tabindex="-1">
-    <img src="posts/2026-09-28-how-bones-began/cover.png" alt="" width="1200" height="630" loading="lazy">
-    
-    <video src="posts/2026-09-28-how-bones-began/preview.mp4" muted="" loop="" playsinline="" preload="none"></video>
-    
-  </a>
-  
 </article>
 
-<article class="entry has-thumb" data-index="1" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1787788800000" data-listing-file-modified-sort="1790695592428" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="966">
+<article class="entry" data-index="1" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1787788800000" data-listing-file-modified-sort="1790697269160" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="967">
   <a class="stamp" href="./posts/2026-08-27-undo-for-shiny/index.html" aria-hidden="true" tabindex="-1">
     <b>27</b>
     <span>Aug</span>
     <span>2026</span>
+    
+    <img class="stamp-hero" src="posts/2026-08-27-undo-for-shiny/hero.svg" alt="" width="800" height="320" loading="lazy">
+    
   </a>
   <div class="entry-body">
     <h3 class="listing-title anchored"><a href="./posts/2026-08-27-undo-for-shiny/index.html">Undo for Shiny, and the three problems that make it interesting</a></h3>
@@ -473,14 +471,6 @@ window.Quarto = {
     </div>
     
   </div>
-  
-  <a class="thumb" href="./posts/2026-08-27-undo-for-shiny/index.html" aria-hidden="true" tabindex="-1">
-    <img src="posts/2026-08-27-undo-for-shiny/cover.png" alt="" width="1200" height="630" loading="lazy">
-    
-    <video src="posts/2026-08-27-undo-for-shiny/preview.mp4" muted="" loop="" playsinline="" preload="none"></video>
-    
-  </a>
-  
 </article>
 
 </div>
@@ -506,70 +496,6 @@ window.Quarto = {
 
 
 </main> <!-- /main -->
-<script>
-/* The post list: a preview video plays over the cover of a post.
-   With a mouse, it plays while the pointer or the keyboard focus is on the
-   entry. On a touch screen there is no hover, so the entry that is mostly in
-   view plays, and only one at a time. It never plays for a reader who asks
-   the system to reduce motion. */
-(function () {
-  var entries = Array.prototype.slice.call(document.querySelectorAll(".kiln-list .entry"))
-    .filter(function (entry) { return entry.querySelector("video"); });
-  if (!entries.length) return;
-
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var mouse = window.matchMedia("(hover: hover) and (pointer: fine)");
-  var current = null;
-
-  function stop(entry) {
-    var video = entry.querySelector("video");
-    entry.classList.remove("is-previewing");
-    video.pause();
-    if (video.readyState > 0) video.currentTime = 0;
-    if (current === entry) current = null;
-  }
-
-  function play(entry) {
-    if (reduce.matches || current === entry) return;
-    if (current) stop(current);
-    var started = entry.querySelector("video").play();
-    current = entry;
-    // A browser may refuse, or the file may be missing. The cover stays.
-    if (started && started.catch) started.catch(function () { stop(entry); });
-  }
-
-  // The video fades in only when a frame is on the screen.
-  entries.forEach(function (entry) {
-    entry.querySelector("video").addEventListener("playing", function () {
-      if (current === entry) entry.classList.add("is-previewing");
-    });
-  });
-
-  if (mouse.matches) {
-    entries.forEach(function (entry) {
-      entry.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") play(entry); });
-      entry.addEventListener("pointerleave", function () { stop(entry); });
-      entry.addEventListener("focusin", function () { play(entry); });
-      entry.addEventListener("focusout", function () { stop(entry); });
-    });
-  } else if ("IntersectionObserver" in window) {
-    var ratios = new Map();
-    var observer = new IntersectionObserver(function (changes) {
-      changes.forEach(function (c) { ratios.set(c.target.closest(".entry"), c.intersectionRatio); });
-      var best = null;
-      ratios.forEach(function (ratio, entry) {
-        if (ratio >= 0.6 && (!best || ratio > ratios.get(best))) best = entry;
-      });
-      if (current && current !== best) stop(current);
-      if (best) play(best);
-    }, { threshold: [0, 0.3, 0.6, 0.8, 1] });
-    entries.forEach(function (entry) { observer.observe(entry.querySelector(".thumb")); });
-  }
-
-  // A reader who turns on reduced motion while the page is open.
-  reduce.addEventListener("change", function () { if (reduce.matches && current) stop(current); });
-})();
-</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     // Ensure there is a toggle, if there isn't float one in the top right

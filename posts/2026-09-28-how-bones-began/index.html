@@ -421,19 +421,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<figure class="post-preview figure">
-<video src="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/preview.mp4" poster="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/preview.jpg" aria-label="A recreated Shiny dashboard. Grey placeholders in the shape of a bar chart and a table wave while the outputs load, then the real chart and table take their place. When the region changes, the old content stays and is dimmed until the new data arrives." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
-<figcaption>A short recreation of what this post describes, made in a browser.</figcaption>
-</figure>
-<script>
-(function () {
-  var video = document.currentScript.previousElementSibling.querySelector("video");
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  video.controls = false;
-  var started = video.play();
-  if (started && started.catch) started.catch(function () { video.controls = true; });
-})();
-</script>
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/hero.svg" alt="The bones hex logo, alive: the bone bounces, a teal wave sweeps across the grey lines under it, and grey placeholders around it fill in with real content." width="800" height="320" class="figure-img"></figure>
 <p>It started with a reel.</p>
 <p>It was one of those short videos that explain a trick of the web. When a page loads, the site does not show you a spinner. It shows you grey boxes in the shape of the page: a bar where the title will be, a rectangle where the picture will be, three lines where the text will be. Then the real content fills in.</p>
 <p>The point of the video was that this is a kind of trick. The page is not faster. The data takes as long to arrive as before. But the wait feels shorter, because you already see the shape of what is coming. Your eye goes to the place where the title will be. You start to read the page before there is anything on it.</p>
@@ -462,6 +450,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tableOutput</span>(<span class="st">"results"</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>That part was fun. The grey boxes themselves were the easy part. The hard part was everything around them.</p>
+<figure class="post-preview figure">
+<video src="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/preview.mp4" poster="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/preview.jpg" aria-label="A recreated Shiny dashboard. Grey placeholders in the shape of a bar chart and a table wave while the outputs load, then the real chart and table take their place. When the region changes, the old content stays and is dimmed until the new data arrives." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
+<figcaption>A short recreation of what this post describes, made in a browser.</figcaption>
+</figure>
+<script>
+(function () {
+  var video = document.currentScript.previousElementSibling.querySelector("video");
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  video.controls = false;
+  var started = video.play();
+  if (started && started.catch) started.catch(function () { video.controls = true; });
+})();
+</script>
 </section>
 <section id="problem-one-the-second-load" class="level2">
 <h2 class="anchored" data-anchor-id="problem-one-the-second-load">Problem one: the second load</h2>
