@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 320" role="img">
+<title>The PACKAGE logo, alive: WHAT MOVES.</title>
+<style>
+/* One loop is 5s. Every animation uses the same length, so the loop is one
+   piece, and the first and last keyframes are the same. */
+.bob,.spin,.doodle{transform-box:fill-box;transform-origin:center}
+.bob{animation:bob 5s cubic-bezier(.45,0,.25,1) infinite}
+.spin{animation:spin 5s cubic-bezier(.6,0,.2,1) infinite}
+.doodle{animation:fill 5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+@keyframes spin{0%,70%,100%{transform:rotate(0)}82%{transform:rotate(-360deg)}}
+@keyframes fill{0%,20%,90%,100%{fill:#cfc5b1}35%,75%{fill:#17202a}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+<!-- The ground: a soft card, so the hero reads on light and dark pages. -->
+<rect width="800" height="320" rx="18" fill="#fbf8f1"/>
+
+<!-- Side doodles, in the site palette. -->
+<g>
+  <rect class="doodle" x="60" y="80" width="120" height="10" rx="5"/>
+  <rect class="doodle" x="60" y="100" width="80" height="10" rx="5" style="animation-delay:-.3s"/>
+  <circle cx="660" cy="90" r="6" fill="#9e2a2b"/>
+  <path d="M600 250c30-18 60 18 90 0s60-18 70 0" fill="none" stroke="#cfc5b1" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 10"/>
+</g>
+
+<!-- The hex, centred in the middle 320x320 square (x 240 to 560), so the
+     date stamp can crop to it. Paste the real logo paths here, without the
+     wordmark text, and re-centre the icon. -->
+<ellipse cx="400" cy="302" rx="70" ry="6" fill="#17202a" opacity=".12"/>
+<g class="bob"><g class="spin">
+  <path d="M400 40l108 62v124l-108 62-108-62V102z" fill="#f4efe4" stroke="#17202a" stroke-width="10" stroke-linejoin="round"/>
+  <!-- The icon inside the hex. -->
+  <circle cx="400" cy="164" r="44" fill="#17202a"/>
+</g></g>
+</svg>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PACKAGE preview scene</title>
+<!-- The scene for the video of the PACKAGE post: WHAT THE CLIP SHOWS.
+     Say where any vendored package CSS comes from, and its licence.
+     renderAt(ms) sets the whole state of the app at that time. -->
+<link rel="stylesheet" href="scene.css">
+<style>
+  /* The font, from the blog's committed files. Adjust the path to where
+     this scene lives. */
+  @font-face { font-family: "Recursive Preview"; font-weight: 400; src: url("../assets/fonts/RecursiveSansLnrSt-Regular.ttf"); }
+  @font-face { font-family: "Recursive Preview"; font-weight: 600; src: url("../assets/fonts/RecursiveSansLnrSt-SemiBold.ttf"); }
+  @font-face { font-family: "Recursive Preview"; font-weight: 800; src: url("../assets/fonts/RecursiveSansLnrSt-ExtraBold.ttf"); }
+
+  /* The app: Bootstrap-like controls, at the size of this stage. */
+  .card { position: absolute; left: 14px; top: 14px; right: 14px; bottom: 50px;
+          border: 1px solid #dee2e6; border-radius: 6px; background: #fff; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="card" id="app">
+    <!-- The app markup goes here, with the package's real class names. -->
+  </div>
+
+  <div id="caption"></div>
+  <div id="keys"></div>
+  <svg id="cursor"></svg>
+  <div id="ripple"></div>
+  <div id="veil"></div>
+</div>
+
+<script src="scene.js"></script>
+<script>
+  const DURATION = 8000;
+  window.DURATION = DURATION;
+  window.POSTER_MS = 4000; // the frame that explains the most on its own
+
+  // One entry per beat: [from ms, to ms, text].
+  const CAPTIONS = [
+    [400, 3000, "First beat: what to notice"],
+    [3200, 7400, "Second beat: what to notice"],
+  ];
+
+  // The pointer: [ms, x, y] keys, and the times of clicks.
+  const PATH = [[2600, 520, 300], [3000, 470, 40], [3400, 470, 40]];
+  const CLICKS = [3050];
+
+  window.renderAt = function (ms) {
+    // Set every piece of state from ms alone, e.g.
+    //   const open = stepAt(ms, [[0, false], [3050, true], [3600, false]]);
+    //   el.style.opacity = tween(ms, 1000, 1400, 0, 1);
+    setCaption(ms, CAPTIONS);
+    setCursor(ms, PATH, CLICKS);
+    freezeAnimations(ms);
+    setVeil(ms, DURATION);
+  };
+  window.renderAt(0);
+</script>
+</body>
+</html>
