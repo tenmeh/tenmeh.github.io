@@ -17,7 +17,307 @@
 <width>144</width>
 </image>
 <generator>quarto-1.10.18</generator>
-<lastBuildDate>Mon, 28 Sep 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Fri, 02 Oct 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>rewind 0.3.0: show what changed</title>
+  <dc:creator>Tanmay Chanda</dc:creator>
+  <link>https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/hero.svg" alt="The rewind hex sways and spins above a ground shadow, with a soft halo behind it. On the left, a select box shows North, followed by -> and South. On the right, one row of a two-row table of bars lights up. Dots and pluses move around the hex, beside dotted paths." width="800" height="320" class="figure-img"></figure>
+<p><strong>rewind 0.3.0 is on CRAN.</strong> I released it on 25 September. If you update from 0.2.0, you also get the changes in 0.2.1, which I released on GitHub only.</p>
+<p><a href="../../posts/2026-08-27-undo-for-shiny/index.html">My first post</a> was about adding undo to Shiny, and the problems behind it. This release makes the history more useful to read. It also fixes two bugs where the history worked, but the app around it did not.</p>
+<section id="what-changed-not-only-which-input" class="level2">
+<h2 class="anchored" data-anchor-id="what-changed-not-only-which-input">What changed, not only which input</h2>
+<p>The new <code>rewind_diff()</code> tells you what a step changed. A history label such as <code>"region, year"</code> tells you which inputs changed. It does not tell you what they held before, or what they hold now.</p>
+<p>I wanted an app to be able to say <code>"North -&gt; South"</code>.</p>
+<figure class="post-preview figure">
+<video src="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/preview.mp4" poster="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/preview.jpg" aria-label="A recreated Shiny app with Undo and Redo buttons. Region changes from North to South, then the year slider moves from 2024 to 2020. A table below shows from, to, name, change, old and new. Undo restores 2024 and removes the year row from the comparison with the first step." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
+<figcaption>A browser recreation. The table compares the first step with the current step using rewind_diff(from = 1).</figcaption>
+</figure>
+<script>
+(function () {
+  var video = document.currentScript.previousElementSibling.querySelector("video");
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  video.controls = false;
+  var started = video.play();
+  if (started && started.catch) started.catch(function () { video.controls = true; });
+})();
+</script>
+<p>Inside a server with <code>rewind_enable()</code> already called, this compares two positions in the history:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_diff</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">from =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">to =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span></code></pre></div></div>
+<p>Suppose position 1 holds region North and year 2024. At position 3, they hold South and 2020. The result has these six columns, in this order:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">from</th>
+<th style="text-align: right;">to</th>
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">change</th>
+<th style="text-align: left;">old</th>
+<th style="text-align: left;">new</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">region</td>
+<td style="text-align: left;">North -&gt; South</td>
+<td style="text-align: left;">North</td>
+<td style="text-align: left;">South</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">year</td>
+<td style="text-align: left;">2024 -&gt; 2020</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">2020</td>
+</tr>
+</tbody>
+</table>
+<p>This table shows the contents of each cell. <code>old</code> and <code>new</code> are list columns, not text columns. The rows are sorted by <code>name</code>, and <code>name</code> holds the input ID, not the label beside the widget.</p>
+<p>That choice matters. An input can hold a date range or a multiple selection. A tracked value can hold a whole data frame. Turning every value into text would lose its type and shape. A list column keeps the value itself. <code>change</code> gives a short description for a person to read.</p>
+<p>Without arguments, <code>rewind_diff()</code> compares the current position with the one before it. At the first step, it returns no rows. It depends on the history, so an output can follow it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">output<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>changed <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">renderTable</span>({</span>
+<span id="cb2-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_diff</span>()[, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"name"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"change"</span>)]</span>
+<span id="cb2-3">})</span></code></pre></div></div>
+<p>The video uses <code>rewind_diff(from = 1)</code> instead. Its table grows as inputs move away from the first step. Undo puts the year back, so that row goes away. The table is a comparison of states, not a record of every action.</p>
+<section id="this-is-not-an-audit-trail" class="level3">
+<h3 class="anchored" data-anchor-id="this-is-not-an-audit-trail">This is not an audit trail</h3>
+<p>I put this limit in the documents on purpose. The history lives in the memory of one session. When the session ends, it goes too. Once it passes <code>depth</code>, it drops the oldest entries. A new change after an undo drops the steps in front of the current position.</p>
+<p>Those are useful rules for undo. They are poor rules for a record that someone may need to inspect later.</p>
+<p>If you need that record, write it as each change occurs and keep it somewhere else. Do not wait until the session ends and try to recover it from the undo history.</p>
+</section>
+</section>
+<section id="the-rail-that-scrolled-the-page" class="level2">
+<h2 class="anchored" data-anchor-id="the-rail-that-scrolled-the-page">The rail that scrolled the page</h2>
+<p>The history rail now scrolls only itself. Before this fix, an app with <code>rewind_ui()</code> in a sidebar could seem to scroll by itself each time the history changed.</p>
+<p>I used this to keep the current step in view:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb3-1">current<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scrollIntoView</span>({ <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">block</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"nearest"</span> })<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span></code></pre></div></div>
+<p>The name sounds like the right tool. But <code>scrollIntoView()</code> scrolls every scrollable ancestor, not only the nearest one. <code>block: "nearest"</code> limits how far each ancestor moves. It does not stop the sidebar or page moving.</p>
+<p>The fix measures the step against the rail and sets the rail’s own <code>scrollTop</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">var</span> top <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> current<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">getBoundingClientRect</span>()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">top</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span></span>
+<span id="cb4-2">  rail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">getBoundingClientRect</span>()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">top</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> rail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">scrollTop</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb4-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">var</span> bottom <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> top <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> current<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">offsetHeight</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb4-4"></span>
+<span id="cb4-5"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (top <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> rail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">scrollTop</span>) {</span>
+<span id="cb4-6">  rail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">scrollTop</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> top<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb4-7">} <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (bottom <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> rail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">scrollTop</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> rail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">clientHeight</span>) {</span>
+<span id="cb4-8">  rail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">scrollTop</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> bottom <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> rail<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">clientHeight</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb4-9">}</span></code></pre></div></div>
+<p>The general lesson: when a control owns a small scrolling area, move that area directly. A browser method that promises to bring something into view may move more of the page than you expect.</p>
+</section>
+<section id="the-module-that-looked-half-alive" class="level2">
+<h2 class="anchored" data-anchor-id="the-module-that-looked-half-alive">The module that looked half alive</h2>
+<p>Undo now works when <code>rewind_enable()</code> is called inside <code>moduleServer()</code>. Before the fix, capture worked and the rail filled up. But no button, shortcut or rail click reached that history.</p>
+<p>The browser sends three global input IDs: <code>rewind_undo</code>, <code>rewind_redo</code> and <code>rewind_jump</code>. Inside a module, I watched those names through the module’s session. Shiny looked for the namespaced IDs instead. The sender and the observer were talking about different inputs.</p>
+<p>The fix reads those controls from the root session. For undo, it is:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">root <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> session<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rootScope</span>()</span>
+<span id="cb5-2"></span>
+<span id="cb5-3">obs_undo <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> shiny<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">observeEvent</span>(root<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>input<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>rewind_undo, ctrl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">undo</span>(),</span>
+<span id="cb5-4">                               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ignoreInit =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">domain =</span> session)</span></code></pre></div></div>
+<p>Capture still uses the module session. The controls come from the root.</p>
+<p>I find this bug useful to remember because the working half hid the broken half. A growing history looked like proof that the setup was right. When JavaScript sends an input ID, check that the R observer reads that exact ID, especially inside a module.</p>
+</section>
+<section id="the-smaller-things" class="level2">
+<h2 class="anchored" data-anchor-id="the-smaller-things">The smaller things</h2>
+<p>A few more changes come with this update:</p>
+<ul>
+<li>The rail shows times in the viewer’s own time zone, instead of UTC. The <code>time</code> column of <code>rewind_history()</code> is unchanged.</li>
+<li><code>coalesce_ms</code>, <code>restore_timeout</code> and <code>hold_ms</code> now refuse <code>NA</code>, <code>NaN</code> and <code>Inf</code>, with a message that names the argument. Before this, <code>Inf</code> in <code>coalesce_ms</code> silently stopped all recording.</li>
+<li><code>rewind_diff()</code> refuses a position such as <code>2.7</code>. It used to truncate it to <code>2</code>. The message for <code>from</code> is “<code>from</code> must be a single whole number.”</li>
+<li>From 0.2.1, <code>rewind_enable()</code> has <code>restore_timeout</code>, in seconds. It sets how long capture waits for the browser to finish a restore. The default is still 2 seconds.</li>
+<li><code>rewind_buttons()</code> has <code>button_class</code> for classes on the buttons. Its <code>class</code> argument still applies to the container. The arrows are now SVG, so their shape does not depend on the browser’s font.</li>
+<li>The redo tooltip says “Redo (Ctrl+Shift+Z or Ctrl+Y)”. <code>Ctrl+Y</code> already worked; the button now says so.</li>
+<li>The <code>fileInput()</code> check tests column types as well as names. A user data frame with the same four names but different types stays in the history. The names are <code>name</code>, <code>size</code>, <code>type</code> and <code>datapath</code>. A frame that matches both the names and the types is still treated as a file input value.</li>
+</ul>
+</section>
+<section id="try-it" class="level2">
+<h2 class="anchored" data-anchor-id="try-it">Try it</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">install.packages</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"rewind"</span>)</span></code></pre></div></div>
+<ul>
+<li>Documentation: <a href="https://tenmeh.github.io/rewind/" class="uri">https://tenmeh.github.io/rewind/</a></li>
+<li>Changelog: <a href="https://tenmeh.github.io/rewind/news/index.html" class="uri">https://tenmeh.github.io/rewind/news/index.html</a></li>
+<li>Source: <a href="https://github.com/tenmeh/rewind" class="uri">https://github.com/tenmeh/rewind</a></li>
+</ul>
+<p>I would especially like to hear how you use the comparisons. Undo can put a value back. Now an app can also tell the user what that step means.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>Shiny</category>
+  <category>packages</category>
+  <guid>https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/</guid>
+  <pubDate>Fri, 02 Oct 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/cover.png" medium="image" type="image/png" height="76" width="144"/>
+</item>
 <item>
   <title>A spinner says wait. A skeleton says what is coming.</title>
   <dc:creator>Tanmay Chanda</dc:creator>

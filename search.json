@@ -14,6 +14,69 @@
     "text": "Blogroll\n\nR-bloggers - a collection of blogs about R, and the place where most of the R community reads.\nR Weekly - a weekly list of what happened in R."
   },
   {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "",
+    "text": "rewind 0.3.0 is on CRAN. I released it on 25 September. If you update from 0.2.0, you also get the changes in 0.2.1, which I released on GitHub only.\nMy first post was about adding undo to Shiny, and the problems behind it. This release makes the history more useful to read. It also fixes two bugs where the history worked, but the app around it did not."
+  },
+  {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#what-changed-not-only-which-input",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html#what-changed-not-only-which-input",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "What changed, not only which input",
+    "text": "What changed, not only which input\nThe new rewind_diff() tells you what a step changed. A history label such as \"region, year\" tells you which inputs changed. It does not tell you what they held before, or what they hold now.\nI wanted an app to be able to say \"North -&gt; South\".\n\n\nA browser recreation. The table compares the first step with the current step using rewind_diff(from = 1).\n\n\nInside a server with rewind_enable() already called, this compares two positions in the history:\nrewind_diff(from = 1, to = 3)\nSuppose position 1 holds region North and year 2024. At position 3, they hold South and 2020. The result has these six columns, in this order:\n\n\n\nfrom\nto\nname\nchange\nold\nnew\n\n\n\n\n1\n3\nregion\nNorth -&gt; South\nNorth\nSouth\n\n\n1\n3\nyear\n2024 -&gt; 2020\n2024\n2020\n\n\n\nThis table shows the contents of each cell. old and new are list columns, not text columns. The rows are sorted by name, and name holds the input ID, not the label beside the widget.\nThat choice matters. An input can hold a date range or a multiple selection. A tracked value can hold a whole data frame. Turning every value into text would lose its type and shape. A list column keeps the value itself. change gives a short description for a person to read.\nWithout arguments, rewind_diff() compares the current position with the one before it. At the first step, it returns no rows. It depends on the history, so an output can follow it:\noutput$changed &lt;- renderTable({\n  rewind_diff()[, c(\"name\", \"change\")]\n})\nThe video uses rewind_diff(from = 1) instead. Its table grows as inputs move away from the first step. Undo puts the year back, so that row goes away. The table is a comparison of states, not a record of every action.\n\nThis is not an audit trail\nI put this limit in the documents on purpose. The history lives in the memory of one session. When the session ends, it goes too. Once it passes depth, it drops the oldest entries. A new change after an undo drops the steps in front of the current position.\nThose are useful rules for undo. They are poor rules for a record that someone may need to inspect later.\nIf you need that record, write it as each change occurs and keep it somewhere else. Do not wait until the session ends and try to recover it from the undo history."
+  },
+  {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#the-rail-that-scrolled-the-page",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html#the-rail-that-scrolled-the-page",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "The rail that scrolled the page",
+    "text": "The rail that scrolled the page\nThe history rail now scrolls only itself. Before this fix, an app with rewind_ui() in a sidebar could seem to scroll by itself each time the history changed.\nI used this to keep the current step in view:\ncurrent.scrollIntoView({ block: \"nearest\" });\nThe name sounds like the right tool. But scrollIntoView() scrolls every scrollable ancestor, not only the nearest one. block: \"nearest\" limits how far each ancestor moves. It does not stop the sidebar or page moving.\nThe fix measures the step against the rail and sets the rail’s own scrollTop:\nvar top = current.getBoundingClientRect().top -\n  rail.getBoundingClientRect().top + rail.scrollTop;\nvar bottom = top + current.offsetHeight;\n\nif (top &lt; rail.scrollTop) {\n  rail.scrollTop = top;\n} else if (bottom &gt; rail.scrollTop + rail.clientHeight) {\n  rail.scrollTop = bottom - rail.clientHeight;\n}\nThe general lesson: when a control owns a small scrolling area, move that area directly. A browser method that promises to bring something into view may move more of the page than you expect."
+  },
+  {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#the-module-that-looked-half-alive",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html#the-module-that-looked-half-alive",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "The module that looked half alive",
+    "text": "The module that looked half alive\nUndo now works when rewind_enable() is called inside moduleServer(). Before the fix, capture worked and the rail filled up. But no button, shortcut or rail click reached that history.\nThe browser sends three global input IDs: rewind_undo, rewind_redo and rewind_jump. Inside a module, I watched those names through the module’s session. Shiny looked for the namespaced IDs instead. The sender and the observer were talking about different inputs.\nThe fix reads those controls from the root session. For undo, it is:\nroot &lt;- session$rootScope()\n\nobs_undo &lt;- shiny::observeEvent(root$input$rewind_undo, ctrl$undo(),\n                               ignoreInit = TRUE, domain = session)\nCapture still uses the module session. The controls come from the root.\nI find this bug useful to remember because the working half hid the broken half. A growing history looked like proof that the setup was right. When JavaScript sends an input ID, check that the R observer reads that exact ID, especially inside a module."
+  },
+  {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#the-smaller-things",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html#the-smaller-things",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "The smaller things",
+    "text": "The smaller things\nA few more changes come with this update:\n\nThe rail shows times in the viewer’s own time zone, instead of UTC. The time column of rewind_history() is unchanged.\ncoalesce_ms, restore_timeout and hold_ms now refuse NA, NaN and Inf, with a message that names the argument. Before this, Inf in coalesce_ms silently stopped all recording.\nrewind_diff() refuses a position such as 2.7. It used to truncate it to 2. The message for from is “from must be a single whole number.”\nFrom 0.2.1, rewind_enable() has restore_timeout, in seconds. It sets how long capture waits for the browser to finish a restore. The default is still 2 seconds.\nrewind_buttons() has button_class for classes on the buttons. Its class argument still applies to the container. The arrows are now SVG, so their shape does not depend on the browser’s font.\nThe redo tooltip says “Redo (Ctrl+Shift+Z or Ctrl+Y)”. Ctrl+Y already worked; the button now says so.\nThe fileInput() check tests column types as well as names. A user data frame with the same four names but different types stays in the history. The names are name, size, type and datapath. A frame that matches both the names and the types is still treated as a file input value."
+  },
+  {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#try-it",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html#try-it",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "Try it",
+    "text": "Try it\ninstall.packages(\"rewind\")\n\nDocumentation: https://tenmeh.github.io/rewind/\nChangelog: https://tenmeh.github.io/rewind/news/index.html\nSource: https://github.com/tenmeh/rewind\n\nI would especially like to hear how you use the comparisons. Undo can put a value back. Now an app can also tell the user what that step means."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Posts",
+    "section": "",
+    "text": "The problems that were harder than they looked, and the reasons behind a decision rather than only the decision."
+  },
+  {
+    "objectID": "index.html#posts",
+    "href": "index.html#posts",
+    "title": "Posts",
+    "section": "Posts",
+    "text": "Posts\n\n\n\n\n\n  \n    2\n    Oct\n    2026\n    \n    \n    \n  \n  \n    rewind 0.3.0: show what changed\n    \n    rewind 0.3.0 is on CRAN. It adds value comparisons to the history, fixes a rail that scrolled the page, and makes undo work when enabled inside a module.\n\n    \n    \n    \n      \n      R\n      \n      Shiny\n      \n      packages\n      \n    \n    \n  \n\n\n\n  \n    28\n    Sep\n    2026\n    \n    \n    \n  \n  \n    A spinner says wait. A skeleton says what is coming.\n    \n    A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.\n\n    \n    \n    \n      \n      R\n      \n      Shiny\n      \n      packages\n      \n    \n    \n  \n\n\n\n  \n    27\n    Aug\n    2026\n    \n    \n    \n  \n  \n    Undo for Shiny, and the three problems that make it interesting\n    \n    Shiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R's lazy evaluation could produce.\n\n    \n    \n    \n      \n      R\n      \n      Shiny\n      \n      packages\n      \n    \n    \n  \n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "index.html#packages",
+    "href": "index.html#packages",
+    "title": "Posts",
+    "section": "Packages",
+    "text": "Packages\n\n  \n    \n    rewindon CRANUndo and redo for Shiny applications.\n  \n  \n    \n    boneson GitHubContent-shaped loading placeholders for Shiny outputs."
+  },
+  {
     "objectID": "posts/2026-09-28-how-bones-began/index.html",
     "href": "posts/2026-09-28-how-bones-began/index.html",
     "title": "A spinner says wait. A skeleton says what is coming.",
@@ -89,27 +152,6 @@
     "title": "A spinner says wait. A skeleton says what is coming.",
     "section": "Try it",
     "text": "Try it\n# install.packages(\"remotes\")\nremotes::install_github(\"tenmeh/bones\")\n\nshiny::runApp(system.file(\"examples/demo\", package = \"bones\"))\n\nDocumentation: https://tenmeh.github.io/bones/\nLive demo: https://tenmeh.github.io/bones/articles/live-demo.html\nSource: https://github.com/tenmeh/bones\n\nIssues and pull requests are welcome. I would especially like to hear about outputs that get the wrong shape, because each one is a shape that bones could learn."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Posts",
-    "section": "",
-    "text": "The problems that were harder than they looked, and the reasons behind a decision rather than only the decision."
-  },
-  {
-    "objectID": "index.html#posts",
-    "href": "index.html#posts",
-    "title": "Posts",
-    "section": "Posts",
-    "text": "Posts\n\n\n\n\n\n  \n    28\n    Sep\n    2026\n    \n    \n    \n  \n  \n    A spinner says wait. A skeleton says what is coming.\n    \n    A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.\n\n    \n    \n    \n      \n      R\n      \n      Shiny\n      \n      packages\n      \n    \n    \n  \n\n\n\n  \n    27\n    Aug\n    2026\n    \n    \n    \n  \n  \n    Undo for Shiny, and the three problems that make it interesting\n    \n    Shiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R's lazy evaluation could produce.\n\n    \n    \n    \n      \n      R\n      \n      Shiny\n      \n      packages\n      \n    \n    \n  \n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "index.html#packages",
-    "href": "index.html#packages",
-    "title": "Posts",
-    "section": "Packages",
-    "text": "Packages\n\n  \n    \n    rewindon CRANUndo and redo for Shiny applications.\n  \n  \n    \n    boneson GitHubContent-shaped loading placeholders for Shiny outputs."
   },
   {
     "objectID": "posts/2026-08-27-undo-for-shiny/index.html",

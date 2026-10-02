@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Tanmay Chanda">
+<meta name="dcterms.date" content="2026-10-02">
+<meta name="description" content="rewind 0.3.0 is on CRAN. It adds value comparisons to the history, fixes a rail that scrolled the page, and makes undo work when enabled inside a module.">
 
-<title>Posts – Tanmay Chanda</title>
+<title>rewind 0.3.0: show what changed – Tanmay Chanda</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -26,32 +29,65 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-74119f4bb4de91c00ce6f93ff1e03a8d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-bca9a01966989c07d63c952f13210c64.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-74119f4bb4de91c00ce6f93ff1e03a8d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-076088dd900c805fcb435aeddcdfc3a0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-0d340fe6d2d040afd2a66377efc0346e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-076088dd900c805fcb435aeddcdfc3a0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-74119f4bb4de91c00ce6f93ff1e03a8d.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-bca9a01966989c07d63c952f13210c64.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-74119f4bb4de91c00ce6f93ff1e03a8d.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-076088dd900c805fcb435aeddcdfc3a0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-0d340fe6d2d040afd2a66377efc0346e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-076088dd900c805fcb435aeddcdfc3a0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -79,84 +115,26 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-post-list .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-description','listing-categories','listing-hero',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-date-modified-sort'] },{ data: ['listing-file-modified-sort'] },{ data: ['listing-reading-time-sort'] },{ data: ['listing-word-count-sort'] }],
-      
-      searchColumns: ["listing-project","listing-website","listing-format","listing-engines","listing-language","listing-freeze","listing-title-block-banner","listing-date-format","listing-image","listing-filters","listing-title","listing-description","listing-author","listing-date","listing-categories","listing-package","listing-image-alt","listing-hero","listing-hero-alt","listing-preview","listing-preview-alt","listing-path","listing-outputHref","listing-date-modified","listing-filename","listing-file-modified","listing-reading-time","listing-word-count","listing-preview-caption"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-post-list'] = new List('listing-post-list', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="Tanmay Chanda" href="index.xml" data-external="1"><meta property="og:title" content="Posts – Tanmay Chanda">
-<meta property="og:description" content="Notes on R, Shiny, and building things that other people use.">
-<meta property="og:image" content="https://tenmeh.github.io/cover.png">
+<link rel="stylesheet" href="../../styles.css">
+<meta property="og:title" content="rewind 0.3.0: show what changed – Tanmay Chanda">
+<meta property="og:description" content="rewind 0.3.0 is on CRAN. It adds value comparisons to the history, fixes a rail that scrolled the page, and makes undo work when enabled inside a module.">
+<meta property="og:image" content="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/cover.png">
 <meta property="og:site_name" content="Tanmay Chanda">
 <meta property="og:image:height" content="630">
 <meta property="og:image:width" content="1200">
-<meta property="og:image:alt" content="Tanmay Chanda. Notes on R, Shiny, and building things that other people use.">
-<meta name="twitter:title" content="Posts – Tanmay Chanda">
-<meta name="twitter:description" content="Notes on R, Shiny, and building things that other people use.">
-<meta name="twitter:image" content="https://tenmeh.github.io/cover.png">
+<meta property="og:image:alt" content="Cover card with the post title, the date and the rewind hex logo.">
+<meta name="twitter:title" content="rewind 0.3.0: show what changed – Tanmay Chanda">
+<meta name="twitter:description" content="rewind 0.3.0 is on CRAN. It adds value comparisons to the history, fixes a rail that scrolled the page, and makes undo work when enabled inside a module.">
+<meta name="twitter:image" content="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/cover.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image-height" content="630">
 <meta name="twitter:image-width" content="1200">
-<meta name="twitter:image:alt" content="Tanmay Chanda. Notes on R, Shiny, and building things that other people use.">
+<meta name="twitter:image:alt" content="Cover card with the post title, the date and the rewind hex logo.">
 </head>
 
-<body class="nav-fixed home quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
     const toggleBodyColorMode = (bsSheetEl) => {
       const mode = bsSheetEl.getAttribute("data-mode");
       const bodyEl = window.document.querySelector("body");
@@ -334,11 +312,11 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
     <img src="https://avatars.githubusercontent.com/u/81738153?v=4&amp;s=96" alt="Tanmay Chanda" class="navbar-logo light-content">
     <img src="https://avatars.githubusercontent.com/u/81738153?v=4&amp;s=96" alt="Tanmay Chanda" class="navbar-logo dark-content">
     </a>
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Tanmay Chanda</span>
     </a>
   </div>
@@ -349,11 +327,11 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Posts</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -364,7 +342,7 @@ window.Quarto = {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img" aria-label="RSS feed">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img" aria-label="RSS feed">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -377,24 +355,58 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">In this post</h2>
+   
+  <ul class="collapse">
+  <li><a href="#what-changed-not-only-which-input" id="toc-what-changed-not-only-which-input" class="nav-link active" data-scroll-target="#what-changed-not-only-which-input">What changed, not only which input</a></li>
+  <li><a href="#the-rail-that-scrolled-the-page" id="toc-the-rail-that-scrolled-the-page" class="nav-link" data-scroll-target="#the-rail-that-scrolled-the-page">The rail that scrolled the page</a></li>
+  <li><a href="#the-module-that-looked-half-alive" id="toc-the-module-that-looked-half-alive" class="nav-link" data-scroll-target="#the-module-that-looked-half-alive">The module that looked half alive</a></li>
+  <li><a href="#the-smaller-things" id="toc-the-smaller-things" class="nav-link" data-scroll-target="#the-smaller-things">The smaller things</a></li>
+  <li><a href="#try-it" id="toc-try-it" class="nav-link" data-scroll-target="#try-it">Try it</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
 
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Posts</h1>
+<h1 class="title">rewind 0.3.0: show what changed</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">Shiny</div>
+    <div class="quarto-category">packages</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    <p>rewind 0.3.0 is on CRAN. It adds value comparisons to the history, fixes a rail that scrolled the page, and makes undo work when enabled inside a module.</p>
+  </div>
 </div>
 
 
+<div class="quarto-title-meta">
 
-<div class="quarto-title-meta column-page">
-
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Tanmay Chanda </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2 October 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -404,125 +416,128 @@ window.Quarto = {
 </header>
 
 
-<section id="notes-on-r-shiny-and-building-things-that-other-people-use." class="level1 intro">
-<h1>Notes on R, Shiny, and building things that other people use.</h1>
-<p>The problems that were harder than they looked, and the reasons behind a decision rather than only the decision.</p>
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/hero.svg" alt="The rewind hex sways and spins above a ground shadow, with a soft halo behind it. On the left, a select box shows North, followed by -> and South. On the right, one row of a two-row table of bars lights up. Dots and pluses move around the hex, beside dotted paths." width="800" height="320" class="figure-img"></figure>
+<p><strong>rewind 0.3.0 is on CRAN.</strong> I released it on 25 September. If you update from 0.2.0, you also get the changes in 0.2.1, which I released on GitHub only.</p>
+<p><a href="../../posts/2026-08-27-undo-for-shiny/index.html">My first post</a> was about adding undo to Shiny, and the problems behind it. This release makes the history more useful to read. It also fixes two bugs where the history worked, but the app around it did not.</p>
+<section id="what-changed-not-only-which-input" class="level2">
+<h2 class="anchored" data-anchor-id="what-changed-not-only-which-input">What changed, not only which input</h2>
+<p>The new <code>rewind_diff()</code> tells you what a step changed. A history label such as <code>"region, year"</code> tells you which inputs changed. It does not tell you what they held before, or what they hold now.</p>
+<p>I wanted an app to be able to say <code>"North -&gt; South"</code>.</p>
+<figure class="post-preview figure">
+<video src="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/preview.mp4" poster="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/preview.jpg" aria-label="A recreated Shiny app with Undo and Redo buttons. Region changes from North to South, then the year slider moves from 2024 to 2020. A table below shows from, to, name, change, old and new. Undo restores 2024 and removes the year row from the comparison with the first step." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
+<figcaption>A browser recreation. The table compares the first step with the current step using rewind_diff(from = 1).</figcaption>
+</figure>
+<script>
+(function () {
+  var video = document.currentScript.previousElementSibling.querySelector("video");
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  video.controls = false;
+  var started = video.play();
+  if (started && started.catch) started.catch(function () { video.controls = true; });
+})();
+</script>
+<p>Inside a server with <code>rewind_enable()</code> already called, this compares two positions in the history:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rewind_diff</span>(<span class="at">from =</span> <span class="dv">1</span>, <span class="at">to =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Suppose position 1 holds region North and year 2024. At position 3, they hold South and 2020. The result has these six columns, in this order:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: right;">from</th>
+<th style="text-align: right;">to</th>
+<th style="text-align: left;">name</th>
+<th style="text-align: left;">change</th>
+<th style="text-align: left;">old</th>
+<th style="text-align: left;">new</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">region</td>
+<td style="text-align: left;">North -&gt; South</td>
+<td style="text-align: left;">North</td>
+<td style="text-align: left;">South</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">year</td>
+<td style="text-align: left;">2024 -&gt; 2020</td>
+<td style="text-align: left;">2024</td>
+<td style="text-align: left;">2020</td>
+</tr>
+</tbody>
+</table>
+<p>This table shows the contents of each cell. <code>old</code> and <code>new</code> are list columns, not text columns. The rows are sorted by <code>name</code>, and <code>name</code> holds the input ID, not the label beside the widget.</p>
+<p>That choice matters. An input can hold a date range or a multiple selection. A tracked value can hold a whole data frame. Turning every value into text would lose its type and shape. A list column keeps the value itself. <code>change</code> gives a short description for a person to read.</p>
+<p>Without arguments, <code>rewind_diff()</code> compares the current position with the one before it. At the first step, it returns no rows. It depends on the history, so an output can follow it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>output<span class="sc">$</span>changed <span class="ot">&lt;-</span> <span class="fu">renderTable</span>({</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rewind_diff</span>()[, <span class="fu">c</span>(<span class="st">"name"</span>, <span class="st">"change"</span>)]</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The video uses <code>rewind_diff(from = 1)</code> instead. Its table grows as inputs move away from the first step. Undo puts the year back, so that row goes away. The table is a comparison of states, not a record of every action.</p>
+<section id="this-is-not-an-audit-trail" class="level3">
+<h3 class="anchored" data-anchor-id="this-is-not-an-audit-trail">This is not an audit trail</h3>
+<p>I put this limit in the documents on purpose. The history lives in the memory of one session. When the session ends, it goes too. Once it passes <code>depth</code>, it drops the oldest entries. A new change after an undo drops the steps in front of the current position.</p>
+<p>Those are useful rules for undo. They are poor rules for a record that someone may need to inspect later.</p>
+<p>If you need that record, write it as each change occurs and keep it somewhere else. Do not wait until the session ends and try to recover it from the undo history.</p>
 </section>
-<div class="home-cols">
-<section id="posts" class="level2 sec home-posts">
-<h2 class="sec anchored" data-anchor-id="posts">Posts</h2>
-<div id="listing-post-list" class="quarto-listing quarto-listing-container-custom">
-
-<div class="kiln-list">
-
-<article class="entry" data-index="0" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1790899200000" data-listing-file-modified-sort="1790957763972" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1027">
-  <a class="stamp" href="./posts/2026-10-02-rewind-0-3-0/index.html" aria-hidden="true" tabindex="-1">
-    <b>2</b>
-    <span>Oct</span>
-    <span>2026</span>
-    
-    <img class="stamp-hero" src="posts/2026-10-02-rewind-0-3-0/hero.svg" alt="" width="800" height="320" loading="lazy">
-    
-  </a>
-  <div class="entry-body">
-    <h3 class="listing-title anchored"><a href="./posts/2026-10-02-rewind-0-3-0/index.html">rewind 0.3.0: show what changed</a></h3>
-    
-    <p class="listing-description">rewind 0.3.0 is on CRAN. It adds value comparisons to the history, fixes a rail that scrolled the page, and makes undo work when enabled inside a module.
-</p>
-    
-    
-    <div class="pills">
-      
-      <span class="pill">R</span>
-      
-      <span class="pill">Shiny</span>
-      
-      <span class="pill">packages</span>
-      
-    </div>
-    
-  </div>
-</article>
-
-<article class="entry" data-index="1" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1790553600000" data-listing-file-modified-sort="1790957763972" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1337">
-  <a class="stamp" href="./posts/2026-09-28-how-bones-began/index.html" aria-hidden="true" tabindex="-1">
-    <b>28</b>
-    <span>Sep</span>
-    <span>2026</span>
-    
-    <img class="stamp-hero" src="posts/2026-09-28-how-bones-began/hero.svg" alt="" width="800" height="320" loading="lazy">
-    
-  </a>
-  <div class="entry-body">
-    <h3 class="listing-title anchored"><a href="./posts/2026-09-28-how-bones-began/index.html">A spinner says wait. A skeleton says what is coming.</a></h3>
-    
-    <p class="listing-description">A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.
-</p>
-    
-    
-    <div class="pills">
-      
-      <span class="pill">R</span>
-      
-      <span class="pill">Shiny</span>
-      
-      <span class="pill">packages</span>
-      
-    </div>
-    
-  </div>
-</article>
-
-<article class="entry" data-index="2" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1787788800000" data-listing-file-modified-sort="1790957763971" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="967">
-  <a class="stamp" href="./posts/2026-08-27-undo-for-shiny/index.html" aria-hidden="true" tabindex="-1">
-    <b>27</b>
-    <span>Aug</span>
-    <span>2026</span>
-    
-    <img class="stamp-hero" src="posts/2026-08-27-undo-for-shiny/hero.svg" alt="" width="800" height="320" loading="lazy">
-    
-  </a>
-  <div class="entry-body">
-    <h3 class="listing-title anchored"><a href="./posts/2026-08-27-undo-for-shiny/index.html">Undo for Shiny, and the three problems that make it interesting</a></h3>
-    
-    <p class="listing-description">Shiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R's lazy evaluation could produce.
-</p>
-    
-    
-    <div class="pills">
-      
-      <span class="pill">R</span>
-      
-      <span class="pill">Shiny</span>
-      
-      <span class="pill">packages</span>
-      
-    </div>
-    
-  </div>
-</article>
-
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div>
 </section>
-<section id="packages" class="level2 sec home-packages">
-<h2 class="sec anchored" data-anchor-id="packages">Packages</h2>
-<div class="shelf">
-  <a class="pkg" href="https://tenmeh.github.io/rewind/">
-    <img src="https://tenmeh.github.io/rewind/logo.png" alt="rewind hex logo">
-    <span><b>rewind<em>on CRAN</em></b>Undo and redo for Shiny applications.</span>
-  </a>
-  <a class="pkg" href="https://tenmeh.github.io/bones/">
-    <img src="https://tenmeh.github.io/bones/logo.png" alt="bones hex logo">
-    <span><b>bones<em>on GitHub</em></b>Content-shaped loading placeholders for Shiny outputs.</span>
-  </a>
-</div>
+<section id="the-rail-that-scrolled-the-page" class="level2">
+<h2 class="anchored" data-anchor-id="the-rail-that-scrolled-the-page">The rail that scrolled the page</h2>
+<p>The history rail now scrolls only itself. Before this fix, an app with <code>rewind_ui()</code> in a sidebar could seem to scroll by itself each time the history changed.</p>
+<p>I used this to keep the current step in view:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>current<span class="op">.</span><span class="fu">scrollIntoView</span>({ <span class="dt">block</span><span class="op">:</span> <span class="st">"nearest"</span> })<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The name sounds like the right tool. But <code>scrollIntoView()</code> scrolls every scrollable ancestor, not only the nearest one. <code>block: "nearest"</code> limits how far each ancestor moves. It does not stop the sidebar or page moving.</p>
+<p>The fix measures the step against the rail and sets the rail’s own <code>scrollTop</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> top <span class="op">=</span> current<span class="op">.</span><span class="fu">getBoundingClientRect</span>()<span class="op">.</span><span class="at">top</span> <span class="op">-</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  rail<span class="op">.</span><span class="fu">getBoundingClientRect</span>()<span class="op">.</span><span class="at">top</span> <span class="op">+</span> rail<span class="op">.</span><span class="at">scrollTop</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> bottom <span class="op">=</span> top <span class="op">+</span> current<span class="op">.</span><span class="at">offsetHeight</span><span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (top <span class="op">&lt;</span> rail<span class="op">.</span><span class="at">scrollTop</span>) {</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  rail<span class="op">.</span><span class="at">scrollTop</span> <span class="op">=</span> top<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (bottom <span class="op">&gt;</span> rail<span class="op">.</span><span class="at">scrollTop</span> <span class="op">+</span> rail<span class="op">.</span><span class="at">clientHeight</span>) {</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  rail<span class="op">.</span><span class="at">scrollTop</span> <span class="op">=</span> bottom <span class="op">-</span> rail<span class="op">.</span><span class="at">clientHeight</span><span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The general lesson: when a control owns a small scrolling area, move that area directly. A browser method that promises to bring something into view may move more of the page than you expect.</p>
 </section>
-</div>
+<section id="the-module-that-looked-half-alive" class="level2">
+<h2 class="anchored" data-anchor-id="the-module-that-looked-half-alive">The module that looked half alive</h2>
+<p>Undo now works when <code>rewind_enable()</code> is called inside <code>moduleServer()</code>. Before the fix, capture worked and the rail filled up. But no button, shortcut or rail click reached that history.</p>
+<p>The browser sends three global input IDs: <code>rewind_undo</code>, <code>rewind_redo</code> and <code>rewind_jump</code>. Inside a module, I watched those names through the module’s session. Shiny looked for the namespaced IDs instead. The sender and the observer were talking about different inputs.</p>
+<p>The fix reads those controls from the root session. For undo, it is:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>root <span class="ot">&lt;-</span> session<span class="sc">$</span><span class="fu">rootScope</span>()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>obs_undo <span class="ot">&lt;-</span> shiny<span class="sc">::</span><span class="fu">observeEvent</span>(root<span class="sc">$</span>input<span class="sc">$</span>rewind_undo, ctrl<span class="sc">$</span><span class="fu">undo</span>(),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                               <span class="at">ignoreInit =</span> <span class="cn">TRUE</span>, <span class="at">domain =</span> session)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Capture still uses the module session. The controls come from the root.</p>
+<p>I find this bug useful to remember because the working half hid the broken half. A growing history looked like proof that the setup was right. When JavaScript sends an input ID, check that the R observer reads that exact ID, especially inside a module.</p>
+</section>
+<section id="the-smaller-things" class="level2">
+<h2 class="anchored" data-anchor-id="the-smaller-things">The smaller things</h2>
+<p>A few more changes come with this update:</p>
+<ul>
+<li>The rail shows times in the viewer’s own time zone, instead of UTC. The <code>time</code> column of <code>rewind_history()</code> is unchanged.</li>
+<li><code>coalesce_ms</code>, <code>restore_timeout</code> and <code>hold_ms</code> now refuse <code>NA</code>, <code>NaN</code> and <code>Inf</code>, with a message that names the argument. Before this, <code>Inf</code> in <code>coalesce_ms</code> silently stopped all recording.</li>
+<li><code>rewind_diff()</code> refuses a position such as <code>2.7</code>. It used to truncate it to <code>2</code>. The message for <code>from</code> is “<code>from</code> must be a single whole number.”</li>
+<li>From 0.2.1, <code>rewind_enable()</code> has <code>restore_timeout</code>, in seconds. It sets how long capture waits for the browser to finish a restore. The default is still 2 seconds.</li>
+<li><code>rewind_buttons()</code> has <code>button_class</code> for classes on the buttons. Its <code>class</code> argument still applies to the container. The arrows are now SVG, so their shape does not depend on the browser’s font.</li>
+<li>The redo tooltip says “Redo (Ctrl+Shift+Z or Ctrl+Y)”. <code>Ctrl+Y</code> already worked; the button now says so.</li>
+<li>The <code>fileInput()</code> check tests column types as well as names. A user data frame with the same four names but different types stays in the history. The names are <code>name</code>, <code>size</code>, <code>type</code> and <code>datapath</code>. A frame that matches both the names and the types is still treated as a file input value.</li>
+</ul>
+</section>
+<section id="try-it" class="level2">
+<h2 class="anchored" data-anchor-id="try-it">Try it</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"rewind"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Documentation: <a href="https://tenmeh.github.io/rewind/" class="uri">https://tenmeh.github.io/rewind/</a></li>
+<li>Changelog: <a href="https://tenmeh.github.io/rewind/news/index.html" class="uri">https://tenmeh.github.io/rewind/news/index.html</a></li>
+<li>Source: <a href="https://github.com/tenmeh/rewind" class="uri">https://github.com/tenmeh/rewind</a></li>
+</ul>
+<p>I would especially like to hear how you use the comparisons. Undo can put a value back. Now an app can also tell the user what that step means.</p>
 
 
-
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
