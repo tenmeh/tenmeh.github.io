@@ -1,0 +1,100 @@
+<!-- The scene of the bones hero (posts/2026-09-28-how-bones-began/hero.svg),
+     laid out again on the 1200x630 card. The style block, the gradient, the
+     shapes and the delays are copied from the hero as they are. Only the
+     groups that hold them have new places (translate and scale), so the
+     doodles stand around the hex and not in a row, and a few of them reach
+     into the gap beside the text. Each group keeps the local coordinates of
+     the hero, so a clip-path and a band still line up. -->
+<style>
+svg{display:block}
+.sway,.spin,.bone,.fx,.fy,.fp,.tw,.fl,.wob,.shadow,.band{transform-box:view-box;transform-origin:0 0}
+.sway{animation:sway 5.6s ease-in-out infinite}
+.shadow{transform-box:fill-box;transform-origin:center;opacity:.14;animation:shadow 5.6s ease-in-out infinite}
+.bone{transform-origin:50px 38px;animation:bounce 5.6s infinite}
+.band{animation:2.8s cubic-bezier(.45,.05,.55,.95) infinite}
+.bandL{animation-name:sweepL}.bandH{animation-name:sweepH}.bandR{animation-name:sweepR}
+.fx,.fy,.fp{transform-box:fill-box;animation:5.6s infinite both}
+.fx{transform-origin:0 50%;animation-name:fx}
+.fy{transform-origin:50% 100%;animation-name:fy}
+.fp{transform-origin:50% 50%;animation-name:fp}
+.tw{transform-box:fill-box;transform-origin:center;animation:tw 2.8s ease-in-out infinite}
+.fl{animation:fl 2.8s ease-in-out infinite}
+.wob{animation:wob 2.8s ease-in-out infinite}
+@keyframes sway{0%{transform:translateY(0) rotate(-4deg)}25%{transform:translateY(-8px) rotate(0deg)}50%{transform:translateY(0) rotate(4deg)}75%{transform:translateY(-8px) rotate(0deg)}100%{transform:translateY(0) rotate(-4deg)}}
+@keyframes shadow{0%,50%,100%{transform:scaleX(1);opacity:.14}25%,75%{transform:scaleX(.86);opacity:.09}}
+@keyframes bounce{
+0%,17%{transform:translateY(0) rotate(0) scale(1,1)}
+19.5%{transform:translateY(0) rotate(0) scale(1.12,.86);animation-timing-function:cubic-bezier(.2,.7,.3,1)}
+22.5%{transform:translateY(-6px) rotate(-7deg) scale(.94,1.1);animation-timing-function:cubic-bezier(.6,0,.9,.5)}
+25.5%{transform:translateY(0) rotate(6deg) scale(1.1,.9)}
+28%{transform:translateY(0) rotate(-3deg) scale(.98,1.03)}
+30.5%,64%{transform:translateY(0) rotate(0) scale(1,1)}
+67%{transform:translateY(0) rotate(-6deg) scale(1,1)}
+70%{transform:translateY(0) rotate(6deg) scale(1,1)}
+72.5%{transform:translateY(0) rotate(-3deg) scale(1,1)}
+75%,100%{transform:translateY(0) rotate(0) scale(1,1)}}
+@keyframes fx{0%,20%{transform:scaleX(0);opacity:1;animation-timing-function:cubic-bezier(.3,.7,.3,1)}32%,82%{transform:scaleX(1);opacity:1}90%{transform:scaleX(1);opacity:0}90.1%,100%{transform:scaleX(0);opacity:0}}
+@keyframes fy{0%,20%{transform:scaleY(0);opacity:1;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}34%,82%{transform:scaleY(1);opacity:1}90%{transform:scaleY(1);opacity:0}90.1%,100%{transform:scaleY(0);opacity:0}}
+@keyframes fp{0%,20%{transform:scale(0);opacity:1;animation-timing-function:cubic-bezier(.34,1.56,.64,1)}30%,82%{transform:scale(1);opacity:1}90%{transform:scale(1);opacity:0}90.1%,100%{transform:scale(0);opacity:0}}
+@keyframes wob{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(10deg)}}
+@keyframes sweepL{0%,0%{transform:translateX(-150px)}36%,100%{transform:translateX(90px)}}
+@keyframes sweepH{0%,20%{transform:translateX(-42px)}56%,100%{transform:translateX(36px)}}
+@keyframes sweepR{0%,40%{transform:translateX(-140px)}76%,100%{transform:translateX(120px)}}
+@keyframes tw{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none !important}}</style>
+<defs>
+<linearGradient id="band"><stop offset="0" stop-color="#237A80" stop-opacity="0"/><stop offset=".5" stop-color="#237A80"/><stop offset="1" stop-color="#237A80" stop-opacity="0"/></linearGradient>
+<clipPath id="cH"><rect x="21" y="58" width="58" height="6" rx="3"/><rect x="21" y="68" width="38" height="6" rx="3"/></clipPath>
+<clipPath id="cA"><circle cx="60" cy="92" r="16"/><rect x="88" y="84" width="120" height="10" rx="5"/><rect x="88" y="102" width="76" height="10" rx="5"/></clipPath>
+<clipPath id="cB"><rect x="52" y="228" width="26" height="34" rx="5"/><rect x="88" y="206" width="26" height="56" rx="5"/><rect x="124" y="220" width="26" height="42" rx="5"/><rect x="160" y="192" width="26" height="70" rx="5"/></clipPath>
+<clipPath id="cR"><rect x="588" y="84" width="112" height="10" rx="5"/><rect x="588" y="104" width="150" height="10" rx="5"/><rect x="588" y="124" width="84" height="10" rx="5"/></clipPath>
+</defs>
+
+<circle cx="905" cy="302" r="178" fill="#D8E8E3"/>
+
+<!-- The doodles, in the order of the hero. -->
+<g transform="translate(602 338) scale(.7) translate(-44 -152)"><path d="M44 152q20-18 40 0t40 0t40 0t40 0" fill="none" stroke="#CFC5B1" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 10"/></g>
+
+<g transform="translate(626 84) scale(1.15) translate(-44 -76)">
+<g fill="#B9B2A3" opacity=".7"><circle cx="60" cy="92" r="16"/><rect x="88" y="84" width="120" height="10" rx="5"/><rect x="88" y="102" width="76" height="10" rx="5"/></g>
+<g clip-path="url(#cA)"><rect class="band bandL" x="120" y="60" width="50" height="60" fill="url(#band)"/></g>
+<circle class="fp" style="animation-delay:calc(0s - 5.6s)" cx="60" cy="92" r="16" fill="#17202A"/>
+<rect class="fx" style="animation-delay:calc(0.06s - 5.6s)" x="88" y="84" width="120" height="10" rx="5" fill="#17202A"/><rect class="fx" style="animation-delay:calc(0.18s - 5.6s)" x="88" y="102" width="76" height="10" rx="5" fill="#17202A"/>
+</g>
+
+<g transform="translate(640 516) scale(1.15) translate(-52 -192)">
+<g fill="#B9B2A3" opacity=".7"><rect x="52" y="228" width="26" height="34" rx="5"/><rect x="88" y="206" width="26" height="56" rx="5"/><rect x="124" y="220" width="26" height="42" rx="5"/><rect x="160" y="192" width="26" height="70" rx="5"/></g>
+<g clip-path="url(#cB)"><rect class="band bandL" x="120" y="180" width="50" height="90" fill="url(#band)"/></g>
+<rect class="fy" style="animation-delay:calc(0.42s - 5.6s)" x="52" y="228" width="26" height="34" rx="5" fill="#237A80"/><rect class="fy" style="animation-delay:calc(0.52s - 5.6s)" x="88" y="206" width="26" height="56" rx="5" fill="#237A80"/><rect class="fy" style="animation-delay:calc(0.62s - 5.6s)" x="124" y="220" width="26" height="42" rx="5" fill="#237A80"/><rect class="fy" style="animation-delay:calc(0.72s - 5.6s)" x="160" y="192" width="26" height="70" rx="5" fill="#237A80"/>
+<path d="M40 270H214" fill="none" stroke="#CFC5B1" stroke-width="4" stroke-linecap="round" stroke-dasharray="10 9"/>
+</g>
+
+<g transform="translate(978 34) scale(1) translate(-566 -60)">
+<rect x="566" y="60" width="200" height="100" rx="16" fill="none" stroke="#CFC5B1" stroke-width="4" stroke-dasharray="10 9"/>
+<g fill="#B9B2A3" opacity=".7"><rect x="588" y="84" width="112" height="10" rx="5"/><rect x="588" y="104" width="150" height="10" rx="5"/><rect x="588" y="124" width="84" height="10" rx="5"/></g>
+<g clip-path="url(#cR)"><rect class="band bandR" x="640" y="60" width="50" height="100" fill="url(#band)"/></g>
+<rect class="fx" style="animation-delay:calc(0.1s - 5.6s)" x="588" y="84" width="112" height="10" rx="5" fill="#17202A"/><rect class="fx" style="animation-delay:calc(0.22s - 5.6s)" x="588" y="104" width="150" height="10" rx="5" fill="#17202A"/><rect class="fx" style="animation-delay:calc(0.34s - 5.6s)" x="588" y="124" width="84" height="10" rx="5" fill="#17202A"/>
+<circle class="fp" style="animation-delay:calc(0.9s - 5.6s)" cx="742" cy="84" r="9" fill="#9E2A2B"/>
+</g>
+
+<g transform="translate(1000 530) scale(1.05) translate(-578 -212)">
+<g fill="none" stroke="#555B66" stroke-width="3"><circle cx="590" cy="212" r="10" stroke-dasharray="4 4"/><circle cx="624" cy="212" r="10" stroke-dasharray="4 4"/><circle cx="658" cy="212" r="10" stroke-dasharray="4 4"/><circle cx="692" cy="212" r="10" stroke-dasharray="0" stroke="#9E2A2B"/></g>
+<circle class="fp" style="animation-delay:calc(0.3s - 5.6s)" cx="590" cy="212" r="12" fill="#17202A"/><circle class="fp" style="animation-delay:calc(0.42s - 5.6s)" cx="624" cy="212" r="12" fill="#17202A"/><circle class="fp" style="animation-delay:calc(0.54s - 5.6s)" cx="658" cy="212" r="12" fill="#17202A"/><circle class="fp" style="animation-delay:calc(0.66s - 5.6s)" cx="692" cy="212" r="12" fill="#9E2A2B"/>
+</g>
+
+<g transform="translate(1124 404) rotate(-18) scale(1.2)"><g class="wob" fill="#CFC5B1"><rect x="-16" y="-4" width="32" height="8"/><circle cx="-17" cy="-5" r="6"/><circle cx="-17" cy="5" r="6"/><circle cx="17" cy="-5" r="6"/><circle cx="17" cy="5" r="6"/></g></g>
+
+<g transform="translate(724 238)"><g class="tw" style="animation-delay:0s;stroke:#9E2A2B" fill="none" stroke-width="4" stroke-linecap="round"><path d="M-7 0H7M0 -7V7"/></g></g><g transform="translate(955 40)"><g class="tw" style="animation-delay:-1.4s;stroke:#237A80" fill="none" stroke-width="4" stroke-linecap="round"><path d="M-8.4 0H8.4M0 -8.4V8.4"/></g></g><g transform="translate(598 452)"><g class="tw" style="animation-delay:-0.7s;stroke:#237A80" fill="none" stroke-width="4" stroke-linecap="round"><path d="M-7 0H7M0 -7V7"/></g></g><g transform="translate(1150 250)"><g class="tw" style="animation-delay:-2.1s;stroke:#9E2A2B" fill="none" stroke-width="4" stroke-linecap="round"><path d="M-7 0H7M0 -7V7"/></g></g>
+<g transform="translate(716 420)"><circle class="fl" style="animation-delay:0s" r="6" fill="#237A80"/></g><g transform="translate(886 584)"><circle class="fl" style="animation-delay:-1.4s" r="5" fill="#17202A"/></g><g transform="translate(590 206)"><circle class="fl" style="animation-delay:-0.7s" r="5" fill="#9E2A2B"/></g><g transform="translate(1160 160)"><circle class="fl" style="animation-delay:-2s" r="6" fill="#237A80"/></g>
+
+<ellipse class="shadow" cx="905" cy="492" rx="115" ry="8" fill="#17202A"/>
+<g transform="translate(905 302) scale(1.25)"><g class="sway"><g transform="scale(2.4) translate(-50 -58)">
+<path d="M50 2 L98 30 L98 86 L50 114 L2 86 L2 30 Z" fill="#F4EFE4"/>
+<path d="M50 2 L98 30 L98 86 L50 114 L2 86 L2 30 Z" fill="none" stroke="#17202A" stroke-width="3" stroke-linejoin="round"/>
+<g transform="translate(50 58) scale(1.15) translate(-50 -49.75)">
+<g class="bone" fill="#17202A"><rect x="31" y="32" width="38" height="12" rx="3"/><circle cx="30" cy="32.5" r="7"/><circle cx="30" cy="43.5" r="7"/><circle cx="70" cy="32.5" r="7"/><circle cx="70" cy="43.5" r="7"/></g>
+<rect x="21" y="58" width="58" height="6" rx="3" fill="#B9B2A3" opacity=".85"/>
+<rect x="21" y="68" width="38" height="6" rx="3" fill="#B9B2A3" opacity=".7"/>
+<g clip-path="url(#cH)"><rect class="band bandH" x="44.7" y="56" width="17" height="20" fill="url(#band)"/></g>
+</g></g></g></g>

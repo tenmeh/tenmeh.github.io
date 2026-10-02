@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Share card</title>
+<style>
+/* The fonts are the static files of the blog (assets/fonts). Nothing is
+   fetched from a network, so the card is the same on every machine. */
+{{FONT_FACES}}
+
+:root {
+  --paper: #f4efe4;
+  --ink: #17202a;
+  --muted: #555b66;
+  --rule: #cfc5b1;
+  --accent: {{ACCENT}};
+  --soft: {{SOFT}};
+  --light: {{LIGHT}};
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  position: relative;
+  width: 1200px;
+  height: 630px;
+  overflow: hidden;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Recursive Card", system-ui, sans-serif;
+}
+.layer { position: absolute; left: 0; top: 0; width: 1200px; height: 630px; display: block; }
+
+.pills { position: absolute; left: 72px; top: 62px; display: flex; gap: 12px; }
+.pill {
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 21px;
+  background: var(--soft);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 21px;
+  line-height: 42px;
+  white-space: nowrap;
+}
+
+/* The block between the two dashed rules (y 130 and 500), centred. */
+.main {
+  position: absolute;
+  left: 72px;
+  top: 130px;
+  width: 508px;
+  height: 370px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.name {
+  display: inline-block;
+  align-self: flex-start;
+  font-weight: 800;
+  font-size: 150px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+#wave { display: block; margin-top: 4px; overflow: visible; }
+#wavePath { stroke: var(--light); }
+.tagline {
+  margin-top: 20px;
+  font-weight: 400;
+  font-size: 33px;
+  line-height: 1.28;
+  color: var(--muted);
+}
+
+.byline {
+  position: absolute;
+  left: 72px;
+  top: 520px;
+  height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  color: var(--muted);
+}
+.url { font-weight: 600; font-size: 28px; line-height: 38px; }
+.author { font-weight: 400; font-size: 24px; line-height: 34px; }
+</style>
+</head>
+<body>
+
+<svg class="layer" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <!-- The dashed rules of the blog cover, in the column of the text only.
+       The scene on the right has no rules of its own to cross. -->
+  <g stroke="#cfc5b1" stroke-width="3" stroke-dasharray="10 9" stroke-linecap="round">
+    <line x1="72" y1="130" x2="580" y2="130"/>
+    <line x1="72" y1="500" x2="580" y2="500"/>
+  </g>
+</svg>
+
+<svg class="layer" id="scene" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+{{SCENE}}
+</svg>
+
+<div class="pills">{{PILLS}}</div>
+
+<div class="main">
+  <div class="name" id="name">{{NAME}}</div>
+  <svg id="wave" width="10" height="20" aria-hidden="true"><path id="wavePath" d="" fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <div class="tagline">{{TAGLINE}}</div>
+</div>
+
+<div class="byline">
+  <div class="url">{{URL}}</div>
+  <div class="author">{{AUTHOR}}</div>
+</div>
+
+<script>
+// The name is as large as the column lets it be, up to 150px.
+const nameEl = document.getElementById("name");
+let size = 150;
+while (nameEl.getBoundingClientRect().width > 508 && size > 60) {
+  size -= 2;
+  nameEl.style.fontSize = size + "px";
+}
+
+// The wavy underline of the links on the blog: a sine wave under the name.
+const w = Math.ceil(nameEl.getBoundingClientRect().width);
+const amp = 4.6, length = 26, phase = 0.6, mid = 10;
+const pts = [];
+for (let x = 3; x <= w - 3; x += 2) {
+  pts.push(`${x} ${(mid + amp * Math.sin(((x - 3) / length) * Math.PI * 2 + phase)).toFixed(2)}`);
+}
+const wave = document.getElementById("wave");
+wave.setAttribute("width", w);
+wave.setAttribute("viewBox", `0 0 ${w} 20`);
+document.getElementById("wavePath").setAttribute("d", "M" + pts.join(" L"));
+
+// Freeze the animation of the scene at a chosen time (seconds into the
+// 5.6s loop of the hero). The delay of each animation is in its timing.
+window.freeze = (seconds) => {
+  for (const a of document.getAnimations()) {
+    const delay = a.effect.getComputedTiming().delay || 0;
+    a.pause();
+    a.currentTime = delay + seconds * 1000;
+  }
+};
+</script>
+</body>
+</html>
