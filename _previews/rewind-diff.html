@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rewind diff preview scene</title>
+<link rel="stylesheet" href="app.css">
+<style>
+.rewind-buttons{display:inline-flex;gap:.25rem}
+.rewind-buttons .btn{display:inline-flex;align-items:center;gap:.35em}
+.rewind-buttons .btn[disabled]{opacity:.45;cursor:not-allowed}
+.rewind-buttons .rewind-label{font-size:.95em}
+.rewind-buttons .rewind-icon{flex:none}
+.btn{padding:4px 10px;border:1px solid transparent;border-radius:4px;font:inherit;line-height:1.4;cursor:pointer}
+.btn-default{border-color:#ccc;background:#fff;color:#333}
+.app{position:absolute;left:14px;top:14px;width:612px;height:142px;padding:12px;background:#f5f5f5;border:1px solid #e3e3e3;border-radius:4px}
+.heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+h1{margin:0;font-size:16px;font-weight:600}
+.controls{display:flex;gap:24px}.field{width:230px}.field:last-child{width:310px}
+.slider{position:relative;height:42px;padding-top:17px}.line{height:8px;border:1px solid #ccc;background:#ddd;border-radius:8px}
+.bar{position:absolute;left:0;top:17px;height:8px;background:#428bca;border-radius:8px 0 0 8px}
+.handle{position:absolute;top:13px;width:16px;height:16px;margin-left:-8px;border:1px solid #428bca;border-radius:50%;background:#fff}
+.value{position:absolute;top:-3px;transform:translateX(-50%);background:#428bca;color:#fff;border-radius:3px;padding:0 4px;font-size:10px}
+.end{position:absolute;top:29px;color:#777;font-size:9px}.end.right{right:0}
+.diff{position:absolute;left:14px;top:168px;width:612px}
+.diff-title{display:flex;justify-content:space-between;margin-bottom:6px;font-weight:600}
+.diff-title code{font-size:11px;font-weight:400}
+table{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed}
+th,td{padding:7px 8px;text-align:left;border-bottom:1px solid #e3e3e3}th{background:#FBF8F1;font-weight:600}
+th:nth-child(1),th:nth-child(2){width:42px}th:nth-child(3){width:78px}th:nth-child(4){width:220px}
+.empty{color:#777;font-size:11px;padding:8px}
+/* Keep the bottom caption lane clear at every scene time. */
+#status{position:absolute;left:14px;top:290px;height:16px;line-height:16px;white-space:nowrap;color:#555B66;font-size:11px}
+</style>
+</head>
+<body>
+<div id="stage">
+<div class="app">
+  <div class="heading"><h1>Filters</h1><div class="rewind-buttons">
+    <button type="button" class="btn btn-default rewind-undo" disabled title="Undo (Ctrl+Z)" aria-label="Undo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="rewind-icon" aria-hidden="true" focusable="false"><path d="M5.5 3 2.5 6l3 3"/><path d="M2.5 6h7a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span class="rewind-label">Undo</span>
+    </button>
+    <button type="button" class="btn btn-default rewind-redo" disabled title="Redo (Ctrl+Shift+Z or Ctrl+Y)" aria-label="Redo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="rewind-icon" aria-hidden="true" focusable="false"><path d="M10.5 3 13.5 6l-3 3"/><path d="M13.5 6h-7a3.5 3.5 0 0 0 0 7H10"/></svg>
+      <span class="rewind-label">Redo</span>
+    </button>
+  </div></div>
+  <div class="controls">
+    <div class="field"><label>Region</label><div class="sel" id="region"><span id="region-value">North</span><div class="sel-menu" id="menu"><div>North</div><div style="background:#428bca;color:white">South</div></div></div></div>
+    <div class="field"><label>Year</label><div class="slider"><div class="line"></div><div class="bar" id="bar"></div><div class="handle" id="handle"></div><div class="value" id="year"></div><span class="end">2018</span><span class="end right">2026</span></div></div>
+  </div>
+</div>
+<div class="diff"><div class="diff-title"><span>What changed</span><code>rewind_diff(from = 1)</code></div>
+<table aria-label="Comparison with the first step"><thead><tr><th>from</th><th>to</th><th>name</th><th>change</th><th>old</th><th>new</th></tr></thead><tbody id="rows"></tbody></table>
+<div class="empty" id="empty">No values differ.</div></div>
+<div id="status"></div>
+<div id="caption"></div><div id="cursor"></div><div id="ripple"></div>
+</div>
+<script src="scene.js"></script>
+<script>
+// Recreated output, not a live R session. Compare the initial state with the
+// current position. Separate changes settle after the default 400 ms quiet
+// period. Undo changes the comparison, without adding an action-log row.
+window.DURATION = 10000;
+window.POSTER_MS = 6000;
+window.renderAt = function(ms) {
+  ms = clamp(ms, 0, window.DURATION);
+  const regionChanged = ms >= 2000;
+  const regionRecorded = ms >= 2400;
+  const yearRecorded = ms >= 5200 && ms < 7800;
+  const undone = ms >= 7800;
+  const year = undone ? 2024 : Math.round(tween(ms, 3500, 4800, 2024, 2020));
+  const position = yearRecorded ? 3 : regionRecorded ? 2 : 1;
+  const open = ms >= 1400 && ms < 2000;
+  document.getElementById('region-value').textContent = regionChanged ? 'South' : 'North';
+  document.getElementById('menu').style.display = open ? 'block' : 'none';
+  document.getElementById('region').classList.toggle('open', open);
+  const percent = (year - 2018) / 8 * 100;
+  document.getElementById('bar').style.width = percent + '%';
+  document.getElementById('handle').style.left = percent + '%';
+  document.getElementById('year').style.left = percent + '%';
+  document.getElementById('year').textContent = year;
+  document.querySelector('.rewind-undo').disabled = !regionRecorded;
+  document.querySelector('.rewind-redo').disabled = !undone;
+  const rows = [];
+  if (regionRecorded) rows.push(['region', 'North -> South', 'North', 'South']);
+  if (yearRecorded) rows.push(['year', '2024 -> 2020', '2024', '2020']);
+  document.getElementById('rows').innerHTML = rows.map(row =>
+    '<tr><td>1</td><td>' + position + '</td>' + row.map(value => '<td>' + value + '</td>').join('') + '</tr>'
+  ).join('');
+  document.getElementById('empty').style.display = rows.length ? 'none' : 'block';
+  document.getElementById('status').textContent = 'Position ' + position + ' - comparison with the first step';
+  setCaption(ms, [[500,1300,'Start with North, 2024'],[2450,3350,'Region: North -> South'],[5350,7100,'Year: 2024 -> 2020'],[8050,9800,'Undo: year returns to 2024']]);
+  setCursor(ms, [[800,150,91],[1400,150,91],[1900,150,135],[2300,150,135],[3300,578,110],[3500,578,110],[4800,423,110],[6400,423,110],[7500,503,40],[8200,503,40],[9700,503,40]], [1400,2000,7800]);
+};
+window.renderAt(0);
+</script>
+</body>
+</html>

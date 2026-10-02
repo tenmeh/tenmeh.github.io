@@ -28,6 +28,7 @@ const ffmpeg = process.env.FFMPEG || "ffmpeg";
 const scenes = {
   bones: "posts/2026-09-28-how-bones-began",
   rewind: "posts/2026-08-27-undo-for-shiny",
+  "rewind-diff": "posts/2026-10-02-rewind-0-3-0",
 };
 
 async function loadPlaywright() {

@@ -1,0 +1,191 @@
+---
+title: "rewind 0.3.0: show what changed"
+description: >
+  rewind 0.3.0 is on CRAN. It adds value comparisons to the history, fixes a
+  rail that scrolled the page, and makes undo work when enabled inside a module.
+author: "Tanmay Chanda"
+date: "2026-10-02"
+categories: [R, Shiny, packages]
+package: rewind
+image-alt: "Cover card with the post title, the date and the rewind hex logo."
+hero: hero.svg
+hero-alt: "The rewind hex sways and spins above a ground shadow, with a soft halo behind it. On the left, a select box shows North, followed by -> and South. On the right, one row of a two-row table of bars lights up. Dots and pluses move around the hex, beside dotted paths."
+preview: preview.mp4
+preview-alt: >
+  A recreated Shiny app with Undo and Redo buttons. Region changes from North
+  to South, then the year slider moves from 2024 to 2020. A table below shows
+  from, to, name, change, old and new. Undo restores 2024 and removes the year
+  row from the comparison with the first step.
+preview-caption: "A browser recreation. The table compares the first step with the current step using rewind_diff(from = 1)."
+---
+
+**rewind 0.3.0 is on CRAN.** I released it on 25 September. If you update
+from 0.2.0, you also get the changes in 0.2.1, which I released on GitHub
+only.
+
+[My first post](../2026-08-27-undo-for-shiny/index.qmd) was about adding undo
+to Shiny, and the problems behind it. This release makes the history more
+useful to read. It also fixes two bugs where the history worked, but the
+app around it did not.
+
+## What changed, not only which input
+
+The new `rewind_diff()` tells you what a step changed. A history label such
+as `"region, year"` tells you which inputs changed. It does not tell you
+what they held before, or what they hold now.
+
+I wanted an app to be able to say `"North -> South"`.
+
+::: {.demo-video}
+:::
+
+Inside a server with `rewind_enable()` already called, this compares two
+positions in the history:
+
+```r
+rewind_diff(from = 1, to = 3)
+```
+
+Suppose position 1 holds region North and year 2024. At position 3, they
+hold South and 2020. The result has these six columns, in this order:
+
+| from | to | name | change | old | new |
+| ---: | ---: | :--- | :--- | :--- | :--- |
+| 1 | 3 | region | North -> South | North | South |
+| 1 | 3 | year | 2024 -> 2020 | 2024 | 2020 |
+
+This table shows the contents of each cell. `old` and `new` are list
+columns, not text columns. The rows are sorted by `name`, and `name` holds
+the input ID, not the label beside the widget.
+
+That choice matters. An input can hold a date range or a multiple
+selection. A tracked value can hold a whole data frame. Turning every
+value into text would lose its type and shape. A list column keeps the
+value itself. `change` gives a short description for a person to read.
+
+Without arguments, `rewind_diff()` compares the current position with the
+one before it. At the first step, it returns no rows. It depends on the
+history, so an output can follow it:
+
+```r
+output$changed <- renderTable({
+  rewind_diff()[, c("name", "change")]
+})
+```
+
+The video uses `rewind_diff(from = 1)` instead. Its table grows as inputs
+move away from the first step. Undo puts the year back, so that row goes
+away. The table is a comparison of states, not a record of every action.
+
+### This is not an audit trail
+
+I put this limit in the documents on purpose. The history lives in the
+memory of one session. When the session ends, it goes too. Once it passes
+`depth`, it drops the oldest entries. A new change after an undo drops the
+steps in front of the current position.
+
+Those are useful rules for undo. They are poor rules for a record that
+someone may need to inspect later.
+
+If you need that record, write it as each change occurs and keep it
+somewhere else. Do not wait until the session ends and try to recover it
+from the undo history.
+
+## The rail that scrolled the page
+
+The history rail now scrolls only itself. Before this fix, an app with
+`rewind_ui()` in a sidebar could seem to scroll by itself each time the
+history changed.
+
+I used this to keep the current step in view:
+
+```js
+current.scrollIntoView({ block: "nearest" });
+```
+
+The name sounds like the right tool. But `scrollIntoView()` scrolls every
+scrollable ancestor, not only the nearest one. `block: "nearest"` limits
+how far each ancestor moves. It does not stop the sidebar or page moving.
+
+The fix measures the step against the rail and sets the rail's own
+`scrollTop`:
+
+```js
+var top = current.getBoundingClientRect().top -
+  rail.getBoundingClientRect().top + rail.scrollTop;
+var bottom = top + current.offsetHeight;
+
+if (top < rail.scrollTop) {
+  rail.scrollTop = top;
+} else if (bottom > rail.scrollTop + rail.clientHeight) {
+  rail.scrollTop = bottom - rail.clientHeight;
+}
+```
+
+The general lesson: when a control owns a small scrolling area, move that
+area directly. A browser method that promises to bring something into
+view may move more of the page than you expect.
+
+## The module that looked half alive
+
+Undo now works when `rewind_enable()` is called inside `moduleServer()`.
+Before the fix, capture worked and the rail filled up. But no button,
+shortcut or rail click reached that history.
+
+The browser sends three global input IDs: `rewind_undo`, `rewind_redo` and
+`rewind_jump`. Inside a module, I watched those names through the module's
+session. Shiny looked for the namespaced IDs instead. The sender and the
+observer were talking about different inputs.
+
+The fix reads those controls from the root session. For undo, it is:
+
+```r
+root <- session$rootScope()
+
+obs_undo <- shiny::observeEvent(root$input$rewind_undo, ctrl$undo(),
+                               ignoreInit = TRUE, domain = session)
+```
+
+Capture still uses the module session. The controls come from the root.
+
+I find this bug useful to remember because the working half hid the broken
+half. A growing history looked like proof that the setup was right. When
+JavaScript sends an input ID, check that the R observer reads that exact
+ID, especially inside a module.
+
+## The smaller things
+
+A few more changes come with this update:
+
+- The rail shows times in the viewer's own time zone, instead of UTC. The
+  `time` column of `rewind_history()` is unchanged.
+- `coalesce_ms`, `restore_timeout` and `hold_ms` now refuse `NA`, `NaN` and
+  `Inf`, with a message that names the argument. Before this, `Inf` in
+  `coalesce_ms` silently stopped all recording.
+- `rewind_diff()` refuses a position such as `2.7`. It used to truncate it
+  to `2`. The message for `from` is "`from` must be a single whole number."
+- From 0.2.1, `rewind_enable()` has `restore_timeout`, in seconds. It sets
+  how long capture waits for the browser to finish a restore. The default
+  is still 2 seconds.
+- `rewind_buttons()` has `button_class` for classes on the buttons. Its
+  `class` argument still applies to the container. The arrows are now SVG,
+  so their shape does not depend on the browser's font.
+- The redo tooltip says "Redo (Ctrl+Shift+Z or Ctrl+Y)". `Ctrl+Y` already
+  worked; the button now says so.
+- The `fileInput()` check tests column types as well as names. A user data
+  frame with the same four names but different types stays in the history.
+  The names are `name`, `size`, `type` and `datapath`. A frame that matches
+  both the names and the types is still treated as a file input value.
+
+## Try it
+
+```r
+install.packages("rewind")
+```
+
+- Documentation: <https://tenmeh.github.io/rewind/>
+- Changelog: <https://tenmeh.github.io/rewind/news/index.html>
+- Source: <https://github.com/tenmeh/rewind>
+
+I would especially like to hear how you use the comparisons. Undo can put
+a value back. Now an app can also tell the user what that step means.
