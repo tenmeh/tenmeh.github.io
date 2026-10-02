@@ -39,7 +39,9 @@ local function absolute(file)
   local site = config:read("a"):match("site%-url:%s*([^%s#]+)")
   config:close()
   if not site then return file end
-  local folder = quarto.doc.input_file:sub(#root + 2):gsub("[^/]*$", "")
+  -- On Windows the input path has backslashes. Make them slashes first, or
+  -- the pattern below removes the whole path and the folder of the post.
+  local folder = quarto.doc.input_file:sub(#root + 2):gsub("\\", "/"):gsub("[^/]*$", "")
   return site:gsub("/$", "") .. "/" .. folder .. file
 end
 
