@@ -437,6 +437,10 @@ body.home main.content {
   font-style: normal;
   font-weight: 600;
   vertical-align: 0.18em;
+  /* One piece: a long name moves the whole tag to the next line, and does
+     not break it between "on" and "GitHub". */
+  display: inline-block;
+  white-space: nowrap;
 }
 
 /* --- Post: title block ---------------------------------------------------------- */
