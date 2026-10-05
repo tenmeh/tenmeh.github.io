@@ -17,6 +17,9 @@ My R packages:
 - **bones** - content-shaped loading placeholders for Shiny outputs. On
   GitHub. [Documentation](https://tenmeh.github.io/bones/) -
   [source](https://github.com/tenmeh/bones).
+- **unsaved** - track and guard unsaved changes in Shiny applications. On
+  GitHub. [Documentation](https://tenmeh.github.io/unsaved/) -
+  [source](https://github.com/tenmeh/unsaved).
 
 Find me on [GitHub](https://github.com/tenmeh).
 
