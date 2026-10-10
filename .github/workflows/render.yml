@@ -1,0 +1,37 @@
+# Render the site for a pull request, and publish nothing.
+#
+# The publish workflow runs only after a change reaches main. A post that
+# does not render, or a broken filter, was thus found only when the site
+# failed to publish. This workflow renders the same site on each pull
+# request, so the problem is found before the merge. Branch protection on
+# main requires this check to pass.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+name: Render
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: quarto-dev/quarto-actions/setup@v2
+
+      # The same tools as the publish workflow: Quarto runs
+      # scripts/covers.mjs before it renders.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install the cover image tools
+        run: npm ci
+
+      - name: Render
+        uses: quarto-dev/quarto-actions/render@v2
