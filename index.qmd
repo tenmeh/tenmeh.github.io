@@ -50,10 +50,6 @@ decision rather than only the decision.
     <img src="https://tenmeh.github.io/bones/logo.png" alt="bones hex logo">
     <span><b>bones<em>on GitHub</em></b>Content-shaped loading placeholders for Shiny outputs.</span>
   </a>
-  <a class="pkg" href="https://tenmeh.github.io/unsaved/">
-    <img src="https://tenmeh.github.io/unsaved/logo.png" alt="unsaved hex logo">
-    <span><b>unsaved<em>on GitHub</em></b>Track and guard unsaved changes in Shiny applications.</span>
-  </a>
 </div>
 ```
 :::
