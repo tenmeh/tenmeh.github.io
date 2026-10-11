@@ -7,6 +7,15 @@
 
 /* --- Base -------------------------------------------------------------------- */
 
+/* Quarto sets html to the height of the screen. With no background of its
+   own, html would take the body's background and draw it against that one
+   screen, so the gradient would stop in a hard line at the first fold. Its
+   own background keeps the gradient on the body, which is as tall as the
+   page. */
+html {
+  background: var(--k-paper-end);
+}
+
 /* The ground: a glow of Very Peri at the top left and Mocha Mousse at the
    top right, over a shade that deepens down the page. Cards and code keep their
    own solid fill, so text contrast does not change. */
@@ -219,6 +228,7 @@ nav.navbar #quarto-search .aa-DetachedSearchButton:hover {
   margin: 0 auto;
   padding: 1.6rem 1rem;
   border-top: 0;
+  background: transparent; /* the theme's $footer-bg drew a box narrower than the page */
   font-size: 0.85rem;
   color: var(--k-muted);
 }
@@ -259,6 +269,10 @@ nav.navbar #quarto-search .aa-DetachedSearchButton:hover {
   text-transform: none;
 }
 
+:is(.pill, .quarto-category):is([data-cat="r"], [data-cat="shiny"], [data-cat="packages"]) {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 22%, transparent);
+}
+
 :is(.pill, .quarto-category)[data-cat="r"] {
   border-color: transparent;
   background: var(--k-tag-r-bg);
@@ -281,6 +295,7 @@ nav.navbar #quarto-search .aa-DetachedSearchButton:hover {
    "#title-block-header.quarto-title-block.default .quarto-categories", so
    the rules repeat at that strength, and the link takes the tag's colour. */
 #title-block-header.quarto-title-block.default .quarto-categories .quarto-category {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 22%, transparent);
   padding: 0.3rem 0.65rem;
   border-radius: 999px;
   font-size: 0.74rem;
@@ -348,13 +363,11 @@ body.home main.content {
   gap: 3rem;
 }
 
-/* The packages and the feed card stay in view beside a long list. */
-@media (min-width: 992px) {
-  .home-packages {
-    position: sticky;
-    top: 5.5rem;
-    align-self: start;
-  }
+/* The packages column scrolls with the posts. A sticky column drifted out
+   of line with them, so its label seemed to float in the middle of the
+   page. */
+.home-packages {
+  align-self: start;
 }
 
 .list-label {
@@ -589,6 +602,8 @@ body.quarto-dark :is(.lead-hero, .row-hero, .post-hero) img {
 .pkg-install code {
   overflow: hidden;
   padding: 0.45rem 0;
+  border: 0; /* the frame is .pkg-install; inline code would add a second one */
+  border-radius: 0;
   background: none;
   color: var(--k-ink);
   font-size: 0.74rem;
