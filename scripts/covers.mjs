@@ -8,9 +8,12 @@
 // committed. Each cover is made from the front
 // matter of the post, so a new post gets one with no extra work.
 //
-// The small differences between covers (the phase of the wave, the tilt of
-// the logo, the motif) come from a hash of the title. Each post thus has
-// its own card, and the same post has the same card on every build.
+// The cover follows the site: a pale ground with a glow of Very Peri at the
+// top left and Mocha Mousse at the top right, Geist type, and the category
+// tags in their own colours. The small differences between covers (the
+// place of the glows, the tilt of the logo, the motif) come from a hash of
+// the title. Each post thus has its own card, and the same post has the
+// same card on every build.
 
 import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -26,30 +29,45 @@ const M = 72; // the margin on each side
 
 // The light palette of the site (theme-light.scss).
 const C = {
-  paper: "#f4efe4",
-  surface: "#fbf8f1",
-  ink: "#17202a",
-  muted: "#555b66",
-  rule: "#cfc5b1",
-  accent: "#9e2a2b",
-  soft: "#f0ddd4",
+  paper: "#f9fbfd",
+  paperEnd: "#e2e9f4",
+  surface: "#ffffff",
+  ink: "#121b31",
+  muted: "#566176",
+  rule: "#d5dce7",
+  accent: "#5758a8", // Very Peri, deepened for text
+  soft: "#ebebfa",
+  peri: "#6667ab", // Very Peri, Pantone 17-3938
+  mocha: "#a47864", // Mocha Mousse, Pantone 17-1230
 };
 
+// The category tags, in the colours they have on the site.
+const TAGS = {
+  r: { fg: "#4d4f9d", bg: "#ebebfa" },
+  shiny: { fg: "#1d6467", bg: "#e5f5f5" },
+  packages: { fg: "#7e5644", bg: "#f4e8e1" },
+};
+const OTHER_TAG = { fg: C.muted, bg: "#eaeff6" };
+
 // --- Fonts ----------------------------------------------------------------
-// One static file per weight. They share the family "Recursive Sans Linear
-// Static" and differ in font-weight, so the SVG asks for 400, 600 or 800.
+// Geist, the face of the site. One static file per weight. They share the
+// family "Geist" and differ in font-weight, so the SVG asks for a weight.
 
 const fontDir = join(root, "assets", "fonts");
 const fontFiles = {
-  regular: join(fontDir, "RecursiveSansLnrSt-Regular.ttf"),
-  semibold: join(fontDir, "RecursiveSansLnrSt-SemiBold.ttf"),
-  extrabold: join(fontDir, "RecursiveSansLnrSt-ExtraBold.ttf"),
+  regular: join(fontDir, "Geist-Regular.ttf"),
+  semibold: join(fontDir, "Geist-SemiBold.ttf"),
+  bold: join(fontDir, "Geist-Bold.ttf"),
+  extrabold: join(fontDir, "Geist-ExtraBold.ttf"),
 };
-const weights = { regular: 400, semibold: 600, extrabold: 800 };
+const weights = { regular: 400, semibold: 600, bold: 700, extrabold: 800 };
 const fonts = {};
 for (const [key, file] of Object.entries(fontFiles)) {
   const font = opentype.loadSync(file);
-  fonts[key] = { font, family: font.names.preferredFamily.en, weight: weights[key] };
+  // Google's static files keep "Geist" in the typographic family when the
+  // weight is in the plain family name, and in the plain name otherwise.
+  const family = font.names.preferredFamily?.en ?? font.names.fontFamily.en;
+  fonts[key] = { font, family, weight: weights[key] };
 }
 
 const measure = (text, key, size) =>
@@ -147,64 +165,84 @@ function fitTitle(text, key, sizes, maxWidth, maxLines) {
 const text = (str, x, y, key, size, fill, extra = "") =>
   `<text x="${fmt(x)}" y="${fmt(y)}" font-family="${fonts[key].family}" font-weight="${fonts[key].weight}" font-size="${size}" fill="${fill}" ${extra}>${esc(str)}</text>`;
 
-const dashedRule = (y) =>
-  `<line x1="${M}" y1="${y}" x2="${W - M}" y2="${y}" stroke="${C.rule}" stroke-width="3" stroke-dasharray="10 9" stroke-linecap="round"/>`;
+const rule = (y) => `<rect x="${M}" y="${y}" width="${W - M * 2}" height="2" fill="${C.rule}"/>`;
 
+// The ground: the pale paper, a shade that deepens downwards, and the two
+// glows of the site. Their places move a little with the title.
+function ground(rand) {
+  const ax = fmt(range(rand, 0.06, 0.2) * W);
+  const bx = fmt(range(rand, 0.8, 0.94) * W);
+  return [
+    `<defs>`,
+    `<linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">`,
+    `<stop offset="0" stop-color="${C.paper}"/><stop offset="1" stop-color="${C.paperEnd}"/>`,
+    `</linearGradient>`,
+    `<radialGradient id="glowA" gradientUnits="userSpaceOnUse" cx="${ax}" cy="-60" r="760">`,
+    `<stop offset="0" stop-color="${C.peri}" stop-opacity="0.42"/><stop offset="1" stop-color="${C.peri}" stop-opacity="0"/>`,
+    `</radialGradient>`,
+    `<radialGradient id="glowB" gradientUnits="userSpaceOnUse" cx="${bx}" cy="-60" r="620">`,
+    `<stop offset="0" stop-color="${C.mocha}" stop-opacity="0.36"/><stop offset="1" stop-color="${C.mocha}" stop-opacity="0"/>`,
+    `</radialGradient>`,
+    `</defs>`,
+    `<rect width="${W}" height="${H}" fill="url(#shade)"/>`,
+    `<rect width="${W}" height="${H}" fill="url(#glowA)"/>`,
+    `<rect width="${W}" height="${H}" fill="url(#glowB)"/>`,
+  ].join("");
+}
+
+// The category tags, each in its own colour, with the fine outline the site
+// gives them.
 function pills(names, y) {
   let x = M;
   const size = 21;
   const out = [];
   for (const name of names.slice(0, 4)) {
+    const tone = TAGS[String(name).toLowerCase()] ?? OTHER_TAG;
     const w = measure(name, "semibold", size) + 36;
     out.push(
-      `<rect x="${x}" y="${y}" width="${fmt(w)}" height="42" rx="21" fill="${C.soft}"/>`,
-      text(name, x + 18, y + 28.5, "semibold", size, C.accent),
+      `<rect x="${x}" y="${y}" width="${fmt(w)}" height="42" rx="21" fill="${tone.bg}" stroke="${tone.fg}" stroke-opacity="0.22" stroke-width="1.5"/>`,
+      text(name, x + 18, y + 28.5, "semibold", size, tone.fg),
     );
     x += w + 12;
   }
   return out.join("");
 }
 
-// The wavy underline of the links on the site, drawn as a sine wave.
-function wave(x0, x1, y, rand) {
-  const amp = range(rand, 3.6, 5.2);
-  const length = range(rand, 22, 30);
-  const phase = range(rand, 0, Math.PI * 2);
-  const points = [];
-  for (let x = x0; x <= x1; x += 2) {
-    const yy = y + amp * Math.sin(((x - x0) / length) * Math.PI * 2 + phase);
-    points.push(`${fmt(x)} ${fmt(yy)}`);
-  }
-  return `<path d="M${points.join(" L")}" fill="none" stroke="${C.accent}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;
-}
+// A short bar of the accent under the title, in place of an underline.
+const accentBar = (x, y) =>
+  `<rect x="${fmt(x)}" y="${fmt(y)}" width="88" height="6" rx="3" fill="${C.accent}"/>`;
 
-// The date stamp of the post list: the day in red, the month and year
-// under it, in a rounded box.
-function stamp(parts, x, y) {
-  const [day, month, year] = parts;
-  const w = 116;
-  const h = 92;
+// The author's photo, as on the posts: the round GitHub avatar in
+// assets/avatar.jpg. If the file is missing, a disc with the initials.
+function avatar(cx, cy, r) {
+  const file = join(root, "assets", "avatar.jpg");
+  if (!existsSync(file)) {
+    return [
+      `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${C.soft}" stroke="${C.rule}" stroke-width="2"/>`,
+      text("TC", cx, cy + r * 0.36, "semibold", r, C.accent, 'text-anchor="middle"'),
+    ].join("");
+  }
+  const href = `data:image/jpeg;base64,${readFileSync(file).toString("base64")}`;
   return [
-    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="22" fill="${C.surface}" stroke="${C.rule}" stroke-width="2"/>`,
-    text(day, x + w / 2, y + 47, "extrabold", 42, C.accent, 'text-anchor="middle"'),
-    text(`${month} ${year}`, x + w / 2, y + 76, "regular", 19, C.muted, 'text-anchor="middle"'),
+    `<defs><clipPath id="face"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath></defs>`,
+    `<image x="${cx - r}" y="${cy - r}" width="${r * 2}" height="${r * 2}" href="${href}" clip-path="url(#face)"/>`,
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${C.rule}" stroke-width="2"/>`,
   ].join("");
 }
 
-// A hex logo, turned a little, with the flat shadow of the package shelf
-// on the site: a copy of the logo in the rule colour, moved down.
+// A hex logo, turned a little, with a soft shadow below it.
 let filterCount = 0;
 function logo(name, cx, cy, width, angle) {
   const file = join(root, "assets", "logos", `${name}.png`);
   const href = `data:image/png;base64,${readFileSync(file).toString("base64")}`;
   const height = width * (557 / 480);
   const id = `shadow${filterCount++}`;
-  const drop = width * 0.04;
   return [
-    `<defs><filter id="${id}" x="-10%" y="-10%" width="120%" height="130%">`,
-    `<feFlood flood-color="${C.rule}" result="flat"/>`,
-    `<feComposite in="flat" in2="SourceAlpha" operator="in" result="tint"/>`,
-    `<feOffset in="tint" dx="0" dy="${fmt(drop)}" result="shadow"/>`,
+    `<defs><filter id="${id}" x="-20%" y="-20%" width="140%" height="150%">`,
+    `<feGaussianBlur in="SourceAlpha" stdDeviation="${fmt(width * 0.035)}"/>`,
+    `<feOffset dx="0" dy="${fmt(width * 0.05)}" result="blur"/>`,
+    `<feFlood flood-color="${C.ink}" flood-opacity="0.18"/>`,
+    `<feComposite in2="blur" operator="in" result="shadow"/>`,
     `<feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>`,
     `</filter></defs>`,
     `<g transform="rotate(${fmt(angle)} ${fmt(cx)} ${fmt(cy)})">`,
@@ -213,11 +251,11 @@ function logo(name, cx, cy, width, angle) {
   ].join("");
 }
 
-// A card of rounded skeleton bars in the rule colour, for a post with no
-// logo. It echoes the placeholders that bones draws.
+// A white card of rounded skeleton bars, for a post with no logo. It echoes
+// the placeholders that bones draws.
 function motif(rand, x, y, w, h) {
   const out = [
-    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="28" fill="${C.surface}" stroke="${C.rule}" stroke-width="2"/>`,
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="24" fill="${C.surface}" stroke="${C.rule}" stroke-width="2"/>`,
   ];
   const pad = 36;
   const ix = x + pad;
@@ -225,7 +263,7 @@ function motif(rand, x, y, w, h) {
   const kind = Math.floor(rand() * 3);
 
   if (kind === 0) {
-    // Columns on an axis. One column takes the soft red, as a highlight.
+    // Columns on an axis. One column takes the accent, as a highlight.
     const n = 6;
     const gap = 16;
     const cw = (iw - gap * (n - 1)) / n;
@@ -235,7 +273,7 @@ function motif(rand, x, y, w, h) {
     for (let i = 0; i < n; i++) {
       const ch = (base - top) * range(rand, 0.34, 1);
       out.push(
-        `<path d="M${fmt(ix + i * (cw + gap))} ${fmt(base)} v${fmt(-(ch - 10))} a10 10 0 0 1 10 -10 h${fmt(cw - 20)} a10 10 0 0 1 10 10 v${fmt(ch - 10)} z" fill="${i === lit ? C.soft : C.rule}"/>`,
+        `<path d="M${fmt(ix + i * (cw + gap))} ${fmt(base)} v${fmt(-(ch - 10))} a10 10 0 0 1 10 -10 h${fmt(cw - 20)} a10 10 0 0 1 10 10 v${fmt(ch - 10)} z" fill="${i === lit ? C.peri : C.rule}"/>`,
       );
     }
     out.push(`<rect x="${ix}" y="${base + 6}" width="${iw}" height="5" rx="2.5" fill="${C.rule}"/>`);
@@ -276,14 +314,14 @@ function coverSvg({ title, subtitle, categories = [], date, author, packages = [
   const rand = rngFrom(title);
   const out = [
     `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`,
-    `<rect width="${W}" height="${H}" fill="${C.paper}"/>`,
+    ground(rand),
   ];
 
-  // Frame: pills, a dashed rule, the title, a dashed rule, the byline.
+  // Frame: the tags, the title block, a rule, then the byline.
   const top = 130;
   const bottom = 500;
   if (categories.length) out.push(pills(categories, 62));
-  out.push(dashedRule(top), dashedRule(bottom));
+  out.push(rule(bottom));
 
   // Right side: the logos of the package, or a card of skeleton bars.
   const textW = 690;
@@ -300,38 +338,37 @@ function coverSvg({ title, subtitle, categories = [], date, author, packages = [
     out.push(motif(rand, 820, top + 34, 308, bottom - top - 68));
   }
 
-  // The title, as large as it can be in three lines.
-  const sizes = [68, 56, 48, 42];
-  const { size, lines } = fitTitle(title, "extrabold", sizes, textW, 3);
-  const lh = Math.round(size * 1.14);
-  const sub = subtitle ? wrap(subtitle, "regular", 30, textW) ?? [subtitle] : [];
-  const subH = sub.length ? 18 + sub.length * 42 : 0;
-  const blockH = lines.length * lh + 26 + subH;
+  // The title, as large as it can be in three lines, then the accent bar.
+  const sizes = [66, 56, 48, 42];
+  const { size, lines } = fitTitle(title, "bold", sizes, textW, 3);
+  const lh = Math.round(size * 1.1);
+  const sub = subtitle ? wrap(subtitle, "regular", 29, textW) ?? [subtitle] : [];
+  const subH = sub.length ? 16 + sub.length * 40 : 0;
+  const blockH = lines.length * lh + 34 + subH;
   const y0 = top + (bottom - top - blockH) / 2;
   lines.forEach((line, i) => {
-    out.push(text(line, M, y0 + size * 0.86 + i * lh, "extrabold", size, C.ink));
+    out.push(text(line, M, y0 + size * 0.86 + i * lh, "bold", size, C.ink));
   });
   const lastBase = y0 + size * 0.86 + (lines.length - 1) * lh;
-  const lastW = measure(lines[lines.length - 1], "extrabold", size);
-  out.push(wave(M, M + Math.min(lastW, textW), lastBase + 20, rand));
+  out.push(accentBar(M, lastBase + 24));
   sub.forEach((line, i) => {
-    out.push(text(line, M, lastBase + 20 + 18 + 30 + i * 42, "regular", 30, C.muted));
+    out.push(text(line, M, lastBase + 30 + 16 + 30 + i * 40, "regular", 29, C.muted));
   });
 
-  // Byline: the date stamp, the author, and the address of the site.
+  // Byline: the photo, the author and the date, and the address of the site.
   const parts = dateParts(date);
-  const midBottom = (bottom + H) / 2;
-  let x = M;
-  if (parts) {
-    out.push(stamp(parts, M, midBottom - 46));
-    x += 116 + 26;
-  }
-  if (author) out.push(text(author, x, midBottom + 10, "semibold", 30, C.ink));
+  const midBottom = (bottom + H) / 2 + 4;
   const url = "tenmeh.github.io";
-  if (author || parts) {
-    out.push(text(url, W - M, midBottom + 9, "regular", 25, C.muted, 'text-anchor="end"'));
+  if (author) {
+    out.push(avatar(M + 28, midBottom, 28));
+    out.push(text(author, M + 72, midBottom + 10, "semibold", 28, C.ink));
+    if (parts) {
+      const x = M + 72 + measure(author, "semibold", 28) + 16;
+      out.push(text(`· ${parts[0]} ${parts[1]} ${parts[2]}`, x, midBottom + 10, "regular", 26, C.muted));
+    }
+    out.push(text(url, W - M, midBottom + 9, "semibold", 24, C.accent, 'text-anchor="end"'));
   } else {
-    out.push(text(url, M, midBottom + 9, "semibold", 28, C.muted));
+    out.push(text(url, M, midBottom + 9, "semibold", 28, C.accent));
   }
 
   out.push("</svg>");

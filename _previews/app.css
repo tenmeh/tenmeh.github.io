@@ -4,19 +4,24 @@
    text is sharp in the 1280x720 video. */
 
 @font-face {
-  font-family: "Recursive Preview";
+  font-family: "Geist Preview";
   font-weight: 400;
-  src: url("../assets/fonts/RecursiveSansLnrSt-Regular.ttf");
+  src: url("../assets/fonts/Geist-Regular.ttf");
 }
 @font-face {
-  font-family: "Recursive Preview";
+  font-family: "Geist Preview";
   font-weight: 600;
-  src: url("../assets/fonts/RecursiveSansLnrSt-SemiBold.ttf");
+  src: url("../assets/fonts/Geist-SemiBold.ttf");
 }
 @font-face {
-  font-family: "Recursive Preview";
+  font-family: "Geist Preview";
+  font-weight: 700;
+  src: url("../assets/fonts/Geist-Bold.ttf");
+}
+@font-face {
+  font-family: "Geist Preview";
   font-weight: 800;
-  src: url("../assets/fonts/RecursiveSansLnrSt-ExtraBold.ttf");
+  src: url("../assets/fonts/Geist-ExtraBold.ttf");
 }
 
 /* The videos are recorded frame by frame from a scene clock, so nothing may
@@ -35,8 +40,11 @@ body {
   margin: 0;
   background: #fff;
   color: #212529;
-  font: 400 12px/1.4 "Recursive Preview", "Helvetica Neue", Arial, sans-serif;
-  font-variation-settings: "CASL" 0, "MONO" 0;
+  font: 400 12px/1.4 "Geist Preview", "Helvetica Neue", Arial, sans-serif;
+  /* Geist joins "->" into an arrow. The scenes show "North -> South" as
+     typed, as the posts do. */
+  font-feature-settings: "calt" 0, "liga" 0;
+  font-variant-ligatures: none;
 }
 
 #stage {
@@ -113,8 +121,8 @@ body {
   z-index: 20;
   padding: 6px 12px;
   border-radius: 999px;
-  background: #f0ddd4;
-  color: #9e2a2b;
+  background: #ebebfa;
+  color: #5758a8;
   font-size: 12px;
   font-weight: 600;
   line-height: 1.2;
@@ -142,7 +150,7 @@ body {
   width: 26px;
   height: 26px;
   margin: -13px 0 0 -13px;
-  border: 2px solid #9e2a2b;
+  border: 2px solid #5758a8;
   border-radius: 50%;
   opacity: 0;
   pointer-events: none;
@@ -164,25 +172,25 @@ body {
   display: inline-block;
   min-width: 26px;
   padding: 5px 9px 4px;
-  border: 1px solid #cfc5b1;
+  border: 1px solid #d5dce7;
   border-bottom-width: 3px;
   border-radius: 7px;
-  background: #fbf8f1;
-  color: #17202a;
-  font: 600 12px/1.2 "Recursive Preview", Arial, sans-serif;
+  background: #ffffff;
+  color: #121b31;
+  font: 600 12px/1.2 "Geist Preview", Arial, sans-serif;
   text-align: center;
 }
 
 #keys kbd.down {
   transform: translateY(2px);
   border-bottom-width: 1px;
-  background: #f0ddd4;
-  color: #9e2a2b;
-  border-color: #9e2a2b;
+  background: #ebebfa;
+  color: #5758a8;
+  border-color: #5758a8;
 }
 
 #keys i {
-  color: #555b66;
+  color: #566176;
   font-style: normal;
   font-weight: 600;
 }

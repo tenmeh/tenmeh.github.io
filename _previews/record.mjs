@@ -15,7 +15,7 @@
 // of each frame at 1280x720 (a 640x360 page at a device scale of 2), and
 // pipes the pictures to ffmpeg.
 
-import { spawn, execFileSync } from "node:child_process";
+import { spawn, execSync } from "node:child_process";
 import { statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -36,7 +36,8 @@ async function loadPlaywright() {
     return await import("playwright");
   } catch {
     // A global install is not on the module path of a script.
-    const globalRoot = execFileSync("npm", ["root", "-g"], { encoding: "utf8" }).trim();
+    // Through the shell, so that npm.cmd is found on Windows too.
+    const globalRoot = execSync("npm root -g", { encoding: "utf8" }).trim();
     return import(pathToFileURL(join(globalRoot, "playwright", "index.mjs")).href);
   }
 }
@@ -57,7 +58,7 @@ for (const name of wanted) {
   });
   await page.goto(pathToFileURL(join(here, `${name}.html`)).href);
   await page.evaluate(async () => {
-    await Promise.all(["400", "600", "800"].map((w) => document.fonts.load(`${w} 12px "Recursive Preview"`)));
+    await Promise.all(["400", "600", "700", "800"].map((w) => document.fonts.load(`${w} 12px "Geist Preview"`)));
     await document.fonts.ready;
   });
   const { duration, poster } = await page.evaluate(() => ({ duration: window.DURATION, poster: window.POSTER_MS }));
