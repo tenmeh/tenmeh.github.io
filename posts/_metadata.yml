@@ -9,3 +9,7 @@ image: cover.png
 # Puts the hero and the demo video of a post into its page.
 filters:
   - ../_filters/post-preview.lua
+# The reading progress bar and the category colours. See the file.
+include-after-body: ../_includes/post-extras.html
+# Shown beside the date in the byline.
+reading-time: true

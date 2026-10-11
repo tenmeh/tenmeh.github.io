@@ -1,46 +1,64 @@
 ```{=html}
 <%
-// The post list on the home page. Each post gets a rounded date stamp at
-// the left. The listing's date-format is "D MMM YYYY", so the date splits
-// into the day, the month and the year, one line each, so that the stamp
-// never wraps on a narrow screen. The raw html fence stops
-// pandoc reading the indented lines as code blocks.
+// The post list on the home page. The newest post is a large card with its
+// hero; the rest are rows with the hero as a thumbnail. Each card shows the
+// date and the reading time. The raw html fence stops pandoc reading the
+// indented lines as code blocks.
 //
-// A post with a "hero" in its front matter hides the animated hero in its
-// stamp. It shows in place of the date while the pointer rests on the entry.
 // Quarto gives "hero" as written in the front matter, so the path is built
-// from the folder of the post.
+// from the folder of the post. The tags carry their category in data-cat,
+// so that styles.css can give each category its own colour.
+const heroOf = (item) => {
+  const folder = (item.outputHref || "").replace(/[^/]*$/, "");
+  return item.hero ? folder + item.hero : "";
+};
+const meta = (item) => {
+  const parts = [`<time>${item.date || ""}</time>`];
+  if (item["reading-time"]) parts.push(`<span>${item["reading-time"]} read</span>`);
+  return parts.join('<span aria-hidden="true">&middot;</span>');
+};
+const tags = (item) => (item.categories || [])
+  .map((c) => `<span class="pill" data-cat="${c.toLowerCase()}">${c}</span>`)
+  .join("");
+const [first, ...rest] = items;
 %>
-<div class="kiln-list">
-<% for (const item of items) { %>
-<%
-const parts = (item.date || "").split(" ");
-const folder = (item.outputHref || "").replace(/[^/]*$/, "");
-const hero = item.hero ? folder + item.hero : "";
-%>
-<article class="entry" <%= metadataAttrs(item) %>>
-  <a class="stamp" href="<%- item.path %>" aria-hidden="true" tabindex="-1">
-    <b><%= parts[0] %></b>
-    <span><%= parts[1] %></span>
-    <span><%= parts[2] %></span>
-    <% if (hero) { %>
-    <img class="stamp-hero" src="<%- hero %>" alt="" width="800" height="320" loading="lazy">
+<div class="post-list">
+<% if (first) { %>
+<p class="list-label">Latest post</p>
+<article class="lead-post" <%= metadataAttrs(first) %>>
+  <a class="lead-link" href="<%- first.path %>">
+    <% if (heroOf(first)) { %>
+    <span class="lead-hero"><img src="<%- heroOf(first) %>" alt="" width="800" height="320"></span>
     <% } %>
+    <span class="pills"><%= tags(first) %></span>
+    <h3 class="listing-title"><%= first.title %></h3>
+    <% if (first.description) { %>
+    <span class="listing-description"><%= first.description %></span>
+    <% } %>
+    <span class="post-meta"><%= meta(first) %></span>
   </a>
-  <div class="entry-body">
-    <h3 class="listing-title"><a href="<%- item.path %>"><%= item.title %></a></h3>
-    <% if (item.description) { %>
-    <p class="listing-description"><%= item.description %></p>
-    <% } %>
-    <% if (item.categories) { %>
-    <div class="pills">
-      <% for (const category of item.categories) { %>
-      <span class="pill"><%= category %></span>
-      <% } %>
-    </div>
-    <% } %>
-  </div>
 </article>
+<% } %>
+<% if (rest.length) { %>
+<p class="list-label list-label-more">More posts</p>
+<div class="more-posts">
+<% for (const item of rest) { %>
+<article class="row-post" <%= metadataAttrs(item) %>>
+  <a class="row-link" href="<%- item.path %>">
+    <% if (heroOf(item)) { %>
+    <span class="row-hero"><img src="<%- heroOf(item) %>" alt="" width="800" height="320" loading="lazy"></span>
+    <% } %>
+    <span class="row-body">
+      <h3 class="listing-title"><%= item.title %></h3>
+      <% if (item.description) { %>
+      <span class="listing-description"><%= item.description %></span>
+      <% } %>
+      <span class="post-meta"><%= meta(item) %></span>
+    </span>
+  </a>
+</article>
+<% } %>
+</div>
 <% } %>
 </div>
 ```

@@ -1,49 +1,67 @@
 /* =============================================================================
    styles.css - tenmeh.github.io
-   Kiln shapes in Colophon colours. The colours are --k-* variables, set by
-   theme-light.scss and theme-dark.scss. One family, Recursive, does all the
-   type: the plain style (CASL 0) for headings and text, MONO 1 for code,
-   and the casual style (CASL 1) only for comments in code.
+   Navy ink and R blue, on a ground with a soft gradient. The colours are
+   --k-* variables, set by theme-light.scss and theme-dark.scss. Geist sets
+   the text and the headings, Geist Mono the code.
    ============================================================================= */
 
 /* --- Base -------------------------------------------------------------------- */
 
+/* The ground: a glow of R blue at the top left and bones teal at the top
+   right, over a shade that deepens down the page. Cards and code keep their
+   own solid fill, so text contrast does not change. */
 body {
-  font-variation-settings: "CASL" 0, "MONO" 0;
-  line-height: 1.68;
+  min-height: 100vh;
+  background-color: var(--k-paper);
+  background-image:
+    radial-gradient(56rem 30rem at 12% -6rem, var(--k-glow-a), transparent 70%),
+    radial-gradient(48rem 26rem at 92% -4rem, var(--k-glow-b), transparent 70%),
+    linear-gradient(to bottom, var(--k-paper), var(--k-paper-end));
+  background-repeat: no-repeat;
+  line-height: 1.72;
+  /* Geist draws "->" as an arrow through its ligatures. The posts
+     write "->" on purpose, so it stays as typed. */
+  font-feature-settings: "calt" 0, "liga" 0, "dlig" 0;
+  font-variant-ligatures: none;
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, .navbar-title {
-  font-variation-settings: "CASL" 0, "MONO" 0;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   color: var(--k-ink);
+  text-wrap: balance;
 }
 
 h1 { font-weight: 700; }
-h2, h3, h4 { font-weight: 650; }
+h2, h3, h4 { font-weight: 600; }
+
+::selection {
+  background: var(--k-accent-soft);
+}
 
 /* A narrow measure reads better than the full width of a wide screen. */
 main.content {
-  max-width: 44rem;
+  max-width: 42rem;
 }
 
-/* Links in running text get a wavy terracotta line. Navigation, titles and
-   cards opt out below. */
+/* Links in running text: the text colour, with a blue underline that
+   darkens on hover. Navigation, titles and cards opt out below. */
 main a {
-  color: var(--k-accent);
-  text-decoration: underline wavy;
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 0.28em;
-  text-decoration-skip-ink: none;
+  color: var(--k-ink);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--k-accent) 45%, transparent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.15s ease;
 }
 
 main a:hover {
-  color: var(--k-accent);
-  text-decoration-thickness: 2px;
+  color: var(--k-ink);
+  text-decoration-color: var(--k-accent);
 }
 
-/* The section anchor Quarto adds on hover should not carry the wave. */
+/* The section anchor Quarto adds on hover should not carry the underline. */
 main a.anchorjs-link {
   text-decoration: none;
 }
@@ -54,33 +72,49 @@ main a.uri {
   overflow-wrap: anywhere;
 }
 
+:focus-visible {
+  outline: 2px solid var(--k-accent);
+  outline-offset: 2px;
+}
+
 /* --- Navbar ------------------------------------------------------------------ */
 
-.navbar {
-  border-bottom: 1.5px dashed var(--k-rule);
+/* See-through, with a blur, so the gradient shows behind it. */
+#quarto-header,
+#quarto-header .navbar {
+  background-color: color-mix(in srgb, var(--k-paper) 72%, transparent) !important; /* beats the theme's solid $navbar-bg */
+  backdrop-filter: saturate(1.4) blur(12px);
+  -webkit-backdrop-filter: saturate(1.4) blur(12px);
+}
+
+#quarto-header .navbar {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background-color: transparent !important;
+  border-bottom: 1px solid var(--k-rule);
 }
 
 .navbar-title {
-  font-weight: 800;
-  font-size: 1.2rem;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 /* The GitHub avatar before the name, as a small round photo. */
 .navbar-brand .navbar-logo {
-  max-height: 2rem;
-  width: 2rem;
+  max-height: 1.75rem;
+  width: 1.75rem;
   border-radius: 50%;
-  border: 1.5px solid var(--k-rule);
+  box-shadow: 0 0 0 1px var(--k-rule);
 }
 
-/* The dark mode toggle shows the current mode, as the bones site does: a
-   sun in light mode, a moon in dark mode. The glyphs come from Bootstrap
-   Icons, which Quarto already loads. */
+/* The dark mode toggle shows the mode to switch to: a moon in light mode,
+   a sun in dark mode. The glyphs come from Bootstrap Icons, which Quarto
+   already loads. */
 .quarto-color-scheme-toggle .bi::before {
   background-image: none !important; /* replaces Quarto's toggle-switch picture */
   width: auto;
   height: auto;
-  content: "\f5a1"; /* bi-sun-fill */
+  content: "\f497"; /* bi-moon */
   font-family: "bootstrap-icons";
   font-size: var(--k-icon);
   line-height: 1;
@@ -88,7 +122,7 @@ main a.uri {
 }
 
 body.quarto-dark .quarto-color-scheme-toggle .bi::before {
-  content: "\f494"; /* bi-moon-fill */
+  content: "\f5a2"; /* bi-sun */
 }
 
 /* The icons on the right come from three parts of Quarto: the navbar links
@@ -96,8 +130,8 @@ body.quarto-dark .quarto-color-scheme-toggle .bi::before {
    and padding. Give all four one icon size and one box, so they line up
    with equal gaps. */
 .navbar {
-  --k-icon: 1.1rem;
-  --k-icon-box: 2.1rem;
+  --k-icon: 1rem;
+  --k-icon-box: 2.25rem;
 }
 
 .navbar .navbar-nav .nav-link .bi,
@@ -131,15 +165,16 @@ nav.navbar #quarto-search .aa-DetachedSearchButton {
   margin: 0;
   padding: 0 !important; /* beats Bootstrap's px-1 utility on the toggle, which is !important */
   border: 0;
+  border-radius: 0.5rem;
   background: none;
-  /* The icons take the accent colour. It passes 4.5:1 on the navbar in
-     both modes. */
-  color: var(--k-accent);
+  color: var(--k-muted);
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 nav.navbar .navbar-nav.ms-auto .nav-link:has(.bi):hover,
 nav.navbar .quarto-navbar-tools .quarto-navigation-tool.quarto-color-scheme-toggle:hover,
 nav.navbar #quarto-search .aa-DetachedSearchButton:hover {
+  background: var(--k-hover);
   color: var(--k-ink);
 }
 
@@ -154,14 +189,18 @@ nav.navbar #quarto-search .aa-DetachedSearchButton:hover {
 }
 
 .navbar .navbar-nav .nav-link {
-  border-radius: 999px;
-  padding-left: 0.8rem;
-  padding-right: 0.8rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  font-size: 0.92rem;
+  color: var(--k-muted);
+}
+
+.navbar .navbar-nav .nav-link:hover,
+.navbar .navbar-nav .nav-link.active {
+  color: var(--k-ink);
 }
 
 .navbar .navbar-nav .nav-link.active {
-  background: var(--k-accent-soft);
-  color: var(--k-accent);
   font-weight: 600;
 }
 
@@ -170,44 +209,92 @@ nav.navbar #quarto-search .aa-DetachedSearchButton:hover {
 /* The rule spans the page, as the navbar's does; the text keeps to the
    width of the home page's content, so its ends line up with the columns. */
 .footer {
-  border-top: 1.5px dashed var(--k-rule);
+  margin-top: 5rem;
+  border-top: 1px solid var(--k-rule);
+  background: transparent;
 }
 
 .nav-footer {
-  max-width: 65rem; /* the home columns' 63rem, plus 1rem padding each side */
+  max-width: 70rem;
   margin: 0 auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: 1.6rem 1rem;
   border-top: 0;
   font-size: 0.85rem;
   color: var(--k-muted);
 }
 
 .nav-footer a {
-  color: var(--k-accent);
+  color: var(--k-ink);
+  font-weight: 500;
+  text-decoration: none;
 }
 
-/* --- Pills ------------------------------------------------------------------- */
+.nav-footer a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
 
+/* --- Tags ---------------------------------------------------------------------- */
+
+/* Each category keeps one colour everywhere: R blue, Shiny teal, packages
+   amber. A category with no colour of its own gets an outline. */
 .pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
+  gap: 0.4rem;
 }
 
 .pill,
 .quarto-title .quarto-categories .quarto-category {
   display: inline-block;
-  padding: 0.35rem 0.7rem;
-  border: 0;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--k-rule);
   border-radius: 999px;
-  background: var(--k-accent-soft);
-  color: var(--k-accent);
-  font-size: 0.78rem;
-  font-weight: 600;
+  background: transparent;
+  color: var(--k-muted);
+  font-size: 0.74rem;
+  font-weight: 500;
   line-height: 1;
   opacity: 1;
   text-transform: none;
+}
+
+:is(.pill, .quarto-category)[data-cat="r"] {
+  border-color: transparent;
+  background: var(--k-tag-r-bg);
+  color: var(--k-tag-r);
+}
+
+:is(.pill, .quarto-category)[data-cat="shiny"] {
+  border-color: transparent;
+  background: var(--k-tag-shiny-bg);
+  color: var(--k-tag-shiny);
+}
+
+:is(.pill, .quarto-category)[data-cat="packages"] {
+  border-color: transparent;
+  background: var(--k-tag-pkg-bg);
+  color: var(--k-tag-pkg);
+}
+
+/* In the title block of a post each tag is a link. Quarto styles those with
+   "#title-block-header.quarto-title-block.default .quarto-categories", so
+   the rules repeat at that strength, and the link takes the tag's colour. */
+#title-block-header.quarto-title-block.default .quarto-categories .quarto-category {
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  opacity: 1;
+}
+
+#title-block-header.quarto-title-block.default .quarto-categories .quarto-category[data-cat="r"] { background: var(--k-tag-r-bg); color: var(--k-tag-r); }
+#title-block-header.quarto-title-block.default .quarto-categories .quarto-category[data-cat="shiny"] { background: var(--k-tag-shiny-bg); color: var(--k-tag-shiny); }
+#title-block-header.quarto-title-block.default .quarto-categories .quarto-category[data-cat="packages"] { background: var(--k-tag-pkg-bg); color: var(--k-tag-pkg); }
+
+.quarto-category a {
+  color: inherit;
+  font-weight: inherit;
+  text-decoration: none;
 }
 
 /* --- Home: intro --------------------------------------------------------------- */
@@ -219,24 +306,37 @@ body.home #title-block-header {
 }
 
 body.home main.content {
-  max-width: 68rem;
+  max-width: 70rem;
 }
 
 .intro {
-  padding: 1.5rem 0 2rem;
+  padding: 2.5rem 0 3rem;
+}
+
+.intro .eyebrow {
+  display: block;
+  margin-bottom: 1rem;
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 0.74rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--k-accent);
 }
 
 .intro h1 {
-  max-width: 18ch;
-  margin: 0 0 1rem;
-  font-size: clamp(2rem, 5vw, 2.8rem);
-  line-height: 1.08;
+  max-width: 22ch;
+  margin: 0 0 1.2rem;
+  font-size: clamp(2.2rem, 5.5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
 }
 
 .intro p {
-  max-width: 48ch;
+  max-width: 46ch;
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
+  line-height: 1.6;
   color: var(--k-muted);
 }
 
@@ -244,208 +344,347 @@ body.home main.content {
 
 .home-cols {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 17rem;
-  gap: 2.7rem;
+  grid-template-columns: minmax(0, 1fr) 18.5rem;
+  gap: 3rem;
 }
 
-.home-cols h2.sec {
-  margin: 0 0 0.7rem;
-  font-size: 1.35rem;
-  font-weight: 800;
-  border: 0;
-  padding: 0;
+/* The packages and the feed card stay in view beside a long list. */
+@media (min-width: 992px) {
+  .home-packages {
+    position: sticky;
+    top: 5.5rem;
+    align-self: start;
+  }
 }
 
-/* One post: the date stamp at the left, the text at the right, a dashed
-   line above. */
-.kiln-list .entry {
-  display: grid;
-  grid-template-columns: 4rem minmax(0, 1fr);
-  gap: 1.2rem;
-  padding: 1.2rem 0;
-  border-top: 1.5px dashed var(--k-rule);
-}
-
-.kiln-list .stamp {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  border-radius: 1rem;
-  background: var(--k-surface);
-  border: 1px solid var(--k-rule);
-  line-height: 1;
-  text-decoration: none;
-}
-
-.kiln-list .stamp b {
-  font-size: 1.55rem;
-  font-weight: 800;
-  font-variation-settings: "CASL" 0;
-  color: var(--k-accent);
-}
-
-.kiln-list .stamp span {
-  font-size: 0.7rem;
-  line-height: 1.15;
+.list-label {
+  display: block;
+  margin: 0 0 1.1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
   color: var(--k-muted);
 }
 
-.kiln-list .stamp b + span {
-  margin-top: 0.25rem;
+.list-label-more {
+  margin-top: 3.5rem;
+  margin-bottom: 0.4rem;
 }
 
-.kiln-list .listing-title {
-  margin: 0 0 0.45rem;
-  font-size: 1.45rem;
-  line-height: 1.22;
-}
-
-.kiln-list .listing-title a {
-  font-weight: inherit; /* the theme sets links to 400 */
-  color: var(--k-ink);
+.post-list a {
+  color: inherit;
+  font-weight: inherit;
   text-decoration: none;
 }
 
-.kiln-list .listing-title a:hover {
-  color: var(--k-accent);
-}
-
-.kiln-list .listing-description {
-  margin: 0 0 0.7rem;
-  font-size: 0.97rem;
-}
-
-/* On a screen with a pointer, the stamp of a post with a hero swaps the
-   date for the hero, cropped to its centre square, and turns a little, as
-   the hex stickers below do. The stamp keeps its place in the grid, so the
-   list does not move. */
-.kiln-list .stamp-hero {
-  display: none;
-}
-
-@media (hover: hover) and (min-width: 768px) {
-  .kiln-list .stamp {
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .kiln-list .stamp b,
-  .kiln-list .stamp span {
-    transition: opacity 0.15s ease;
-  }
-
-  .kiln-list .stamp-hero {
-    position: absolute;
-    inset: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    opacity: 0;
-    transition: opacity 0.15s ease;
-  }
-
-  .kiln-list .entry:hover .stamp,
-  .kiln-list .entry:focus-within .stamp {
-    z-index: 1;
-    border-color: var(--k-accent);
-    box-shadow: 0 3px 0 var(--k-rule);
-    transform: rotate(-4deg) scale(1.3);
-  }
-
-  .kiln-list .entry:hover .stamp-hero,
-  .kiln-list .entry:focus-within .stamp-hero {
-    opacity: 1;
-  }
-
-  .kiln-list .entry:hover .stamp:has(.stamp-hero) > :is(b, span),
-  .kiln-list .entry:focus-within .stamp:has(.stamp-hero) > :is(b, span) {
-    opacity: 0;
-  }
-}
-
-@media (hover: hover) and (min-width: 768px) and (prefers-reduced-motion: reduce) {
-  .kiln-list .entry:hover .stamp,
-  .kiln-list .entry:focus-within .stamp {
-    transform: none;
-  }
-}
-
-/* The packages: hex logos on a shelf, turned a little, like stickers. */
-.shelf {
-  padding: 0.6rem 1.2rem;
-  background: var(--k-surface);
-  border: 1px solid var(--k-rule);
-  border-radius: 14px;
-}
-
-.shelf .pkg {
-  display: grid;
-  grid-template-columns: 4.2rem 1fr;
-  gap: 0.9rem;
-  align-items: center;
-  padding: 0.7rem 0;
+.post-list .listing-title {
+  margin: 0;
   color: var(--k-ink);
-  font-size: 0.88rem;
-  line-height: 1.45;
-  text-decoration: none;
-}
-
-.shelf .pkg + .pkg {
-  border-top: 1.5px dashed var(--k-rule);
-}
-
-.shelf .pkg img {
-  display: block;
-  width: 4.2rem;
-  transform: rotate(-5deg);
-  filter: drop-shadow(0 3px 0 var(--k-rule));
-  transition: transform 0.2s ease;
-}
-
-.shelf .pkg:nth-child(odd) img {
-  transform: rotate(4deg);
-}
-
-.shelf .pkg:hover img {
-  transform: rotate(0deg) scale(1.04);
-}
-
-.shelf .pkg b {
-  display: block;
-  font-size: 1.15rem;
-  font-weight: 800;
-  font-variation-settings: "CASL" 0;
-}
-
-.shelf .pkg:hover b {
-  color: var(--k-accent);
-}
-
-.shelf .pkg em {
-  margin-left: 0.35rem;
-  padding: 0.1rem 0.5rem;
-  border-radius: 999px;
-  background: var(--k-accent-soft);
-  color: var(--k-accent);
-  font-size: 0.72rem;
-  font-style: normal;
   font-weight: 600;
-  vertical-align: 0.18em;
-  /* One piece: a long name moves the whole tag to the next line, and does
-     not break it between "on" and "GitHub". */
+  letter-spacing: -0.025em;
+  transition: color 0.15s ease;
+}
+
+.post-list a:hover .listing-title {
+  color: var(--k-accent);
+}
+
+.post-list .listing-description {
+  display: block;
+  color: var(--k-muted);
+}
+
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--k-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The newest post: the hero in full, then the text. */
+.lead-link {
+  display: block;
+}
+
+.lead-hero,
+.row-hero {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--k-rule);
+  background: var(--k-surface);
+}
+
+.lead-hero {
+  border-radius: 1.1rem;
+}
+
+.lead-hero img,
+.row-hero img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 5 / 2;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.lead-link:hover .lead-hero img { transform: scale(1.02); }
+.row-link:hover .row-hero img { transform: scale(1.04); }
+
+.lead-post .pills {
+  margin-top: 1.3rem;
+}
+
+.lead-post .listing-title {
+  margin-top: 0.8rem;
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  line-height: 1.18;
+}
+
+.lead-post .listing-description {
+  max-width: 60ch;
+  margin-top: 0.6rem;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.lead-post .post-meta {
+  margin-top: 0.8rem;
+}
+
+/* The other posts: a thumbnail of the hero beside the text. */
+.more-posts {
+  border-top: 1px solid var(--k-rule);
+  border-bottom: 1px solid var(--k-rule);
+}
+
+.row-post + .row-post {
+  border-top: 1px solid var(--k-rule);
+}
+
+.row-link {
+  display: grid;
+  grid-template-columns: 12.5rem minmax(0, 1fr);
+  gap: 1.4rem;
+  padding: 1.6rem 0;
+}
+
+.row-hero {
+  align-self: start;
+  border-radius: 0.6rem;
+}
+
+.row-post .listing-title {
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.row-post .listing-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 0.4rem;
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
+
+.row-post .post-meta {
+  margin-top: 0.6rem;
+}
+
+/* The hero has a light ground in both modes, so in dark mode it is toned
+   down a little to keep it from glaring. */
+body.quarto-dark :is(.lead-hero, .row-hero, .post-hero) img {
+  filter: brightness(0.9);
+}
+
+/* --- Home: package cards and the feed card --------------------------------------- */
+
+.pkg-cards {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.pkg-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.4rem minmax(0, 1fr);
+  gap: 0.9rem;
+  padding: 1rem;
+  border: 1px solid var(--k-rule);
+  border-radius: 0.9rem;
+  background: var(--k-surface);
+  transition: border-color 0.15s ease;
+}
+
+.pkg-card:hover {
+  border-color: color-mix(in srgb, var(--k-ink) 22%, transparent);
+}
+
+.pkg-card img {
+  width: 3.4rem;
+  height: auto;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12));
+}
+
+.pkg-text {
+  min-width: 0;
+}
+
+/* The name's link covers the whole card. The install row sits above it,
+   so its copy button still works. */
+.pkg-card .pkg-name {
+  color: var(--k-ink);
+  font-size: 1.02rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.pkg-card .pkg-name::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.pkg-where {
   display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  background: var(--k-muted-bg);
+  color: var(--k-muted);
+  font-size: 0.68rem;
+  font-weight: 500;
+  vertical-align: 0.15em;
   white-space: nowrap;
+}
+
+.pkg-where.pkg-cran {
+  background: color-mix(in srgb, var(--k-ok) 12%, transparent);
+  color: var(--k-ok);
+}
+
+.pkg-card p {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--k-muted);
+}
+
+.pkg-install {
+  position: relative;
+  z-index: 1;
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding-left: 0.7rem;
+  border: 1px solid var(--k-rule);
+  border-radius: 0.45rem;
+  background: var(--k-code);
+}
+
+.pkg-install code {
+  overflow: hidden;
+  padding: 0.45rem 0;
+  background: none;
+  color: var(--k-ink);
+  font-size: 0.74rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pkg-copy {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  margin-left: auto;
+  border: 0;
+  border-radius: 0.4rem;
+  background: none;
+  color: var(--k-muted);
+}
+
+.pkg-copy:hover {
+  background: var(--k-hover);
+  color: var(--k-ink);
+}
+
+.pkg-copy .bi-check2 {
+  color: var(--k-ok);
+}
+
+.follow-card {
+  margin-top: 2rem;
+  padding: 1.2rem;
+  border: 1px dashed var(--k-rule);
+  border-radius: 0.9rem;
+}
+
+.follow-card p {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.55;
+  color: var(--k-muted);
+}
+
+.follow-card .follow-title {
+  margin-bottom: 0.35rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--k-ink);
+}
+
+.follow-card .follow-title .bi {
+  margin-right: 0.3rem;
+  color: var(--k-accent);
+}
+
+.follow-card .follow-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 0.45rem;
+  background: var(--k-primary);
+  color: var(--k-on-primary);
+  font-size: 0.86rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.follow-card .follow-button:hover {
+  color: var(--k-on-primary);
+  opacity: 0.88;
+}
+
+/* --- Post: reading progress ---------------------------------------------------- */
+
+.read-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 1100; /* above Quarto's fixed navbar */
+  height: 2px;
+  pointer-events: none;
+}
+
+.read-progress span {
+  display: block;
+  height: 100%;
+  background: var(--k-accent);
+  transform: scaleX(0);
+  transform-origin: left;
 }
 
 /* --- Post: title block ---------------------------------------------------------- */
 
-/* Pills above the title, as in the mockup. */
+/* Tags above the title. */
 .quarto-title {
   display: flex;
   flex-direction: column;
@@ -454,40 +693,52 @@ body.home main.content {
 .quarto-title .quarto-categories {
   order: -1;
   display: flex;
-  gap: 0.45rem;
-  margin: 0 0 0.9rem;
+  gap: 0.4rem;
+  margin: 1rem 0 1rem;
   padding: 0;
 }
 
 #title-block-header.quarto-title-block.default .quarto-title h1.title {
   margin-bottom: 1rem;
-  font-size: clamp(2rem, 4.6vw, 2.7rem);
-  line-height: 1.1;
+  font-size: clamp(2.1rem, 5vw, 2.85rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
 }
 
-/* The standfirst sits a step above the body text, not below it. The
-   selector matches Quarto's, which sets it to 0.9em. */
+/* The standfirst sits a step above the body text. The selector matches
+   Quarto's, which sets it to 0.9em. */
 #title-block-header.quarto-title-block.default .description > p {
-  margin-bottom: 0.9rem;
+  margin-bottom: 1.2rem;
   font-size: 1.15rem;
-  line-height: 1.5;
+  line-height: 1.6;
   color: var(--k-muted);
 }
 
-/* Author and date as one byline, "Tanmay Chanda . 27 August 2026", not a
-   grid with headings. */
+/* Author and date as one byline, after the author's photo: "Tanmay Chanda
+   . 2 October 2026". */
 #title-block-header.quarto-title-block.default .quarto-title-meta {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 0 0.5rem;
   margin-top: 0.4rem;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--k-muted);
 }
 
 #title-block-header .quarto-title-meta > div {
   display: flex;
-  align-items: baseline;
+  align-items: center;
+}
+
+#title-block-header .quarto-title-meta > div:first-child::before {
+  content: "";
+  width: 2rem;
+  height: 2rem;
+  margin-right: 0.65rem;
+  border-radius: 50%;
+  background: var(--k-muted-bg) url("https://avatars.githubusercontent.com/u/81738153?v=4&s=96") center / cover;
+  box-shadow: 0 0 0 1px var(--k-rule);
 }
 
 #title-block-header.quarto-title-block.default .quarto-title-meta-heading {
@@ -497,8 +748,13 @@ body.home main.content {
 #title-block-header.quarto-title-block.default .quarto-title-meta-contents,
 #title-block-header .quarto-title-meta p {
   margin: 0;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: var(--k-muted);
+}
+
+#title-block-header .quarto-title-meta > div:first-child p {
+  color: var(--k-ink);
+  font-weight: 500;
 }
 
 #title-block-header .quarto-title-meta > div + div::before {
@@ -508,10 +764,8 @@ body.home main.content {
 
 /* --- Post: hero and demo video ------------------------------------------------------ */
 
-/* The hero is drawn on its own card, so the image needs a rule and round
-   corners and nothing else. It goes under the title block. */
 .post-hero {
-  margin: 1.6rem 0 2rem;
+  margin: 2rem 0 2.5rem;
 }
 
 .post-hero img {
@@ -520,23 +774,11 @@ body.home main.content {
   height: auto;
   margin: 0; /* Quarto gives a figure image a bottom margin */
   border: 1px solid var(--k-rule);
-  border-radius: 14px;
+  border-radius: 1.1rem;
 }
 
-/* The hero has a fixed light ground in both modes, so in dark mode it is
-   toned down a little to keep it from glaring. */
-body.quarto-dark .post-hero img {
-  filter: brightness(0.92);
-}
-
-/* The demo video sits where the author put it, as a card like the code
-   blocks and the quotes. */
 .post-preview {
-  margin: 1.6rem 0 2rem;
-  overflow: hidden;
-  border: 1px solid var(--k-rule);
-  border-radius: 14px;
-  background: var(--k-surface);
+  margin: 2rem 0 2.2rem;
 }
 
 .post-preview video {
@@ -544,92 +786,144 @@ body.quarto-dark .post-hero img {
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
+  border: 1px solid var(--k-rule);
+  border-radius: 0.9rem;
   background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18);
 }
 
 .post-preview figcaption {
-  margin: 0;
-  padding: 0.55rem 1rem;
-  border-top: 1.5px dashed var(--k-rule);
-  font-size: 0.8rem;
-  line-height: 1.4;
+  margin: 0.8rem 0 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  text-align: center;
   color: var(--k-muted);
 }
 
 /* --- Post: text ------------------------------------------------------------------ */
 
 main h2 {
-  margin-top: 2.2rem;
-  font-size: 1.6rem;
+  margin-top: 3rem;
+  font-size: 1.55rem;
   line-height: 1.25;
   border-bottom: 0;
 }
 
 main h3 {
-  font-size: 1.25rem;
+  margin-top: 2.2rem;
+  font-size: 1.2rem;
 }
 
-/* Inline code: the code ground, rounded. */
+/* Inline code: the code ground, with a fine border. */
 main :not(pre) > code {
-  padding: 0.1em 0.4em;
-  border-radius: 6px;
+  padding: 0.12em 0.4em;
+  border: 1px solid var(--k-rule);
+  border-radius: 0.35rem;
   background: var(--k-code);
   color: var(--k-ink);
-  font-size: 0.88em;
-  font-variation-settings: "MONO" 1, "CASL" 0;
+  font-size: 0.85em;
+}
+
+/* Tables: a rounded frame, a tinted head row, and lines between rows. */
+main table {
+  width: 100%;
+  margin: 1.8rem 0;
+  border: 1px solid var(--k-rule);
+  border-radius: 0.6rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+main table thead {
+  background: var(--k-muted-bg);
+}
+
+main table th {
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--k-muted);
+}
+
+main table :is(th, td) {
+  padding: 0.6rem 1rem;
+  border: 0;
+  border-bottom: 1px solid var(--k-rule);
+}
+
+main table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+main table > :not(caption) > * > * {
+  background: transparent; /* Bootstrap's table cells set their own */
 }
 
 /* --- Post: code blocks ------------------------------------------------------------ */
 
+/* A frame with a header bar that names the language. Quarto's copy button
+   sits at the right of that bar. */
 div.sourceCode {
-  margin: 1.5rem 0;
-  border: 0;
-  border-radius: 14px;
+  position: relative;
+  margin: 1.8rem 0;
+  overflow: hidden;
+  border: 1px solid var(--k-rule);
+  border-radius: 0.6rem;
   background: var(--k-code);
 }
 
-/* A small language tab above each code block. */
 div.sourceCode:has(> pre.sourceCode.r)::before { content: "R"; }
-div.sourceCode:has(> pre.sourceCode.js)::before { content: "JavaScript"; }
+div.sourceCode:has(> pre.sourceCode.js)::before { content: "JS"; }
 div.sourceCode:has(> pre.sourceCode.css)::before { content: "CSS"; }
 div.sourceCode:has(> pre.sourceCode.html)::before { content: "HTML"; }
 div.sourceCode:has(> pre.sourceCode.bash)::before { content: "Shell"; }
 
 div.sourceCode:has(> pre.sourceCode)::before {
-  display: block;
-  padding: 0.6rem 0 0 1.35rem;
-  font-size: 0.72rem;
-  font-weight: 700;
-  font-variation-settings: "CASL" 0;
+  display: flex;
+  align-items: center;
+  height: 2.5rem;
+  padding: 0 1rem;
+  border-bottom: 1px solid var(--k-rule);
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
   color: var(--k-muted);
 }
 
 pre.sourceCode {
-  padding: 0.5rem 1.35rem 1.1rem;
-  font-size: 0.86rem;
-  line-height: 1.62;
+  margin: 0;
+  padding: 1rem 1.1rem 1.1rem;
+  font-size: 0.82rem;
+  line-height: 1.7;
   color: var(--k-ink);
-  font-variation-settings: "MONO" 1, "CASL" 0;
   /* ligatures off, so that <- never turns into an arrow */
   font-variant-ligatures: none;
 }
 
 pre.sourceCode code {
-  font-variation-settings: "MONO" 1, "CASL" 0;
   font-variant-ligatures: none;
 }
 
+/* Quarto's copy button, moved into the header bar. */
+.code-copy-outer-scaffold {
+  position: relative;
+}
+
 .code-copy-button {
+  top: 0.3rem !important; /* Quarto places it with its own inline-sized rule */
+  right: 0.4rem !important;
+  border-radius: 0.4rem;
   color: var(--k-muted);
 }
 
 /* Syntax colours. The selectors beat the ones Quarto writes for the
-   highlight style, so both modes take the Colophon colours. */
+   highlight style, so both modes take these colours. */
 div.sourceCode code span.co {
   color: var(--k-syn-comment);
   font-style: italic;
-  /* comments are casual italic, like notes in the margin */
-  font-variation-settings: "MONO" 1, "CASL" 1;
 }
 
 div.sourceCode code span.kw,
@@ -646,27 +940,17 @@ div.sourceCode code span.op { color: var(--k-ink); }
 
 /* --- Post: quotes ------------------------------------------------------------------ */
 
+/* A quote reads as a note beside the text: a blue rule at the left and a
+   pale blue ground. */
 blockquote {
-  position: relative;
-  margin: 1.5rem 0;
-  padding: 1.1rem 1.35rem 1.1rem 3.6rem;
-  border: 1px solid var(--k-rule);
-  border-radius: 14px;
-  background: var(--k-surface);
+  margin: 2rem 0;
+  padding: 1rem 1.3rem;
+  border: 0;
+  border-left: 3px solid var(--k-accent);
+  border-radius: 0 0.6rem 0.6rem 0;
+  background: var(--k-accent-soft);
   color: var(--k-ink);
-  font-size: 1.05rem;
-}
-
-blockquote::before {
-  content: "\201C";
-  position: absolute;
-  left: 1.1rem;
-  top: 0.35rem;
-  font-size: 3.3rem;
-  font-weight: 800;
-  line-height: 1;
-  font-variation-settings: "CASL" 0;
-  color: var(--k-accent);
+  font-size: 0.98rem;
 }
 
 blockquote p:last-child {
@@ -675,58 +959,51 @@ blockquote p:last-child {
 
 /* --- Post: table of contents -------------------------------------------------------- */
 
+/* A plain list with a line at the left. The current section takes a blue
+   mark on that line. */
 #TOC {
-  padding: 1rem 1.1rem;
-  border: 1px solid var(--k-rule);
-  border-radius: 14px;
-  background: var(--k-surface);
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   line-height: 1.45;
 }
 
 #TOC #toc-title {
-  margin-bottom: 0.4rem;
-  font-size: 0.95rem;
-  font-weight: 800;
-  font-variation-settings: "CASL" 0;
+  margin-bottom: 0.7rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--k-ink);
 }
 
 #TOC ul {
-  border-left: 0;
   padding-left: 0;
+  border-left: 1px solid var(--k-rule);
 }
 
-#TOC li {
-  position: relative;
-  padding-left: 1rem;
-}
-
-#TOC li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0.8rem;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--k-rule);
-}
-
-#TOC li:has(> a.active)::before {
-  background: var(--k-accent);
+#TOC ul ul {
+  border-left: 0;
 }
 
 #TOC .nav-link {
-  border-left: 0 !important; /* Quarto draws its own active bar; the dot replaces it */
-  padding-left: 0 !important;
-  color: var(--k-ink);
+  margin-left: -1px;
+  padding: 0.25rem 0 0.25rem 1rem !important; /* beats Quarto's own TOC padding */
+  border-left: 2px solid transparent !important;
+  color: var(--k-muted);
   text-decoration: none;
+  transition: color 0.15s ease;
 }
 
-/* Colour and the dot mark the current section. Bold would re-wrap the
+#TOC ul ul .nav-link {
+  padding-left: 1.75rem !important;
+}
+
+#TOC .nav-link:hover {
+  color: var(--k-ink);
+}
+
+/* Colour and the mark show the current section. Bold would re-wrap the
    line and shift the list as you scroll. */
 #TOC .nav-link.active {
-  color: var(--k-accent);
+  border-left-color: var(--k-accent) !important;
+  color: var(--k-ink);
   font-weight: inherit;
 }
 
@@ -734,13 +1011,7 @@ blockquote p:last-child {
 
 @media (max-width: 767.98px) {
   body {
-    font-size: 17px;
-  }
-
-  /* The avatar, the full name and the icons fit on one row beside the
-     menu button. */
-  .navbar-title {
-    font-size: 1rem;
+    font-size: 16.5px;
   }
 
   .navbar-brand .navbar-logo {
@@ -749,72 +1020,43 @@ blockquote p:last-child {
   }
 
   .navbar {
-    --k-icon-box: 1.9rem;
+    --k-icon-box: 2rem;
   }
 
   .intro {
-    padding: 0.5rem 0 1.5rem;
+    padding: 1rem 0 2rem;
   }
 
   .home-cols {
     grid-template-columns: 1fr;
-    gap: 1.6rem;
+    gap: 2.5rem;
   }
 
-  /* Packages above the posts on a phone. */
-  .home-cols .home-packages {
-    order: -1;
-  }
-
-  .kiln-list .entry {
-    grid-template-columns: 3.3rem minmax(0, 1fr);
-    gap: 0.8rem;
-  }
-
-  .kiln-list .stamp {
-    width: 3.3rem;
-    height: auto;
-    min-height: 3.3rem;
-    align-self: start;
-    padding: 0.4rem 0;
-    border-radius: 0.8rem;
-  }
-
-  .kiln-list .stamp span {
-    font-size: 0.66rem;
-  }
-
-  .kiln-list .stamp b {
-    font-size: 1.25rem;
-  }
-
-  .kiln-list .listing-title {
-    font-size: 1.2rem;
-  }
-
-  .post-preview {
-    margin: 1.2rem 0 1.6rem;
+  /* The packages follow the posts on a phone; each older post stacks its
+     thumbnail above its text. */
+  .row-link {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
   }
 
   .post-hero {
-    margin: 1.2rem 0 1.6rem;
+    margin: 1.4rem 0 1.8rem;
   }
 
-  .shelf .pkg {
-    grid-template-columns: 3.4rem 1fr;
+  /* A cell such as "2024 -> 2020" would break between "-" and ">". Keep
+     each cell on one line, and let a wide table scroll inside its frame. */
+  main table {
+    display: block;
+    overflow-x: auto;
   }
 
-  .shelf .pkg img {
-    width: 3.4rem;
+  main table :is(th, td) {
+    white-space: nowrap;
   }
 
   pre.sourceCode {
-    font-size: 0.82rem;
-    padding: 0.4rem 1rem 1rem;
-  }
-
-  div.sourceCode:has(> pre.sourceCode)::before {
-    padding-left: 1rem;
+    font-size: 0.78rem;
+    padding: 0.9rem 1rem;
   }
 
   /* Quarto moves the centre item to the end on a phone and pads it with
@@ -823,7 +1065,7 @@ blockquote p:last-child {
     flex-direction: column;
     align-items: center;
     gap: 0.3rem;
-    padding: 1rem 0 1.4rem;
+    padding: 1.2rem 0 1.6rem;
   }
 
   .nav-footer .nav-footer-left,
@@ -835,13 +1077,16 @@ blockquote p:last-child {
     margin: 0;
     text-align: center;
   }
+}
 
-  blockquote {
-    padding: 1rem 1rem 1rem 2.8rem;
+@media (prefers-reduced-motion: reduce) {
+  .lead-hero img,
+  .row-hero img {
+    transition: none;
   }
 
-  blockquote::before {
-    left: 0.7rem;
-    font-size: 2.7rem;
+  .lead-link:hover .lead-hero img,
+  .row-link:hover .row-hero img {
+    transform: none;
   }
 }
