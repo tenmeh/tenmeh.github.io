@@ -44,14 +44,14 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-e70553149f59dc3ba94bb9b7e385ccc1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-9a31ad16936c740976a50f4cf5406962.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-e70553149f59dc3ba94bb9b7e385ccc1.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-77672f20334aa82671ccdef1276e2334.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-10f6b01f5c8f4b26512aa394618c462a.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-77672f20334aa82671ccdef1276e2334.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-076088dd900c805fcb435aeddcdfc3a0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-0d340fe6d2d040afd2a66377efc0346e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-076088dd900c805fcb435aeddcdfc3a0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-deafd01b4b4ac9b9abbd790b91f1d8ad.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-c9dd8fdde39f4efb5cd50c7315d136a3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-deafd01b4b4ac9b9abbd790b91f1d8ad.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -89,9 +89,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-date','listing-title','listing-description','listing-categories','listing-hero',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-date-modified-sort'] },{ data: ['listing-file-modified-sort'] },{ data: ['listing-reading-time-sort'] },{ data: ['listing-word-count-sort'] }],
+      valueNames: ['listing-date','listing-title','listing-description','listing-categories','listing-hero','listing-reading-time',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-reading-time-sort'] },{ data: ['listing-date-sort'] },{ data: ['listing-date-modified-sort'] },{ data: ['listing-file-modified-sort'] },{ data: ['listing-word-count-sort'] }],
       
-      searchColumns: ["listing-project","listing-website","listing-format","listing-engines","listing-language","listing-freeze","listing-title-block-banner","listing-date-format","listing-image","listing-filters","listing-title","listing-description","listing-author","listing-date","listing-categories","listing-package","listing-image-alt","listing-hero","listing-hero-alt","listing-preview","listing-preview-alt","listing-path","listing-outputHref","listing-date-modified","listing-filename","listing-file-modified","listing-reading-time","listing-word-count","listing-preview-caption"],
+      searchColumns: ["listing-project","listing-website","listing-format","listing-engines","listing-language","listing-freeze","listing-title-block-banner","listing-date-format","listing-image","listing-filters","listing-include-after-body","listing-reading-time","listing-title","listing-description","listing-author","listing-date","listing-categories","listing-package","listing-image-alt","listing-hero","listing-hero-alt","listing-preview","listing-preview-alt","listing-path","listing-outputHref","listing-date-modified","listing-filename","listing-file-modified","listing-word-count","listing-preview-caption"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -141,14 +141,12 @@ window.Quarto = {
 
 <link rel="stylesheet" href="styles.css">
 <link rel="alternate" type="application/rss+xml" title="Tanmay Chanda" href="index.xml" data-external="1"><meta property="og:title" content="Posts – Tanmay Chanda">
-<meta property="og:description" content="Notes on R, Shiny, and building things that other people use.">
 <meta property="og:image" content="https://tenmeh.github.io/cover.png">
 <meta property="og:site_name" content="Tanmay Chanda">
 <meta property="og:image:height" content="630">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:alt" content="Tanmay Chanda. Notes on R, Shiny, and building things that other people use.">
 <meta name="twitter:title" content="Posts – Tanmay Chanda">
-<meta name="twitter:description" content="Notes on R, Shiny, and building things that other people use.">
 <meta name="twitter:image" content="https://tenmeh.github.io/cover.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image-height" content="630">
@@ -404,121 +402,126 @@ window.Quarto = {
 </header>
 
 
-<section id="notes-on-r-shiny-and-building-things-that-other-people-use." class="level1 intro">
+<div class="intro">
+<p><span class="eyebrow">R · Shiny · packages</span></p>
+<section id="notes-on-r-shiny-and-building-things-that-other-people-use." class="level1">
 <h1>Notes on R, Shiny, and building things that other people use.</h1>
 <p>The problems that were harder than they looked, and the reasons behind a decision rather than only the decision.</p>
 </section>
+</div>
 <div class="home-cols">
-<section id="posts" class="level2 sec home-posts">
-<h2 class="sec anchored" data-anchor-id="posts">Posts</h2>
+<div class="home-posts">
 <div id="listing-post-list" class="quarto-listing quarto-listing-container-custom">
 
-<div class="kiln-list">
+<div class="post-list">
 
-<article class="entry" data-index="0" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1790899200000" data-listing-file-modified-sort="1791654456186" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1027">
-  <a class="stamp" href="./posts/2026-10-02-rewind-0-3-0/index.html" aria-hidden="true" tabindex="-1">
-    <b>2</b>
-    <span>Oct</span>
-    <span>2026</span>
+<p class="list-label">Latest post</p>
+<article class="lead-post" data-index="0" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1790899200000" data-listing-file-modified-sort="1791711739982" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1027">
+  <a class="lead-link" href="./posts/2026-10-02-rewind-0-3-0/index.html">
     
-    <img class="stamp-hero" src="posts/2026-10-02-rewind-0-3-0/hero.svg" alt="" width="800" height="320" loading="lazy">
+    <span class="lead-hero"><img src="posts/2026-10-02-rewind-0-3-0/hero.svg" alt="" width="800" height="320"></span>
     
+    <span class="pills"><span class="pill" data-cat="r">R</span><span class="pill" data-cat="shiny">Shiny</span><span class="pill" data-cat="packages">packages</span></span>
+    <h3 class="listing-title anchored">rewind 0.3.0: show what changed</h3>
+    
+    <span class="listing-description">rewind 0.3.0 is on CRAN. It adds value comparisons to the history, fixes a rail that scrolled the page, and makes undo work when enabled inside a module.
+</span>
+    
+    <span class="post-meta"><time>2 October 2026</time><span aria-hidden="true">·</span><span>6 min read</span></span>
   </a>
-  <div class="entry-body">
-    <h3 class="listing-title anchored"><a href="./posts/2026-10-02-rewind-0-3-0/index.html">rewind 0.3.0: show what changed</a></h3>
-    
-    <p class="listing-description">rewind 0.3.0 is on CRAN. It adds value comparisons to the history, fixes a rail that scrolled the page, and makes undo work when enabled inside a module.
-</p>
-    
-    
-    <div class="pills">
-      
-      <span class="pill">R</span>
-      
-      <span class="pill">Shiny</span>
-      
-      <span class="pill">packages</span>
-      
-    </div>
-    
-  </div>
 </article>
 
-<article class="entry" data-index="1" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1790553600000" data-listing-file-modified-sort="1791654456185" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1337">
-  <a class="stamp" href="./posts/2026-09-28-how-bones-began/index.html" aria-hidden="true" tabindex="-1">
-    <b>28</b>
-    <span>Sep</span>
-    <span>2026</span>
+<p class="list-label list-label-more">More posts</p>
+<div class="more-posts">
+
+<article class="row-post" data-index="1" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1790553600000" data-listing-file-modified-sort="1791711739981" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1337">
+  <a class="row-link" href="./posts/2026-09-28-how-bones-began/index.html">
     
-    <img class="stamp-hero" src="posts/2026-09-28-how-bones-began/hero.svg" alt="" width="800" height="320" loading="lazy">
+    <span class="row-hero"><img src="posts/2026-09-28-how-bones-began/hero.svg" alt="" width="800" height="320" loading="lazy"></span>
     
+    <span class="row-body">
+      <h3 class="listing-title anchored">A spinner says wait. A skeleton says what is coming.</h3>
+      
+      <span class="listing-description">A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.
+</span>
+      
+      <span class="post-meta"><time>28 September 2026</time><span aria-hidden="true">·</span><span>7 min read</span></span>
+    </span>
   </a>
-  <div class="entry-body">
-    <h3 class="listing-title anchored"><a href="./posts/2026-09-28-how-bones-began/index.html">A spinner says wait. A skeleton says what is coming.</a></h3>
-    
-    <p class="listing-description">A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.
-</p>
-    
-    
-    <div class="pills">
-      
-      <span class="pill">R</span>
-      
-      <span class="pill">Shiny</span>
-      
-      <span class="pill">packages</span>
-      
-    </div>
-    
-  </div>
 </article>
 
-<article class="entry" data-index="2" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1787788800000" data-listing-file-modified-sort="1791654456184" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="967">
-  <a class="stamp" href="./posts/2026-08-27-undo-for-shiny/index.html" aria-hidden="true" tabindex="-1">
-    <b>27</b>
-    <span>Aug</span>
-    <span>2026</span>
+<article class="row-post" data-index="2" data-categories="UiUyQ1NoaW55JTJDcGFja2FnZXM=" data-listing-date-sort="1787788800000" data-listing-file-modified-sort="1791711739979" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="967">
+  <a class="row-link" href="./posts/2026-08-27-undo-for-shiny/index.html">
     
-    <img class="stamp-hero" src="posts/2026-08-27-undo-for-shiny/hero.svg" alt="" width="800" height="320" loading="lazy">
+    <span class="row-hero"><img src="posts/2026-08-27-undo-for-shiny/hero.svg" alt="" width="800" height="320" loading="lazy"></span>
     
+    <span class="row-body">
+      <h3 class="listing-title anchored">Undo for Shiny, and the three problems that make it interesting</h3>
+      
+      <span class="listing-description">Shiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R's lazy evaluation could produce.
+</span>
+      
+      <span class="post-meta"><time>27 August 2026</time><span aria-hidden="true">·</span><span>5 min read</span></span>
+    </span>
   </a>
-  <div class="entry-body">
-    <h3 class="listing-title anchored"><a href="./posts/2026-08-27-undo-for-shiny/index.html">Undo for Shiny, and the three problems that make it interesting</a></h3>
-    
-    <p class="listing-description">Shiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R's lazy evaluation could produce.
-</p>
-    
-    
-    <div class="pills">
-      
-      <span class="pill">R</span>
-      
-      <span class="pill">Shiny</span>
-      
-      <span class="pill">packages</span>
-      
-    </div>
-    
-  </div>
 </article>
+
+</div>
 
 </div>
 <div class="listing-no-matching d-none">No matching items</div>
 </div>
-</section>
-<section id="packages" class="level2 sec home-packages">
-<h2 class="sec anchored" data-anchor-id="packages">Packages</h2>
-<div class="shelf">
-  <a class="pkg" href="https://tenmeh.github.io/rewind/">
-    <img src="https://tenmeh.github.io/rewind/logo.png" alt="rewind hex logo">
-    <span><b>rewind<em>on CRAN</em></b>Undo and redo for Shiny applications.</span>
-  </a>
-  <a class="pkg" href="https://tenmeh.github.io/bones/">
-    <img src="https://tenmeh.github.io/bones/logo.png" alt="bones hex logo">
-    <span><b>bones<em>on GitHub</em></b>Content-shaped loading placeholders for Shiny outputs.</span>
-  </a>
 </div>
-</section>
+<div class="home-packages">
+<p><span class="list-label">Packages</span></p>
+<div class="pkg-cards">
+  <div class="pkg-card">
+    <img src="https://tenmeh.github.io/rewind/logo.png" alt="rewind hex logo">
+    <div class="pkg-text">
+      <a class="pkg-name" href="https://tenmeh.github.io/rewind/">rewind</a>
+      <span class="pkg-where pkg-cran">on CRAN</span>
+      <p>Undo and redo for Shiny applications.</p>
+    </div>
+    <div class="pkg-install">
+      <code>install.packages("rewind")</code>
+      <button type="button" class="pkg-copy" aria-label="Copy the install command"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+    </div>
+  </div>
+  <div class="pkg-card">
+    <img src="https://tenmeh.github.io/bones/logo.png" alt="bones hex logo">
+    <div class="pkg-text">
+      <a class="pkg-name" href="https://tenmeh.github.io/bones/">bones</a>
+      <span class="pkg-where">on GitHub</span>
+      <p>Content-shaped loading placeholders for Shiny outputs.</p>
+    </div>
+    <div class="pkg-install">
+      <code>remotes::install_github("tenmeh/bones")</code>
+      <button type="button" class="pkg-copy" aria-label="Copy the install command"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+    </div>
+  </div>
+</div>
+
+<div class="follow-card">
+  <p class="follow-title"><i class="bi bi-rss" aria-hidden="true"></i> Follow the blog</p>
+  <p>New posts go to the RSS feed with their full text. They also appear on R-bloggers.</p>
+  <a class="follow-button" href="index.xml">Open the feed <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
+</div>
+
+<script>
+// Copies the install command beside each button. The icon turns into a
+// tick for a moment, so the reader knows it worked.
+document.querySelectorAll(".pkg-copy").forEach(function (button) {
+  button.addEventListener("click", function () {
+    var text = button.previousElementSibling.textContent;
+    var icon = button.querySelector("i");
+    navigator.clipboard.writeText(text).then(function () {
+      icon.className = "bi bi-check2";
+      setTimeout(function () { icon.className = "bi bi-clipboard"; }, 1500);
+    }, function () {});
+  });
+});
+</script>
+</div>
 </div>
 
 

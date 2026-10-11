@@ -28,26 +28,14 @@
 
 
 
-<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/hero.svg" alt="The rewind hex sways and spins above a ground shadow, with a soft halo behind it. On the left, a select box shows North, followed by -> and South. On the right, one row of a two-row table of bars lights up. Dots and pluses move around the hex, beside dotted paths." width="800" height="320" class="figure-img"></figure>
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/hero.png" alt="The rewind hex sways and spins above a ground shadow, with a soft halo behind it. On the left, a select box shows North, followed by -> and South. On the right, one row of a two-row table of bars lights up. Dots and pluses move around the hex, beside dotted paths." width="800" height="320" class="figure-img"></figure>
 <p><strong>rewind 0.3.0 is on CRAN.</strong> I released it on 25 September. If you update from 0.2.0, you also get the changes in 0.2.1, which I released on GitHub only.</p>
-<p><a href="../../posts/2026-08-27-undo-for-shiny/index.html">My first post</a> was about adding undo to Shiny, and the problems behind it. This release makes the history more useful to read. It also fixes two bugs where the history worked, but the app around it did not.</p>
+<p><a href="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/index.html">My first post</a> was about adding undo to Shiny, and the problems behind it. This release makes the history more useful to read. It also fixes two bugs where the history worked, but the app around it did not.</p>
 <section id="what-changed-not-only-which-input" class="level2">
 <h2 class="anchored" data-anchor-id="what-changed-not-only-which-input">What changed, not only which input</h2>
 <p>The new <code>rewind_diff()</code> tells you what a step changed. A history label such as <code>"region, year"</code> tells you which inputs changed. It does not tell you what they held before, or what they hold now.</p>
 <p>I wanted an app to be able to say <code>"North -&gt; South"</code>.</p>
-<figure class="post-preview figure">
-<video src="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/preview.mp4" poster="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/preview.jpg" aria-label="A recreated Shiny app with Undo and Redo buttons. Region changes from North to South, then the year slider moves from 2024 to 2020. A table below shows from, to, name, change, old and new. Undo restores 2024 and removes the year row from the comparison with the first step." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
-<figcaption>A browser recreation. The table compares the first step with the current step using rewind_diff(from = 1).</figcaption>
-</figure>
-<script>
-(function () {
-  var video = document.currentScript.previousElementSibling.querySelector("video");
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  video.controls = false;
-  var started = video.play();
-  if (started && started.catch) started.catch(function () { video.controls = true; });
-})();
-</script>
+<figure class="post-preview"><a href="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/"><img src="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/preview.jpg" alt="A recreated Shiny app with Undo and Redo buttons. Region changes from North to South, then the year slider moves from 2024 to 2020. A table below shows from, to, name, change, old and new. Undo restores 2024 and removes the year row from the comparison with the first step." width="640" height="360"></a><figcaption>A browser recreation. The table compares the first step with the current step using rewind_diff(from = 1). <a href="https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/">Watch the video in the post.</a></figcaption></figure>
 <p>Inside a server with <code>rewind_enable()</code> already called, this compares two positions in the history:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -328,7 +316,7 @@ font-style: inherit;">"rewind"</span>)</span></code></pre></div></div>
 
 
 
-<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/hero.svg" alt="The bones hex logo, alive: the bone bounces, a teal wave sweeps across the grey lines under it, and grey placeholders around it fill in with real content." width="800" height="320" class="figure-img"></figure>
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/hero.png" alt="The bones hex logo, alive: the bone bounces, a teal wave sweeps across the grey lines under it, and grey placeholders around it fill in with real content." width="800" height="320" class="figure-img"></figure>
 <p>It started with a reel.</p>
 <p>It was one of those short videos that explain a trick of the web. When a page loads, the site does not show you a spinner. It shows you grey boxes in the shape of the page: a bar where the title will be, a rectangle where the picture will be, three lines where the text will be. Then the real content fills in.</p>
 <p>The point of the video was that this is a kind of trick. The page is not faster. The data takes as long to arrive as before. But the wait feels shorter, because you already see the shape of what is coming. Your eye goes to the place where the title will be. You start to read the page before there is anything on it.</p>
@@ -397,19 +385,7 @@ background-color: null;
 font-style: inherit;">"results"</span>)</span>
 <span id="cb2-4">))</span></code></pre></div></div>
 <p>That part was fun. The grey boxes themselves were the easy part. The hard part was everything around them.</p>
-<figure class="post-preview figure">
-<video src="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/preview.mp4" poster="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/preview.jpg" aria-label="A recreated Shiny dashboard. Grey placeholders in the shape of a bar chart and a table wave while the outputs load, then the real chart and table take their place. When the region changes, the old content stays and is dimmed until the new data arrives." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
-<figcaption>A short recreation of what this post describes, made in a browser.</figcaption>
-</figure>
-<script>
-(function () {
-  var video = document.currentScript.previousElementSibling.querySelector("video");
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  video.controls = false;
-  var started = video.play();
-  if (started && started.catch) started.catch(function () { video.controls = true; });
-})();
-</script>
+<figure class="post-preview"><a href="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/"><img src="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/preview.jpg" alt="A recreated Shiny dashboard. Grey placeholders in the shape of a bar chart and a table wave while the outputs load, then the real chart and table take their place. When the region changes, the old content stays and is dimmed until the new data arrives." width="640" height="360"></a><figcaption>A short recreation of what this post describes, made in a browser. <a href="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/">Watch the video in the post.</a></figcaption></figure>
 </section>
 <section id="problem-one-the-second-load" class="level2">
 <h2 class="anchored" data-anchor-id="problem-one-the-second-load">Problem one: the second load</h2>
@@ -549,7 +525,7 @@ font-style: inherit;">"bones"</span>))</span></code></pre></div></div>
 
 
 
-<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/hero.svg" alt="The rewind hex logo, alive: the two rewind arrows nudge backwards, the hex spins back once, and a knob walks back along a dotted path and then forward again." width="800" height="320" class="figure-img"></figure>
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/hero.png" alt="The rewind hex logo, alive: the two rewind arrows nudge backwards, the hex spins back once, and a knob walks back along a dotted path and then forward again." width="800" height="320" class="figure-img"></figure>
 <p>Shiny has bookmarking. It has <code>reactlog</code>. It has no undo.</p>
 <p>That is strange when you stop to think about it. Undo is in every text editor, every drawing program, every spreadsheet. People arrive at a dashboard already expecting <code>Ctrl+Z</code> to work. Then they change a filter by mistake, and there is no way back except to remember what the filter used to say.</p>
 <p>I wrote <strong>rewind</strong> to close that gap. It is on CRAN now.</p>
@@ -593,19 +569,7 @@ font-style: inherit;">$</span>year))</span>
 <span id="cb2-8">}</span></code></pre></div></div>
 <p><code>Ctrl+Z</code> now steps backwards through the choices the user made. <code>Ctrl+Shift+Z</code> and <code>Ctrl+Y</code> step forwards. There is a pair of buttons and a clickable history rail if you want them.</p>
 <p>The package itself is small. The interesting part is not the feature. It is the three problems you meet when you try to build it, and I think each one is worth reading about even if you never install this.</p>
-<figure class="post-preview figure">
-<video src="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/preview.mp4" poster="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/preview.jpg" aria-label="A recreated Shiny app with Undo and Redo buttons. The year slider is dragged from 2024 to 2020 and the region is changed to East. Ctrl+Z puts the region back, Ctrl+Z again puts the whole drag back in one step, and Ctrl+Shift+Z redoes it." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
-<figcaption>A short recreation of what this post describes, made in a browser.</figcaption>
-</figure>
-<script>
-(function () {
-  var video = document.currentScript.previousElementSibling.querySelector("video");
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  video.controls = false;
-  var started = video.play();
-  if (started && started.catch) started.catch(function () { video.controls = true; });
-})();
-</script>
+<figure class="post-preview"><a href="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/"><img src="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/preview.jpg" alt="A recreated Shiny app with Undo and Redo buttons. The year slider is dragged from 2024 to 2020 and the region is changed to East. Ctrl+Z puts the region back, Ctrl+Z again puts the whole drag back in one step, and Ctrl+Shift+Z redoes it." width="640" height="360"></a><figcaption>A short recreation of what this post describes, made in a browser. <a href="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/">Watch the video in the post.</a></figcaption></figure>
 <section id="problem-one-restoring-a-widget-you-have-never-heard-of" class="level2">
 <h2 class="anchored" data-anchor-id="problem-one-restoring-a-widget-you-have-never-heard-of">Problem one: restoring a widget you have never heard of</h2>
 <p>To undo, you have to put an old value back into a widget. The obvious way is a lookup table:</p>
