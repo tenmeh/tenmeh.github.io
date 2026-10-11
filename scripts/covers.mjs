@@ -3,8 +3,9 @@
 //   node scripts/covers.mjs
 //
 // Quarto runs this before each render (project: pre-render in _quarto.yml).
-// It writes posts/<slug>/cover.png and ./cover.png at 1200x630. Those are
-// build outputs and are not committed. Each cover is made from the front
+// It writes posts/<slug>/cover.png and ./cover.png at 1200x630, and a PNG
+// still of each hero for the feed. Those are build outputs and are not
+// committed. Each cover is made from the front
 // matter of the post, so a new post gets one with no extra work.
 //
 // The small differences between covers (the phase of the wave, the tilt of
@@ -337,9 +338,9 @@ function coverSvg({ title, subtitle, categories = [], date, author, packages = [
   return out.join("");
 }
 
-function render(svg) {
+function render(svg, width = W) {
   const resvg = new Resvg(svg, {
-    fitTo: { mode: "width", value: W },
+    fitTo: { mode: "width", value: width },
     font: {
       fontFiles: Object.values(fontFiles),
       loadSystemFonts: false,
@@ -378,4 +379,13 @@ for (const slug of readdirSync(postsDir).sort()) {
   });
   writeFileSync(join(postsDir, slug, "cover.png"), render(svg));
   console.log(`posts/${slug}/cover.png`);
+
+  // A still of the hero, for the feed. R-bloggers and many readers drop an
+  // SVG, so scripts/feed.mjs points the feed at this PNG. The page keeps the
+  // animated SVG. resvg draws the first frame, at twice the 800px width.
+  if (fm.hero && fm.hero.endsWith(".svg") && existsSync(join(postsDir, slug, fm.hero))) {
+    const still = fm.hero.replace(/\.svg$/, ".png");
+    writeFileSync(join(postsDir, slug, still), render(readFileSync(join(postsDir, slug, fm.hero), "utf8"), 1600));
+    console.log(`posts/${slug}/${still}`);
+  }
 }
