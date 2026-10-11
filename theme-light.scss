@@ -1,48 +1,63 @@
 /*-- scss:defaults --*/
 
-// Kiln shapes in Colophon colours. Light: the bone paper and ink of the
-// bones logo, with a rubric red as the one accent.
-@import url("https://fonts.googleapis.com/css2?family=Recursive:slnt,wght,CASL,CRSV,MONO@-15..0,300..1000,0..1,0..1,0..1&display=swap");
+// Light: cool paper and navy ink, with Very Peri (Pantone 2022) as the one
+// accent and Mocha Mousse (Pantone 2025) as the warm second colour.
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Geist+Mono:wght@400..600&display=swap");
 
-$body-bg: #f4efe4;
-$body-color: #17202a;
-$primary: #9e2a2b;
-$link-color: #9e2a2b;
-$text-muted: #555b66;
-$border-color: #cfc5b1;
+$body-bg: #f9fbfd;
+$body-color: #121b31;
+$primary: #5758a8;
+$link-color: #5758a8;
+$text-muted: #566176;
+$border-color: #d5dce7;
 
-$navbar-bg: #f4efe4;
-$navbar-fg: #17202a;
-$navbar-hl: #9e2a2b;
-$footer-bg: #f4efe4;
-$footer-fg: #555b66;
+$navbar-bg: #f9fbfd;
+$navbar-fg: #121b31;
+$navbar-hl: #5758a8;
+$footer-bg: #e2e9f4;
+$footer-fg: #566176;
 
-$code-color: #17202a;
-$code-bg: #fbf8f1;
-$code-block-bg: #fbf8f1;
+$code-color: #121b31;
+$code-bg: #f2f5fb;
+$code-block-bg: #f2f5fb;
 
-$font-family-sans-serif: Recursive, system-ui, sans-serif;
-$font-family-monospace: Recursive, Consolas, monospace;
-$headings-font-family: Recursive, system-ui, sans-serif;
-$font-size-root: 18px;
+$font-family-sans-serif: Geist, system-ui, -apple-system, "Segoe UI", sans-serif;
+$font-family-monospace: "Geist Mono", ui-monospace, Consolas, monospace;
+$headings-font-family: Geist, system-ui, -apple-system, "Segoe UI", sans-serif;
+$font-size-root: 17px;
 
 /*-- scss:rules --*/
 
-// The shared rules in styles.css read these. Each value passes 4.5:1 on
-// the ground it is used on.
+// The shared rules in styles.css read these. Each text colour passes 4.5:1
+// on the ground it is used on.
 :root {
-  --k-paper: #f4efe4;
-  --k-surface: #fbf8f1;
-  --k-code: #fbf8f1;
-  --k-ink: #17202a;
-  --k-muted: #555b66;
-  --k-rule: #cfc5b1;
-  --k-accent: #9e2a2b;
-  --k-accent-soft: #f0ddd4;
-  --k-syn-comment: #6b6457;
-  --k-syn-keyword: #9e2a2b;
-  --k-syn-string: #2f6b3b;
-  --k-syn-function: #1f4f8a;
-  --k-syn-number: #8a5300;
+  --k-paper: #f9fbfd;
+  --k-paper-end: #e2e9f4;
+  --k-surface: #ffffff;
+  --k-code: #f2f5fb;
+  --k-ink: #121b31;
+  --k-muted: #566176;
+  --k-muted-bg: #eaeff6;
+  --k-hover: #ededf8;
+  --k-rule: #d5dce7;
+  --k-accent: #5758a8;
+  --k-accent-soft: #efeffb;
+  --k-primary: #162446;
+  --k-on-primary: #f9fbfd;
+  --k-ok: #1e686b;
+  // The glows at the top of the page: Very Peri and Mocha Mousse.
+  --k-glow-a: rgba(87, 88, 168, 0.42);
+  --k-glow-b: rgba(163, 121, 102, 0.34);
+  --k-tag-r: #4d4f9d;
+  --k-tag-r-bg: #ebebfa;
+  --k-tag-shiny: #1d6467;
+  --k-tag-shiny-bg: #e5f5f5;
+  --k-tag-pkg: #7e5644;
+  --k-tag-pkg-bg: #f4e8e1;
+  --k-syn-comment: #657086;
+  --k-syn-keyword: #a52766;
+  --k-syn-string: #186755;
+  --k-syn-function: #46479b;
+  --k-syn-number: #a64f07;
   --k-syn-arg: #6a3f86;
 }

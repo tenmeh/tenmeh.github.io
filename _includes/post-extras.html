@@ -1,0 +1,22 @@
+<!-- Added to each post by posts/_metadata.yml. -->
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<script>
+(function () {
+  // The categories in the title block carry their name in data-cat, as the
+  // tags on the home page do, so that each category keeps one colour.
+  document.querySelectorAll(".quarto-title .quarto-category").forEach(function (tag) {
+    tag.dataset.cat = tag.textContent.trim().toLowerCase();
+  });
+
+  // The bar at the top grows as the reader moves down the post.
+  var bar = document.querySelector(".read-progress span");
+  function update() {
+    var page = document.documentElement;
+    var room = page.scrollHeight - page.clientHeight;
+    bar.style.transform = "scaleX(" + (room > 0 ? page.scrollTop / room : 0) + ")";
+  }
+  update();
+  addEventListener("scroll", update, { passive: true });
+  addEventListener("resize", update);
+})();
+</script>
