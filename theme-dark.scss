@@ -1,19 +1,19 @@
 /*-- scss:defaults --*/
 
-// Dark: the same navy and R blue as the light theme, lightened, on a deep
-// navy ground.
+// Dark: the same navy, Very Peri and Mocha Mousse as the light theme,
+// lightened, on a deep navy ground.
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Geist+Mono:wght@400..600&display=swap");
 
 $body-bg: #0b0d14;
 $body-color: #eef2f6;
-$primary: #71acf4;
-$link-color: #71acf4;
+$primary: #a0a1e9;
+$link-color: #a0a1e9;
 $text-muted: #9ba5b5;
 $border-color: #252b37;
 
 $navbar-bg: #0b0d14;
 $navbar-fg: #eef2f6;
-$navbar-hl: #71acf4;
+$navbar-hl: #a0a1e9;
 $footer-bg: #06070c;
 $footer-fg: #9ba5b5;
 
@@ -40,24 +40,24 @@ $font-size-root: 17px;
   --k-muted-bg: #1e232f;
   --k-hover: #1e2838;
   --k-rule: #252b37;
-  --k-accent: #71acf4;
-  --k-accent-soft: #142234;
+  --k-accent: #a0a1e9;
+  --k-accent-soft: #1d1d30;
   --k-primary: #eef2f6;
   --k-on-primary: #121b31;
   --k-ok: #66ccc9;
   // The glows are stronger here, so they still show on the dark ground.
-  --k-glow-a: rgba(113, 172, 244, 0.3);
-  --k-glow-b: rgba(102, 204, 201, 0.2);
-  --k-tag-r: #94bdf0;
-  --k-tag-r-bg: #182739;
+  --k-glow-a: rgba(160, 161, 233, 0.3);
+  --k-glow-b: rgba(163, 121, 102, 0.22);
+  --k-tag-r: #acadec;
+  --k-tag-r-bg: #1f1f33;
   --k-tag-shiny: #6ecfcb;
   --k-tag-shiny-bg: #162d2d;
-  --k-tag-pkg: #f2b54a;
-  --k-tag-pkg-bg: #2e2314;
+  --k-tag-pkg: #d8ad97;
+  --k-tag-pkg-bg: #2d211b;
   --k-syn-comment: #8790a1;
   --k-syn-keyword: #ed97c2;
   --k-syn-string: #7acdb1;
-  --k-syn-function: #84b7f5;
+  --k-syn-function: #abaced;
   --k-syn-number: #f5b047;
   --k-syn-arg: #d2b4f0;
 }

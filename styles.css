@@ -1,14 +1,14 @@
 /* =============================================================================
    styles.css - tenmeh.github.io
-   Navy ink and R blue, on a ground with a soft gradient. The colours are
+   Navy ink with Very Peri and Mocha Mousse, on a ground with a soft gradient. The colours are
    --k-* variables, set by theme-light.scss and theme-dark.scss. Geist sets
    the text and the headings, Geist Mono the code.
    ============================================================================= */
 
 /* --- Base -------------------------------------------------------------------- */
 
-/* The ground: a glow of R blue at the top left and bones teal at the top
-   right, over a shade that deepens down the page. Cards and code keep their
+/* The ground: a glow of Very Peri at the top left and Mocha Mousse at the
+   top right, over a shade that deepens down the page. Cards and code keep their
    own solid fill, so text contrast does not change. */
 body {
   min-height: 100vh;
@@ -44,7 +44,7 @@ main.content {
   max-width: 42rem;
 }
 
-/* Links in running text: the text colour, with a blue underline that
+/* Links in running text: the text colour, with a Very Peri underline that
    darkens on hover. Navigation, titles and cards opt out below. */
 main a {
   color: var(--k-ink);
@@ -236,8 +236,8 @@ nav.navbar #quarto-search .aa-DetachedSearchButton:hover {
 
 /* --- Tags ---------------------------------------------------------------------- */
 
-/* Each category keeps one colour everywhere: R blue, Shiny teal, packages
-   amber. A category with no colour of its own gets an outline. */
+/* Each category keeps one colour everywhere: R in Very Peri, Shiny in teal,
+   packages in Mocha Mousse. A category with no colour of its own gets an outline. */
 .pills {
   display: flex;
   flex-wrap: wrap;
@@ -940,8 +940,8 @@ div.sourceCode code span.op { color: var(--k-ink); }
 
 /* --- Post: quotes ------------------------------------------------------------------ */
 
-/* A quote reads as a note beside the text: a blue rule at the left and a
-   pale blue ground. */
+/* A quote reads as a note beside the text: an accent rule at the left and
+   a pale accent ground. */
 blockquote {
   margin: 2rem 0;
   padding: 1rem 1.3rem;
@@ -959,8 +959,8 @@ blockquote p:last-child {
 
 /* --- Post: table of contents -------------------------------------------------------- */
 
-/* A plain list with a line at the left. The current section takes a blue
-   mark on that line. */
+/* A plain list with a line at the left. The current section takes an
+   accent mark on that line. */
 #TOC {
   font-size: 0.84rem;
   line-height: 1.45;

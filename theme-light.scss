@@ -1,19 +1,19 @@
 /*-- scss:defaults --*/
 
-// Light: cool paper and navy ink, with R's own blue as the one accent. The
-// bones teal and the rewind amber colour the category tags.
+// Light: cool paper and navy ink, with Very Peri (Pantone 2022) as the one
+// accent and Mocha Mousse (Pantone 2025) as the warm second colour.
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@400..800&family=Geist+Mono:wght@400..600&display=swap");
 
 $body-bg: #f9fbfd;
 $body-color: #121b31;
-$primary: #266bc0;
-$link-color: #266bc0;
+$primary: #5758a8;
+$link-color: #5758a8;
 $text-muted: #566176;
 $border-color: #d5dce7;
 
 $navbar-bg: #f9fbfd;
 $navbar-fg: #121b31;
-$navbar-hl: #266bc0;
+$navbar-hl: #5758a8;
 $footer-bg: #e2e9f4;
 $footer-fg: #566176;
 
@@ -38,26 +38,26 @@ $font-size-root: 17px;
   --k-ink: #121b31;
   --k-muted: #566176;
   --k-muted-bg: #eaeff6;
-  --k-hover: #e7eef9;
+  --k-hover: #ededf8;
   --k-rule: #d5dce7;
-  --k-accent: #266bc0;
-  --k-accent-soft: #e7f1fd;
+  --k-accent: #5758a8;
+  --k-accent-soft: #efeffb;
   --k-primary: #162446;
   --k-on-primary: #f9fbfd;
   --k-ok: #1e686b;
-  // The glows at the top of the page: R blue and bones teal.
-  --k-glow-a: rgba(38, 107, 192, 0.42);
-  --k-glow-b: rgba(29, 140, 140, 0.32);
-  --k-tag-r: #225faa;
-  --k-tag-r-bg: #e7f1fd;
+  // The glows at the top of the page: Very Peri and Mocha Mousse.
+  --k-glow-a: rgba(87, 88, 168, 0.42);
+  --k-glow-b: rgba(163, 121, 102, 0.34);
+  --k-tag-r: #4d4f9d;
+  --k-tag-r-bg: #ebebfa;
   --k-tag-shiny: #1d6467;
   --k-tag-shiny-bg: #e5f5f5;
-  --k-tag-pkg: #964f08;
-  --k-tag-pkg-bg: #fdf0d8;
+  --k-tag-pkg: #7e5644;
+  --k-tag-pkg-bg: #f4e8e1;
   --k-syn-comment: #657086;
   --k-syn-keyword: #a52766;
   --k-syn-string: #186755;
-  --k-syn-function: #205aa2;
+  --k-syn-function: #46479b;
   --k-syn-number: #a64f07;
   --k-syn-arg: #6a3f86;
 }
