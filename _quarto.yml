@@ -30,6 +30,9 @@ website:
   twitter-card:
     card-style: summary_large_image
   navbar:
+    # Always in view. Without it, Quarto slides the navbar away as the
+    # reader scrolls down.
+    pinned: true
     logo: "https://avatars.githubusercontent.com/u/81738153?v=4&s=96"
     logo-alt: "Tanmay Chanda"
     left:
