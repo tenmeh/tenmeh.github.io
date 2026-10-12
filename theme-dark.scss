@@ -45,9 +45,11 @@ $font-size-root: 17px;
   --k-primary: #eef2f6;
   --k-on-primary: #121b31;
   --k-ok: #66ccc9;
-  // The glows are stronger here, so they still show on the dark ground.
-  --k-glow-a: rgba(160, 161, 233, 0.3);
-  --k-glow-b: rgba(163, 121, 102, 0.22);
+  // The glows use the true Very Peri and Mocha Mousse, which are more
+  // saturated than the light text colours and so still show on the dark
+  // ground. Muted text keeps 5:1 even at the centre of a glow.
+  --k-glow-a: rgba(102, 103, 171, 0.4);
+  --k-glow-b: rgba(164, 120, 100, 0.3);
   --k-tag-r: #acadec;
   --k-tag-r-bg: #1f1f33;
   --k-tag-shiny: #6ecfcb;
