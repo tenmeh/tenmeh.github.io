@@ -7,26 +7,35 @@
 
 /* --- Base -------------------------------------------------------------------- */
 
-/* Quarto sets html to the height of the screen. With no background of its
-   own, html would take the body's background and draw it against that one
-   screen, so the gradient would stop in a hard line at the first fold. Its
-   own background keeps the gradient on the body, which is as tall as the
-   page. */
+/* The ground behind every page: a glow of Very Peri at the top left, Mocha
+   Mousse at the top right and again at the bottom left, over a
+   shade that deepens down the screen. It sits on a layer fixed to the
+   screen, so the glows stay in view as the reader scrolls, instead of
+   staying at the top of the page. A fixed layer, not
+   background-attachment: fixed, because iOS Safari ignores that. Cards and
+   code keep their own solid fill, so text contrast does not change. */
 html {
-  background: var(--k-paper-end);
+  background: var(--k-paper);
 }
 
-/* The ground: a glow of Very Peri at the top left and Mocha Mousse at the
-   top right, over a shade that deepens down the page. Cards and code keep their
-   own solid fill, so text contrast does not change. */
-body {
-  min-height: 100vh;
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background-color: var(--k-paper);
   background-image:
     radial-gradient(56rem 30rem at 12% -6rem, var(--k-glow-a), transparent 70%),
-    radial-gradient(48rem 26rem at 92% -4rem, var(--k-glow-b), transparent 70%),
+    radial-gradient(62rem 38rem at 94% -4rem, var(--k-glow-b), transparent 70%),
+    radial-gradient(58rem 34rem at 2% 106%, var(--k-glow-b), transparent 70%),
     linear-gradient(to bottom, var(--k-paper), var(--k-paper-end));
   background-repeat: no-repeat;
+}
+
+body {
+  min-height: 100vh;
+  background: transparent; /* the ground is on body::before */
   line-height: 1.72;
   /* Geist draws "->" as an arrow through its ligatures. The posts
      write "->" on purpose, so it stays as typed. */
