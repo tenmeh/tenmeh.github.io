@@ -205,7 +205,7 @@
   // A soft ring on a control that rewind has put back, so the eye finds it.
   const ring = (ms, t0) => {
     const p = clamp((ms - t0) / 900);
-    return ms >= t0 && p < 1 ? `0 0 0 3px rgba(158, 42, 43, ${0.55 * (1 - p)})` : "";
+    return ms >= t0 && p < 1 ? `0 0 0 3px rgba(87, 88, 168, ${0.55 * (1 - p)})` : "";
   };
 
   let shown = "";
