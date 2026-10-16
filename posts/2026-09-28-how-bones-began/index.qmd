@@ -212,9 +212,10 @@ waits in a better way.
 
 ## Try it
 
+*Update, 16 October 2026: bones is now on CRAN.*
+
 ```r
-# install.packages("remotes")
-remotes::install_github("tenmeh/bones")
+install.packages("bones")
 
 shiny::runApp(system.file("examples/demo", package = "bones"))
 ```

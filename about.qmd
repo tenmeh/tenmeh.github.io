@@ -15,7 +15,7 @@ My R packages:
   [Documentation](https://tenmeh.github.io/rewind/) -
   [source](https://github.com/tenmeh/rewind).
 - **bones** - content-shaped loading placeholders for Shiny outputs. On
-  GitHub. [Documentation](https://tenmeh.github.io/bones/) -
+  CRAN. [Documentation](https://tenmeh.github.io/bones/) -
   [source](https://github.com/tenmeh/bones).
 
 Find me on [GitHub](https://github.com/tenmeh).
