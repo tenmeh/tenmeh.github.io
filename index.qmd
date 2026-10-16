@@ -58,11 +58,11 @@ decision rather than only the decision.
     <img src="https://tenmeh.github.io/bones/logo.png" alt="bones hex logo">
     <div class="pkg-text">
       <a class="pkg-name" href="https://tenmeh.github.io/bones/">bones</a>
-      <span class="pkg-where">on GitHub</span>
+      <span class="pkg-where pkg-cran">on CRAN</span>
       <p>Content-shaped loading placeholders for Shiny outputs.</p>
     </div>
     <div class="pkg-install">
-      <code>remotes::install_github("tenmeh/bones")</code>
+      <code>install.packages("bones")</code>
       <button type="button" class="pkg-copy" aria-label="Copy the install command"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
     </div>
   </div>
