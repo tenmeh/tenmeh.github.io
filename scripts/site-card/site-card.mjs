@@ -51,7 +51,8 @@ const blog = join(here, "..", "..");
 // name      the big word. The tagline is read from `home: title:` of the
 //           _pkgdown.yml of the package, unless one is given here.
 // pill      the second pill, after "R package". One value, to change later:
-//           bones says "on GitHub" until it is on CRAN, then "on CRAN".
+//           Both packages are on CRAN. A new package says "on GitHub"
+//           until it is on CRAN.
 // accent    the dark accent of the site, for the text of the pills
 // light     the light accent, for the wavy line (the amber and the teal of
 //           the logos)
@@ -70,7 +71,7 @@ const packages = {
   bones: {
     name: "bones",
     url: "tenmeh.github.io/bones",
-    pill: "on GitHub",
+    pill: "on CRAN",
     accent: "#1B6A70",
     light: "#237A80",
     scene: "bones",
