@@ -17,6 +17,9 @@ My R packages:
 - **bones** - content-shaped loading placeholders for Shiny outputs. On
   CRAN. [Documentation](https://tenmeh.github.io/bones/) -
   [source](https://github.com/tenmeh/bones).
+- **whence** - explain where a number came from in Shiny dashboards. On
+  CRAN. [Documentation](https://tenmeh.github.io/whence/) -
+  [source](https://github.com/tenmeh/whence).
 
 Find me on [GitHub](https://github.com/tenmeh).
 
