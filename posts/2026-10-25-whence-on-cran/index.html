@@ -84,9 +84,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-77672f20334aa82671ccdef1276e2334.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-8854cd58563388799380cb17b5a17832.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark-6a32afaf7d083c7c1c5bf876d95f20e8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="../../site_libs/bootstrap/bootstrap-8854cd58563388799380cb17b5a17832.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-6cd1063869c1700acf0fe3aa9f48ada5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-9af0c1d7a6c17e08917da5455f2cbee1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-6cd1063869c1700acf0fe3aa9f48ada5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -367,7 +367,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#problem-two-a-summary-is-not-a-loss" id="toc-problem-two-a-summary-is-not-a-loss" class="nav-link" data-scroll-target="#problem-two-a-summary-is-not-a-loss">Problem two: a summary is not a loss</a></li>
   <li><a href="#problem-three-one-row-of-a-table" id="toc-problem-three-one-row-of-a-table" class="nav-link" data-scroll-target="#problem-three-one-row-of-a-table">Problem three: one row of a table</a></li>
   <li><a href="#problem-four-which-rows" id="toc-problem-four-which-rows" class="nav-link" data-scroll-target="#problem-four-which-rows">Problem four: which rows</a></li>
-  <li><a href="#what-it-will-not-do" id="toc-what-it-will-not-do" class="nav-link" data-scroll-target="#what-it-will-not-do">What it will not do</a></li>
   <li><a href="#try-it" id="toc-try-it" class="nav-link" data-scroll-target="#try-it">Try it</a></li>
   </ul>
 </nav>
@@ -423,7 +422,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>A few weeks later she sent me a screenshot. The dashboard said 412 orders for April. Under it she had written: “I packed more than 600 boxes.”</p>
 <p>The number was not wrong. I knew that before I looked. The pipeline under it removed test orders, then refunds, then orders that were never paid, and then it cut the month at midnight in UTC, not in her time zone. Each step was right. Together, they made a number that she did not recognise.</p>
 <p>So I opened R and ran the pipeline one step at a time. I counted the rows after each step and wrote the counts in a message:</p>
-<pre><code>640 orders in April
+<pre class="text"><code>640 orders in April
 598 after the test orders
 431 after refunds and unpaid orders
 412 after the cut at midnight UTC</code></pre>
@@ -434,7 +433,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Every dashboard I have built has met some version of it. Someone looks at a number and expects a different one. They do not doubt the arithmetic. They want to know what was left out.</p>
 <p>The person who asks is usually not the person who wrote the code. They cannot read the pipeline. Even if they could, a row count is not in the code. It only exists when the code runs.</p>
 <p>whence puts the answer next to the number. The viewer clicks it, and a panel opens:</p>
-<pre><code>$4,281,330
+<pre class="text"><code>$4,281,330
 
   Where the rows went
     sales                 18,442 rows
@@ -502,15 +501,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>“View the rows” shows the rows of the source that make the value. A click on a removed count shows the rows that the step removed. In the story at the top, that is where the 167 refunds and unpaid orders would be.</p>
 <p>This could be slow, so it happens only when the viewer asks. The steps then run again on a copy of the source with a hidden id column, and the ids that survive are the rows that count.</p>
 <p>Some steps break that link. After <code>distinct()</code>, <code>pivot_longer()</code>, <code>pivot_wider()</code> or a step that whence does not know, a row of the result is no longer one row of the source. The panel then says so. The waterfall still works, because counts survive any step.</p>
-</section>
-<section id="what-it-will-not-do" class="level2">
-<h2 class="anchored" data-anchor-id="what-it-will-not-do">What it will not do</h2>
-<p>I would rather say this here than have you find it in an app.</p>
-<ul>
-<li><strong>Database pipelines are not supported.</strong> With ‘dbplyr’, nothing runs until <code>collect()</code>, so there are no counts to show for each step. whence stops with an error for a lazy table. It does not show a waterfall that would mislead.</li>
-<li><strong>Joins are not traced.</strong> A join ends the chain. The join and everything before it become the first row of the waterfall.</li>
-<li><strong>Other verbs are not known.</strong> The verbs of ‘data.table’, ‘arrow’ and ‘duckplyr’ are not in its list.</li>
-</ul>
 </section>
 <section id="try-it" class="level2">
 <h2 class="anchored" data-anchor-id="try-it">Try it</h2>
