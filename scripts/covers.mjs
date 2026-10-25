@@ -330,9 +330,16 @@ function coverSvg({ title, subtitle, categories = [], date, author, packages = [
   const angle = tilt * range(rand, 3, 7);
   if (packages.length === 1) {
     out.push(logo(packages[0], 985, midY + 2, 262, angle));
-  } else if (packages.length > 1) {
-    packages.slice(0, 2).forEach((name, i) => {
+  } else if (packages.length === 2) {
+    packages.forEach((name, i) => {
       out.push(logo(name, 875 + i * 200, midY + (i ? 28 : -28), 205, i ? -angle : angle));
+    });
+  } else if (packages.length > 2) {
+    // Three hexes in a cluster: two above, one below between them. More
+    // than three would not fit, so the cover shows the first three.
+    const spots = [[880, midY - 76, angle], [1062, midY - 94, -angle], [975, midY + 72, angle / 2]];
+    packages.slice(0, 3).forEach((name, i) => {
+      out.push(logo(name, spots[i][0], spots[i][1], 172, spots[i][2]));
     });
   } else {
     out.push(motif(rand, 820, top + 34, 308, bottom - top - 68));

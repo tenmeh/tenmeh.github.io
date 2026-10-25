@@ -66,6 +66,18 @@ decision rather than only the decision.
       <button type="button" class="pkg-copy" aria-label="Copy the install command"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
     </div>
   </div>
+  <div class="pkg-card">
+    <img src="https://tenmeh.github.io/whence/logo.png" alt="whence hex logo">
+    <div class="pkg-text">
+      <a class="pkg-name" href="https://tenmeh.github.io/whence/">whence</a>
+      <span class="pkg-where pkg-cran">on CRAN</span>
+      <p>Explain where a number came from in Shiny dashboards.</p>
+    </div>
+    <div class="pkg-install">
+      <code>install.packages("whence")</code>
+      <button type="button" class="pkg-copy" aria-label="Copy the install command"><i class="bi bi-clipboard" aria-hidden="true"></i></button>
+    </div>
+  </div>
 </div>
 
 <div class="follow-card">
