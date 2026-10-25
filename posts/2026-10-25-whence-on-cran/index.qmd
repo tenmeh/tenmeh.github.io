@@ -32,7 +32,7 @@ was right. Together, they made a number that she did not recognise.
 So I opened R and ran the pipeline one step at a time. I counted the rows
 after each step and wrote the counts in a message:
 
-```
+```text
 640 orders in April
 598 after the test orders
 431 after refunds and unpaid orders
@@ -57,7 +57,7 @@ code. It only exists when the code runs.
 whence puts the answer next to the number. The viewer clicks it, and a
 panel opens:
 
-```
+```text
 $4,281,330
 
   Where the rows went
@@ -181,19 +181,6 @@ Some steps break that link. After `distinct()`, `pivot_longer()`,
 `pivot_wider()` or a step that whence does not know, a row of the result is
 no longer one row of the source. The panel then says so. The waterfall
 still works, because counts survive any step.
-
-## What it will not do
-
-I would rather say this here than have you find it in an app.
-
-- **Database pipelines are not supported.** With 'dbplyr', nothing runs
-  until `collect()`, so there are no counts to show for each step. whence
-  stops with an error for a lazy table. It does not show a waterfall that
-  would mislead.
-- **Joins are not traced.** A join ends the chain. The join and everything
-  before it become the first row of the waterfall.
-- **Other verbs are not known.** The verbs of 'data.table', 'arrow' and
-  'duckplyr' are not in its list.
 
 ## Try it
 

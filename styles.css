@@ -53,8 +53,11 @@ h1, h2, h3, h4, .navbar-title {
 h1 { font-weight: 700; }
 h2, h3, h4 { font-weight: 600; }
 
+/* Selected text. The soft accent was almost the colour of the page, so a
+   selection could hardly be seen. */
 ::selection {
-  background: var(--k-accent-soft);
+  background: var(--k-select);
+  color: var(--k-ink);
 }
 
 /* A narrow measure reads better than the full width of a wide screen. */
@@ -929,6 +932,46 @@ pre.sourceCode {
 
 pre.sourceCode code {
   font-variant-ligatures: none;
+}
+
+/* A block with no language, or one that Quarto does not highlight, such as
+   ```text, is a bare <pre> with no div.sourceCode around it. It gets the
+   same frame, so it never shows as loose text on the page. A known class
+   names the block in a bar, as the language bar does above. */
+main pre:not(.sourceCode) {
+  margin: 1.8rem 0;
+  padding: 1rem 1.1rem 1.1rem;
+  overflow-x: auto;
+  border: 1px solid var(--k-rule);
+  border-radius: 0.6rem;
+  background: var(--k-code);
+  color: var(--k-ink);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  font-variant-ligatures: none;
+}
+
+main pre:not(.sourceCode) code {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+}
+
+main pre.text::before {
+  content: "Text";
+  display: flex;
+  align-items: center;
+  height: 2.5rem;
+  margin: -1rem -1.1rem 1rem;
+  padding: 0 1rem;
+  border-bottom: 1px solid var(--k-rule);
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--k-muted);
 }
 
 /* Quarto's copy button, moved into the header bar. */

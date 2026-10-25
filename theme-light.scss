@@ -42,6 +42,9 @@ $font-size-root: 17px;
   --k-rule: #d5dce7;
   --k-accent: #5758a8;
   --k-accent-soft: #efeffb;
+  // Selected text: a Very Peri tint that stands out from the page (1.5:1,
+  // about as strong as the browser default) and keeps the text at 11:1.
+  --k-select: #cccde5;
   --k-primary: #162446;
   --k-on-primary: #f9fbfd;
   --k-ok: #1e686b;
