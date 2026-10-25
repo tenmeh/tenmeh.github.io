@@ -53,8 +53,11 @@ h1, h2, h3, h4, .navbar-title {
 h1 { font-weight: 700; }
 h2, h3, h4 { font-weight: 600; }
 
+/* Selected text. The soft accent was almost the colour of the page, so a
+   selection could hardly be seen. */
 ::selection {
-  background: var(--k-accent-soft);
+  background: var(--k-select);
+  color: var(--k-ink);
 }
 
 /* A narrow measure reads better than the full width of a wide screen. */
