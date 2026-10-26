@@ -1,7 +1,7 @@
 // Draws the share card (the link preview) of a pkgdown site, 1200x630, as a
 // still (card.png) and as a GIF (card.gif) that loops once per loop of the hero.
 //
-//   node scripts/site-card/site-card.mjs            # both packages
+//   node scripts/site-card/site-card.mjs            # every package
 //   node scripts/site-card/site-card.mjs bones      # one package
 //   node scripts/site-card/site-card.mjs --no-gif   # the still only, quickly
 //   node scripts/site-card/site-card.mjs --t 2.2    # freeze the hero at 2.2s
@@ -51,11 +51,11 @@ const blog = join(here, "..", "..");
 // name      the big word. The tagline is read from `home: title:` of the
 //           _pkgdown.yml of the package, unless one is given here.
 // pill      the second pill, after "R package". One value, to change later:
-//           Both packages are on CRAN. A new package says "on GitHub"
+//           All three packages are on CRAN. A new package says "on GitHub"
 //           until it is on CRAN.
 // accent    the dark accent of the site, for the text of the pills
-// light     the light accent, for the wavy line (the amber and the teal of
-//           the logos)
+// light     the light accent, for the wavy line (the amber, the teal and
+//           the purple of the logos)
 // scene     the file in scenes/
 // t         the second of the 5.6s loop where the hero is frozen
 const packages = {
@@ -76,6 +76,15 @@ const packages = {
     light: "#237A80",
     scene: "bones",
     t: 4.0,
+  },
+  whence: {
+    name: "whence",
+    url: "tenmeh.github.io/whence",
+    pill: "on CRAN",
+    accent: "#5B3FB5",
+    light: "#7356D6",
+    scene: "whence",
+    t: 3.5,
   },
 };
 const AUTHOR = "Tanmay Chanda";
