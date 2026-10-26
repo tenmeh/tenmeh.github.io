@@ -1,0 +1,106 @@
+<!-- The scene of the whence hero (posts/2026-10-25-whence-on-cran/hero.svg),
+     laid out again on the 1200x630 card. The style block, the shapes and the
+     delays are copied from the hero as they are. Only the groups that hold
+     them have new places (translate and scale): the hex in the middle of the
+     right half, on a halo, the number and its pointer below it on the left,
+     and the panel of steps above it on the right. The text of the hero uses
+     the font of the card, so the card has one family of letters.
+     The pointer, the ripple and the steps loop in 6s, not 5.6s, as in the
+     hero. So the GIF of this card does not loop with no jump. The still is
+     what GitHub and most previews show. The pointer rests inside the box
+     of the number, and not 70px away as in the hero, so the still shows it
+     at the number. -->
+<style>
+svg{display:block}
+.sway{transform-box:view-box;transform-origin:0 0;animation:sway 5.6s ease-in-out infinite}
+.shadow{transform-box:fill-box;transform-origin:center;opacity:.14;animation:shadow 5.6s ease-in-out infinite}
+.cur{animation:cur 6s cubic-bezier(.45,0,.25,1) infinite}
+.rip{transform-box:fill-box;transform-origin:center;opacity:0;animation:rip 6s ease-out infinite}
+.r1,.r2,.r3{animation:6s ease-out infinite}
+.r1{animation-name:r1}.r2{animation-name:r2}.r3{animation-name:r3}
+.cut{transform-box:fill-box;transform-origin:center top;animation:cut 5.6s ease-in-out infinite}
+.tw{transform-box:fill-box;transform-origin:center;animation:tw 2.8s ease-in-out infinite}
+.fl{animation:fl 2.8s ease-in-out infinite}
+.ui{font-family:"Recursive Card",system-ui,sans-serif}
+.mono{font-family:ui-monospace,Consolas,monospace}
+@keyframes sway{0%{transform:translateY(0) rotate(-4deg)}25%{transform:translateY(-8px) rotate(0deg)}50%{transform:translateY(0) rotate(4deg)}75%{transform:translateY(-8px) rotate(0deg)}100%{transform:translateY(0) rotate(-4deg)}}
+@keyframes shadow{0%,50%,100%{transform:scaleX(1);opacity:.14}25%,75%{transform:scaleX(.86);opacity:.09}}
+@keyframes cur{0%{transform:translate(-22px,16px)}22%,34%{transform:translate(0,0)}52%,100%{transform:translate(-22px,16px)}}
+@keyframes rip{0%,24%{opacity:0;transform:scale(.4)}26%{opacity:.7;transform:scale(.6)}36%,100%{opacity:0;transform:scale(1.4)}}
+@keyframes r1{0%,30%{opacity:.15}36%,92%{opacity:1}100%{opacity:.15}}
+@keyframes r2{0%,40%{opacity:.15}46%,92%{opacity:1}100%{opacity:.15}}
+@keyframes r3{0%,50%{opacity:.15}56%,92%{opacity:1}100%{opacity:.15}}
+@keyframes cut{0%,20%,100%{transform:scaleY(1)}45%,80%{transform:scaleY(.55)}}
+@keyframes tw{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+
+<!-- The halo: the purple of the logo at a low tint over the paper. -->
+<circle cx="905" cy="302" r="172" fill="#E4DEEE"/>
+
+<!-- A dotted wave in the gap beside the text, as on the bones card. -->
+<g transform="translate(600 300) scale(.7) translate(-44 -152)"><path d="M44 152q20-18 40 0t40 0t40 0t40 0" fill="none" stroke="#CFC5B1" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 10"/></g>
+
+<!-- The number on a dashboard, and the pointer that clicks it. -->
+<g transform="translate(598 448) scale(.88)">
+<rect width="204" height="116" rx="14" fill="#FBF8F1" stroke="#121b31" stroke-width="4"/>
+<text x="18" y="34" class="ui" font-size="14" font-weight="600" fill="#566176">Revenue</text>
+<text x="18" y="74" class="ui" font-size="26" font-weight="800" fill="#121b31">$4,281,330</text>
+<path d="M18 88H186" stroke="#5758a8" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 7"/>
+<circle class="rip" cx="176" cy="94" r="16" fill="none" stroke="#5758a8" stroke-width="3"/>
+<g class="cur"><path transform="translate(174 86)" d="M1.5 1.2v20l5-4.8 3.3 7.6 3.6-1.6-3.3-7.5h6.9z" fill="#121b31" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"/></g>
+</g>
+
+<!-- The panel. Each step appears in turn, with the share it removed. -->
+<g transform="translate(1012 18) scale(.82)">
+<rect width="206" height="204" rx="14" fill="#FBF8F1" stroke="#121b31" stroke-width="4"/>
+<text x="16" y="30" class="ui" font-size="13" font-weight="800" fill="#121b31">Where the rows went</text>
+<g>
+<text x="16" y="56" class="mono" font-size="10.5" fill="#566176">sales</text>
+<rect x="16" y="62" width="174" height="10" rx="5" fill="#5758a8"/>
+</g>
+<g class="r1">
+<text x="16" y="96" class="mono" font-size="10.5" fill="#566176">region == "APAC"</text>
+<rect x="16" y="102" width="174" height="10" rx="5" fill="#f4e8e1"/>
+<rect x="16" y="102" width="62" height="10" rx="5" fill="#5758a8"/>
+<text x="190" y="96" class="ui" font-size="10.5" font-weight="800" fill="#7e5644" text-anchor="end">-83%</text>
+</g>
+<g class="r2">
+<text x="16" y="136" class="mono" font-size="10.5" fill="#566176">year &gt;= 2023</text>
+<rect x="16" y="142" width="62" height="10" rx="5" fill="#f4e8e1"/>
+<rect x="16" y="142" width="26" height="10" rx="5" fill="#5758a8"/>
+<text x="190" y="136" class="ui" font-size="10.5" font-weight="800" fill="#7e5644" text-anchor="end">-62%</text>
+</g>
+<g class="r3">
+<text x="16" y="178" class="mono" font-size="10.5" fill="#566176">summarise</text>
+<circle cx="22" cy="189" r="5" fill="#7356d6"/>
+<text x="34" y="193" class="ui" font-size="10.5" font-weight="600" fill="#121b31">1 row</text>
+</g>
+</g>
+
+<!-- Pluses and dots, as on the other cards. -->
+<g transform="translate(612 196)"><g class="tw" fill="none" stroke="#7356d6" stroke-width="4" stroke-linecap="round"><path d="M-7 0H7M0 -7V7"/></g></g>
+<g transform="translate(975 48)"><g class="tw" style="animation-delay:-1.4s" fill="none" stroke="#5758a8" stroke-width="4" stroke-linecap="round"><path d="M-8.4 0H8.4M0 -8.4V8.4"/></g></g>
+<g transform="translate(1150 300)"><g class="tw" style="animation-delay:-.7s" fill="none" stroke="#a47864" stroke-width="4" stroke-linecap="round"><path d="M-7 0H7M0 -7V7"/></g></g>
+<g transform="translate(1120 548)"><g class="tw" style="animation-delay:-2.1s" fill="none" stroke="#7356d6" stroke-width="4" stroke-linecap="round"><path d="M-7 0H7M0 -7V7"/></g></g>
+<g transform="translate(660 110)"><circle class="fl" r="6" fill="#7356d6"/></g>
+<g transform="translate(712 400)"><circle class="fl" style="animation-delay:-1.4s" r="5" fill="#a47864"/></g>
+<g transform="translate(1160 410)"><circle class="fl" style="animation-delay:-.7s" r="6" fill="#5758a8"/></g>
+<g transform="translate(886 590)"><circle class="fl" style="animation-delay:-2s" r="5" fill="#121b31"/></g>
+
+<!-- The whence hex, in the colours of its logo. The beige tops are the rows
+     that each step removed. -->
+<ellipse class="shadow" cx="905" cy="492" rx="115" ry="8" fill="#121b31"/>
+<g transform="translate(905 302) scale(1.3)"><g class="sway"><g transform="scale(2.3) translate(-50 -58)">
+<path d="M50 2 L98 30 L98 86 L50 114 L2 86 L2 30 Z" fill="#f4efe4" stroke="#17202a" stroke-width="3" stroke-linejoin="round"/>
+<rect x="24" y="30" width="10" height="44" rx="2" fill="#17202a"/>
+<rect class="cut" x="38" y="34" width="10" height="10" rx="2" fill="#d9d0be"/>
+<rect x="38" y="45" width="10" height="29" rx="2" fill="#17202a"/>
+<rect class="cut" x="52" y="43" width="10" height="9" rx="2" fill="#d9d0be" style="animation-delay:-.4s"/>
+<rect x="52" y="53" width="10" height="21" rx="2" fill="#17202a"/>
+<rect class="cut" x="66" y="54" width="10" height="7" rx="2" fill="#d9d0be" style="animation-delay:-.8s"/>
+<rect x="66" y="62" width="10" height="12" rx="2" fill="#7356d6"/>
+<g fill="#7356d6"><circle cx="26" cy="81" r="1.4"/><circle cx="32" cy="81" r="1.4"/><circle cx="38" cy="81" r="1.4"/><circle cx="44" cy="81" r="1.4"/><circle cx="50" cy="81" r="1.4"/><circle cx="56" cy="81" r="1.4"/><circle cx="62" cy="81" r="1.4"/><circle cx="68" cy="81" r="1.4"/><circle cx="74" cy="81" r="1.4"/></g>
+<text x="50" y="97" class="ui" font-size="10.5" font-weight="600" fill="#17202a" text-anchor="middle">whence</text>
+</g></g></g>
