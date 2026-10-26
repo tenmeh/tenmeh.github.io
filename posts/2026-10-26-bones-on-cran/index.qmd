@@ -1,0 +1,157 @@
+---
+title: "bones is on CRAN: two things the review caught"
+description: >
+  bones is on CRAN. The review caught a package name and a demo that left
+  plot settings behind, and taught me to search beyond the named line.
+author: "Tanmay Chanda"
+date: "2026-10-26"
+categories: [R, Shiny, packages]
+package: bones
+image-alt: "Cover card with the post title, the date and the bones hex logo."
+---
+
+**bones 0.1.1 is on CRAN.** It was published on 16 October. It is my second
+package on CRAN, after rewind.
+
+```r
+install.packages("bones")
+```
+
+bones gives Shiny outputs loading placeholders in the shape of their
+content. [My first post](../2026-09-28-how-bones-began/index.qmd) explains
+the idea. This one is about getting it through review.
+
+I submitted 0.1.0 on 25 September. The automatic pre-tests on Windows and
+Debian passed with one NOTE: "New submission". Every first submission gets
+that note.
+
+On 6 October, a reviewer sent two requests and ended with "Please fix and
+resubmit."
+
+## A package name keeps its case
+
+CRAN asks for the names of packages, software and APIs in the Title and
+Description fields of DESCRIPTION to be in single quotes. I had written
+`'Shiny'`. The package is called `shiny`. Package names are case sensitive.
+
+The title is now:
+
+```text
+Content-Shaped Loading Placeholders for 'shiny' Outputs
+```
+
+Title Case does not apply inside those quotes. The name must keep the
+case of the package it names.
+
+`R CMD check --as-cran` passed with `'Shiny'` and gave no note about it.
+The human reviewer caught it. A clean check does not mean that every name
+in the prose is right.
+
+There was a second place to fix. Roxygen copies the Title and Description
+into the package help page, `man/bones-package.Rd`, through the
+`"_PACKAGE"` sentinel. Changing DESCRIPTION alone leaves the old text in
+the help page and the PDF manual. I had to run roxygen again.
+
+This shell command helps with the name check:
+
+```sh
+grep -oE "'[^']+'" DESCRIPTION | sort -u
+```
+
+It lists every quoted name. Compare each one with the real name, including
+its case. Then rebuild the help files that copy those fields.
+
+## Give the settings back, also under inst/
+
+The other request was to restore changes to `par()`, `options()` and the
+working directory in examples, vignettes and demos. The reviewer added
+"in your inst folder".
+
+bones has a demo app under `inst/examples/demo/`. Users can run it with:
+
+```r
+shiny::runApp(system.file("examples/demo", package = "bones"))
+```
+
+Its plots changed `par()` inside `renderPlot()` and never put the settings
+back. `R CMD check` did not catch this either. The reviewer read `inst/`
+by hand.
+
+The fix saves the old settings and restores them when the function exits:
+
+```r
+old_par <- par(mar = c(3, 3, 1, 1), mgp = c(2, 0.6, 0), las = 1)
+on.exit(par(old_par), add = TRUE)
+```
+
+`on.exit()` works inside a `renderPlot()` expression because Shiny makes
+that expression the body of a function. The cleanup belongs to that
+function, and also runs if it exits with an error.
+
+A demo ships with the package too. I need to treat its changes to the
+user's settings with the same care as changes in `R/`.
+
+## Search beyond the line in the reply
+
+The reviewer gave me an example, not a full list. Before resubmitting, I
+searched the whole package for the same kind of change:
+
+```sh
+grep -rnE "options\(|par\(|setwd\(|Sys\.setenv\(" R man inst vignettes demo
+```
+
+The demo was the only place. But fixing only the named line would have
+left me guessing about the rest. That is my first lesson from this
+release: turn a review comment into a search for the pattern.
+
+I fixed both requests and resubmitted as 0.1.1 on 6 October. A resubmission
+needs a higher version. The covering comment starts with a "Resubmission"
+section that lists each change.
+
+Then it waited in CRAN's folder for new packages, called "newbies". I could
+watch the queue at [CRAN incoming](https://cran.r-project.org/incoming/)
+and on [cransays](https://r-hub.github.io/cransays/).
+
+On 16 October, the reply was "Thanks, on its way to CRAN."
+[bones 0.1.1](https://CRAN.R-project.org/package=bones) was published that day.
+
+## The release that tags itself
+
+My second lesson is to let the GitHub release follow CRAN. A merge is too
+early. CRAN can still send that version back. GitHub could then show
+"Latest" beside a version CRAN never published. That nearly happened with
+0.1.0.
+
+A workflow in `.github/workflows/release.yaml`, first written for rewind,
+runs once a day. It reads the bones version in the
+[CRAN index](https://cloud.r-project.org/src/contrib/PACKAGES). If that
+version has no git tag, it downloads the CRAN tarball.
+
+It finds the oldest commit on main with that version in DESCRIPTION whose
+files match the tarball. It skips DESCRIPTION, MD5 and `build/`, which
+`R CMD build` and CRAN change. It tags that commit and makes a GitHub
+release, using that version's section of NEWS.md as the notes.
+
+On 17 October, it tagged v0.1.1 at the commit sent to CRAN. Main had already
+moved on. Nobody had to remember to tag it.
+
+Before a package reaches CRAN, the daily run stops with a notice instead
+of an error. It does not send an email every day.
+
+## What comes next
+
+These changes are in the development version for 0.2.0. They are not on
+CRAN yet:
+
+- An error panel when an output fails, in place of Shiny's red error text.
+- Learned shapes. After a load, the browser stores the content's shape,
+  using numbers only, with no text. The next visit shows a skeleton in
+  that shape.
+- Clear errors for a misspelt shape. `type = "bars"` says
+  `Did you mean "bar"?`.
+
+## Try it
+
+- Documentation: <https://tenmeh.github.io/bones/>
+- Live demo, in the browser: <https://tenmeh.github.io/bones/articles/live-demo.html>
+- Source: <https://github.com/tenmeh/bones>
