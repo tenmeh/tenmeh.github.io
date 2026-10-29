@@ -40,6 +40,8 @@ website:
         href: index.qmd
       - text: About
         href: about.qmd
+      - text: Work with me
+        href: work-with-me.qmd
     right:
       - icon: github
         href: https://github.com/tenmeh
