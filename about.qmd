@@ -21,7 +21,8 @@ My R packages:
   CRAN. [Documentation](https://tenmeh.github.io/whence/) -
   [source](https://github.com/tenmeh/whence).
 
-Find me on [GitHub](https://github.com/tenmeh).
+Find me on [GitHub](https://github.com/tenmeh). To hire me, see
+[Work with me](work-with-me.qmd).
 
 ## Blogroll
 

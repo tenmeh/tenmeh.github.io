@@ -1,0 +1,56 @@
+---
+title: "Work with me"
+description: "Production Shiny apps, Shiny you can audit, Shiny performance, Bayesian marketing mix models, and workshops."
+toc: false
+---
+
+I am Tanmay Chanda, a data scientist and R and Shiny developer. I build
+production Shiny applications, and I maintain three R packages on CRAN.
+
+## What I can help with
+
+**Production Shiny apps.** I build modular Shiny apps with golem, for real
+users. This includes data import and validation, interactive tables and
+dashboards, Docker, CI/CD with GitHub Actions, deployment to Azure, and unit
+and end-to-end tests.
+
+**Shiny that people must trust.** Some apps are in regulated or audit-heavy
+settings, where users must trust the numbers. I build audit trails, validation
+rules, and reconciliation and de-duplication of data from many sources. I also
+show users where a result came from.
+
+**Shiny performance and UX.** I find slow reactives, add loading states, and
+give users undo and redo.
+
+**Bayesian marketing mix models and forecasts.** I build Bayesian MMM and
+forecasts in R with brms. I have 3+ years of experience with media budgets
+for large US clients.
+
+**Workshops and talks.** I give hands-on sessions on production Shiny, on
+testing Shiny apps, and on Shiny in regulated settings.
+
+## My R packages
+
+All three are on CRAN.
+
+- **[rewind](https://tenmeh.github.io/rewind/)** - undo and redo for Shiny
+  apps.
+- **[bones](https://tenmeh.github.io/bones/)** - loading placeholders in the
+  shape of the content.
+- **[whence](https://tenmeh.github.io/whence/)** - shows where a number in
+  your app came from.
+
+There is more on [GitHub](https://github.com/tenmeh).
+
+## How we can work together
+
+I work part-time and remotely, on a project or hourly basis. I am in India
+(IST). I can overlap with mornings or evenings in the UK and the US.
+
+## Get in touch
+
+- Email: [tanmaychanda96@gmail.com](mailto:tanmaychanda96@gmail.com)
+- LinkedIn: [linkedin.com/in/tanmay-chanda](https://www.linkedin.com/in/tanmay-chanda/)
+
+Tell me briefly what you are building, your timeline, and what blocks you.
+I reply within a few working days.
