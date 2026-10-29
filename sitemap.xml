@@ -1,31 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://tenmeh.github.io/about.html</loc>
-    <lastmod>2026-10-26T12:15:59.236Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/index.html</loc>
-    <lastmod>2026-10-26T12:15:59.253Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/index.html</loc>
-    <lastmod>2026-10-26T12:15:59.250Z</lastmod>
-  </url>
-  <url>
     <loc>https://tenmeh.github.io/index.html</loc>
-    <lastmod>2026-10-26T12:15:59.246Z</lastmod>
+    <lastmod>2026-10-29T12:16:06.455Z</lastmod>
   </url>
   <url>
-    <loc>https://tenmeh.github.io/posts/2026-09-28-how-bones-began/index.html</loc>
-    <lastmod>2026-10-26T12:15:59.249Z</lastmod>
+    <loc>https://tenmeh.github.io/work-with-me.html</loc>
+    <lastmod>2026-10-29T12:16:06.462Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/index.html</loc>
-    <lastmod>2026-10-26T12:15:59.247Z</lastmod>
+    <lastmod>2026-10-29T12:16:06.456Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/index.html</loc>
+    <lastmod>2026-10-29T12:16:06.459Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-10-13-recording-shiny-demos/index.html</loc>
-    <lastmod>2026-10-26T12:15:59.251Z</lastmod>
+    <lastmod>2026-10-29T12:16:06.460Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/index.html</loc>
+    <lastmod>2026-10-29T12:16:06.461Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-09-28-how-bones-began/index.html</loc>
+    <lastmod>2026-10-29T12:16:06.457Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/about.html</loc>
+    <lastmod>2026-10-29T12:16:06.446Z</lastmod>
   </url>
 </urlset>
