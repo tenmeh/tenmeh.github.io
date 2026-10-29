@@ -1157,3 +1157,33 @@ blockquote p:last-child {
     transform: none;
   }
 }
+
+/* --- Toptal badge (work-with-me.qmd) -------------------------------------- */
+
+/* The badge code comes from Toptal and is pasted unchanged. It sits to the
+   right of the opening text. The site's heading rules beat its own colour on
+   the h3, so the title nearly vanished on the white badge. These rules put the
+   badge's own look back. On a narrow screen there is no room beside the text,
+   so the badge goes under it. */
+#r {
+  float: right;
+  margin: 0.25rem 0 1rem 2rem;
+}
+
+@media (max-width: 575.98px) {
+  #r {
+    float: none;
+    margin: 0 0 1.5rem;
+  }
+}
+
+#r h3.b {
+  color: #204ecf;
+  font-family: inherit;
+  letter-spacing: normal;
+}
+
+#r a.f {
+  color: #fff;
+  border-bottom: 0;
+}
