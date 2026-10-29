@@ -5,18 +5,17 @@
      right half, on a halo, the number and its pointer below it on the left,
      and the panel of steps above it on the right. The text of the hero uses
      the font of the card, so the card has one family of letters.
-     The pointer, the ripple and the steps loop in 6s, not 5.6s, as in the
-     hero. So the GIF of this card does not loop with no jump. The still is
-     what GitHub and most previews show. The pointer rests inside the box
-     of the number, and not 70px away as in the hero, so the still shows it
-     at the number. -->
+     The pointer, the ripple and the steps loop in 6s in the hero. Here they
+     loop in 5.6s, the loop of the card, so the GIF loops with no jump.
+     The pointer rests inside the box of the number, and not 70px away as in
+     the hero, so the still shows it at the number. -->
 <style>
 svg{display:block}
 .sway{transform-box:view-box;transform-origin:0 0;animation:sway 5.6s ease-in-out infinite}
 .shadow{transform-box:fill-box;transform-origin:center;opacity:.14;animation:shadow 5.6s ease-in-out infinite}
-.cur{animation:cur 6s cubic-bezier(.45,0,.25,1) infinite}
-.rip{transform-box:fill-box;transform-origin:center;opacity:0;animation:rip 6s ease-out infinite}
-.r1,.r2,.r3{animation:6s ease-out infinite}
+.cur{animation:cur 5.6s cubic-bezier(.45,0,.25,1) infinite}
+.rip{transform-box:fill-box;transform-origin:center;opacity:0;animation:rip 5.6s ease-out infinite}
+.r1,.r2,.r3{animation:5.6s ease-out infinite}
 .r1{animation-name:r1}.r2{animation-name:r2}.r3{animation-name:r3}
 .cut{transform-box:fill-box;transform-origin:center top;animation:cut 5.6s ease-in-out infinite}
 .tw{transform-box:fill-box;transform-origin:center;animation:tw 2.8s ease-in-out infinite}

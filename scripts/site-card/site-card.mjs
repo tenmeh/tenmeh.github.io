@@ -58,6 +58,8 @@ const blog = join(here, "..", "..");
 //           the purple of the logos)
 // scene     the file in scenes/
 // t         the second of the 5.6s loop where the hero is frozen
+// lossy     optional: the gifsicle --lossy of this package, in place of
+//           GIF.lossy, for a scene with more motion that makes a larger GIF
 const packages = {
   rewind: {
     name: "rewind",
@@ -85,6 +87,7 @@ const packages = {
     light: "#7356D6",
     scene: "whence",
     t: 3.5,
+    lossy: 50, // the panel and the pointer move as well as the hex
   },
 };
 const AUTHOR = "Tanmay Chanda";
@@ -190,7 +193,7 @@ function has(cmd) {
 // the hero moves, so it is the colours of the hero that count), and then
 // every frame is drawn with it. Rectangle differencing keeps the file small,
 // since a frame stores only the box that changed.
-function encodeGif(frames, out) {
+function encodeGif(frames, out, lossy = GIF.lossy) {
   const ffmpeg = tool("FFMPEG", "ffmpeg");
   const palette = join(frames, "palette.png");
   const input = ["-y", "-loglevel", "error", "-framerate", String(GIF.fps), "-i", join(frames, "f%03d.png")];
@@ -208,7 +211,7 @@ function encodeGif(frames, out) {
   const gifsicle = tool("GIFSICLE", "gifsicle");
   if (has(gifsicle)) {
     const args = ["-O3", "--no-comments", "--no-names"];
-    if (GIF.lossy) args.push(`--lossy=${GIF.lossy}`);
+    if (lossy) args.push(`--lossy=${lossy}`);
     execFileSync(gifsicle, [...args, out, "-o", out]);
   } else {
     console.log("gifsicle not found: the GIF is not optimised");
@@ -280,7 +283,7 @@ try {
         writeFileSync(join(frames, `f${String(k).padStart(3, "0")}.png`), await page.screenshot());
       }
       const gif = join(outDir, "card.gif");
-      encodeGif(frames, gif);
+      encodeGif(frames, gif, config.lossy ?? GIF.lossy);
       console.log(report(gif, `${n} frames`));
     }
     await page.close();
