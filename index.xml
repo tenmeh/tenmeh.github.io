@@ -17,7 +17,164 @@
 <width>144</width>
 </image>
 <generator>quarto-1.10.19</generator>
-<lastBuildDate>Sun, 25 Oct 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 26 Oct 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>bones is on CRAN: two things the review caught</title>
+  <dc:creator>Tanmay Chanda</dc:creator>
+  <link>https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p><strong>bones 0.1.1 is on CRAN.</strong> It was published on 16 October. It is my second package on CRAN, after rewind.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">install.packages</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"bones"</span>)</span></code></pre></div></div>
+<p>bones gives Shiny outputs loading placeholders in the shape of their content. <a href="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/index.html">My first post</a> explains the idea. This one is about getting it through review.</p>
+<p>I submitted 0.1.0 on 25 September. The automatic pre-tests on Windows and Debian passed with one NOTE: “New submission”. Every first submission gets that note.</p>
+<p>On 6 October, a reviewer sent two requests and ended with “Please fix and resubmit.”</p>
+<section id="a-package-name-keeps-its-case" class="level2">
+<h2 class="anchored" data-anchor-id="a-package-name-keeps-its-case">A package name keeps its case</h2>
+<p>CRAN asks for the names of packages, software and APIs in the Title and Description fields of DESCRIPTION to be in single quotes. I had written <code>'Shiny'</code>. The package is called <code>shiny</code>. Package names are case sensitive.</p>
+<p>The title is now:</p>
+<pre class="text"><code>Content-Shaped Loading Placeholders for 'shiny' Outputs</code></pre>
+<p>Title Case does not apply inside those quotes. The name must keep the case of the package it names.</p>
+<p><code>R CMD check --as-cran</code> passed with <code>'Shiny'</code> and gave no note about it. The human reviewer caught it. A clean check does not mean that every name in the prose is right.</p>
+<p>There was a second place to fix. Roxygen copies the Title and Description into the package help page, <code>man/bones-package.Rd</code>, through the <code>"_PACKAGE"</code> sentinel. Changing DESCRIPTION alone leaves the old text in the help page and the PDF manual. I had to run roxygen again.</p>
+<p>This shell command helps with the name check:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">grep</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-oE</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"'[^']+'"</span> DESCRIPTION <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">|</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sort</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-u</span></span></code></pre></div></div>
+<p>It lists every quoted name. Compare each one with the real name, including its case. Then rebuild the help files that copy those fields.</p>
+</section>
+<section id="give-the-settings-back-also-under-inst" class="level2">
+<h2 class="anchored" data-anchor-id="give-the-settings-back-also-under-inst">Give the settings back, also under inst/</h2>
+<p>The other request was to restore changes to <code>par()</code>, <code>options()</code> and the working directory in examples, vignettes and demos. The reviewer added “in your inst folder”.</p>
+<p>bones has a demo app under <code>inst/examples/demo/</code>. Users can run it with:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">shiny<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">runApp</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">system.file</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"examples/demo"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">package =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"bones"</span>))</span></code></pre></div></div>
+<p>Its plots changed <code>par()</code> inside <code>renderPlot()</code> and never put the settings back. <code>R CMD check</code> did not catch this either. The reviewer read <code>inst/</code> by hand.</p>
+<p>The fix saves the old settings and restores them when the function exits:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">old_par <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">par</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mar =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mgp =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.6</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">las =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb5-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">on.exit</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">par</span>(old_par), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">add =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span></code></pre></div></div>
+<p><code>on.exit()</code> works inside a <code>renderPlot()</code> expression because Shiny makes that expression the body of a function. The cleanup belongs to that function, and also runs if it exits with an error.</p>
+<p>A demo ships with the package too. I need to treat its changes to the user’s settings with the same care as changes in <code>R/</code>.</p>
+</section>
+<section id="search-beyond-the-line-in-the-reply" class="level2">
+<h2 class="anchored" data-anchor-id="search-beyond-the-line-in-the-reply">Search beyond the line in the reply</h2>
+<p>The reviewer gave me an example, not a full list. Before resubmitting, I searched the whole package for the same kind of change:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">grep</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-rnE</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"options\(|par\(|setwd\(|Sys\.setenv\("</span> R man inst vignettes demo</span></code></pre></div></div>
+<p>The demo was the only place. But fixing only the named line would have left me guessing about the rest. That is my first lesson from this release: turn a review comment into a search for the pattern.</p>
+<p>I fixed both requests and resubmitted as 0.1.1 on 6 October. A resubmission needs a higher version. The covering comment starts with a “Resubmission” section that lists each change.</p>
+<p>Then it waited in CRAN’s folder for new packages, called “newbies”. I could watch the queue at <a href="https://cran.r-project.org/incoming/">CRAN incoming</a> and on <a href="https://r-hub.github.io/cransays/">cransays</a>.</p>
+<p>On 16 October, the reply was “Thanks, on its way to CRAN.” <a href="https://CRAN.R-project.org/package=bones">bones 0.1.1</a> was published that day.</p>
+</section>
+<section id="the-release-that-tags-itself" class="level2">
+<h2 class="anchored" data-anchor-id="the-release-that-tags-itself">The release that tags itself</h2>
+<p>My second lesson is to let the GitHub release follow CRAN. A merge is too early. CRAN can still send that version back. GitHub could then show “Latest” beside a version CRAN never published. That nearly happened with 0.1.0.</p>
+<p>A workflow in <code>.github/workflows/release.yaml</code>, first written for rewind, runs once a day. It reads the bones version in the <a href="https://cloud.r-project.org/src/contrib/PACKAGES">CRAN index</a>. If that version has no git tag, it downloads the CRAN tarball.</p>
+<p>It finds the oldest commit on main with that version in DESCRIPTION whose files match the tarball. It skips DESCRIPTION, MD5 and <code>build/</code>, which <code>R CMD build</code> and CRAN change. It tags that commit and makes a GitHub release, using that version’s section of NEWS.md as the notes.</p>
+<p>On 17 October, it tagged v0.1.1 at the commit sent to CRAN. Main had already moved on. Nobody had to remember to tag it.</p>
+<p>Before a package reaches CRAN, the daily run stops with a notice instead of an error. It does not send an email every day.</p>
+</section>
+<section id="what-comes-next" class="level2">
+<h2 class="anchored" data-anchor-id="what-comes-next">What comes next</h2>
+<p>These changes are in the development version for 0.2.0. They are not on CRAN yet:</p>
+<ul>
+<li>An error panel when an output fails, in place of Shiny’s red error text.</li>
+<li>Learned shapes. After a load, the browser stores the content’s shape, using numbers only, with no text. The next visit shows a skeleton in that shape.</li>
+<li>Clear errors for a misspelt shape. <code>type = "bars"</code> says <code>Did you mean "bar"?</code>.</li>
+</ul>
+</section>
+<section id="try-it" class="level2">
+<h2 class="anchored" data-anchor-id="try-it">Try it</h2>
+<ul>
+<li>Documentation: <a href="https://tenmeh.github.io/bones/" class="uri">https://tenmeh.github.io/bones/</a></li>
+<li>Live demo, in the browser: <a href="https://tenmeh.github.io/bones/articles/live-demo.html" class="uri">https://tenmeh.github.io/bones/articles/live-demo.html</a></li>
+<li>Source: <a href="https://github.com/tenmeh/bones" class="uri">https://github.com/tenmeh/bones</a></li>
+</ul>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>Shiny</category>
+  <category>packages</category>
+  <guid>https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/</guid>
+  <pubDate>Mon, 26 Oct 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/cover.png" medium="image" type="image/png" height="76" width="144"/>
+</item>
 <item>
   <title>Where did this number come from?</title>
   <dc:creator>Tanmay Chanda</dc:creator>
