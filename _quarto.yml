@@ -13,6 +13,8 @@ project:
   # Quarto follows neither, so the files are listed here. hero.png is the
   # still of the hero that only the feed uses.
   resources:
+    # Google Search Console checks this file. Keep it, or the site loses verification.
+    - google9a27a6983886707c.html
     - posts/*/preview.mp4
     - posts/*/preview.jpg
     - posts/*/hero.svg
