@@ -8,7 +8,7 @@
 
 <meta name="author" content="Tanmay Chanda">
 <meta name="dcterms.date" content="2026-10-25">
-<meta name="description" content="A friend asked why her dashboard showed fewer orders than she had packed. The answer took me twenty minutes in R. whence, now on CRAN, lets the viewer of a Shiny dashboard click the number and see the answer for themselves.">
+<meta name="description" content="Sooner or later, someone looks at a number on a Shiny dashboard and says it seems low. whence, now on CRAN, lets them click the number and see where the rows went.">
 
 <title>Where did this number come from? – Tanmay Chanda</title>
 <style>
@@ -119,14 +119,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="Where did this number come from? – Tanmay Chanda">
-<meta property="og:description" content="A friend asked why her dashboard showed fewer orders than she had packed. The answer took me twenty minutes in R. whence, now on CRAN, lets the viewer of a Shiny dashboard click the number and see the answer for themselves.">
+<meta property="og:description" content="Sooner or later, someone looks at a number on a Shiny dashboard and says it seems low. whence, now on CRAN, lets them click the number and see where the rows went.">
 <meta property="og:image" content="https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/cover.png">
 <meta property="og:site_name" content="Tanmay Chanda">
 <meta property="og:image:height" content="630">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:alt" content="Cover card with the post title, the date and the whence hex logo.">
 <meta name="twitter:title" content="Where did this number come from? – Tanmay Chanda">
-<meta name="twitter:description" content="A friend asked why her dashboard showed fewer orders than she had packed. The answer took me twenty minutes in R. whence, now on CRAN, lets the viewer of a Shiny dashboard click the number and see the answer for themselves.">
+<meta name="twitter:description" content="Sooner or later, someone looks at a number on a Shiny dashboard and says it seems low. whence, now on CRAN, lets them click the number and see where the rows went.">
 <meta name="twitter:image" content="https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/cover.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image:alt" content="Cover card with the post title, the date and the whence hex logo.">
@@ -374,7 +374,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">In this post</h2>
    
   <ul class="collapse">
-  <li><a href="#the-question-every-dashboard-gets" id="toc-the-question-every-dashboard-gets" class="nav-link active" data-scroll-target="#the-question-every-dashboard-gets">The question every dashboard gets</a></li>
+  <li><a href="#what-the-viewer-sees" id="toc-what-the-viewer-sees" class="nav-link active" data-scroll-target="#what-the-viewer-sees">What the viewer sees</a></li>
   <li><a href="#problem-one-the-pipe-leaves-no-trace" id="toc-problem-one-the-pipe-leaves-no-trace" class="nav-link" data-scroll-target="#problem-one-the-pipe-leaves-no-trace">Problem one: the pipe leaves no trace</a></li>
   <li><a href="#problem-two-a-summary-is-not-a-loss" id="toc-problem-two-a-summary-is-not-a-loss" class="nav-link" data-scroll-target="#problem-two-a-summary-is-not-a-loss">Problem two: a summary is not a loss</a></li>
   <li><a href="#problem-three-one-row-of-a-table" id="toc-problem-three-one-row-of-a-table" class="nav-link" data-scroll-target="#problem-three-one-row-of-a-table">Problem three: one row of a table</a></li>
@@ -399,7 +399,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div>
   <div class="description">
-    <p>A friend asked why her dashboard showed fewer orders than she had packed. The answer took me twenty minutes in R. whence, now on CRAN, lets the viewer of a Shiny dashboard click the number and see the answer for themselves.</p>
+    <p>Sooner or later, someone looks at a number on a Shiny dashboard and says it seems low. whence, now on CRAN, lets them click the number and see where the rows went.</p>
   </div>
 </div>
 
@@ -429,22 +429,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/hero.svg" alt="A pointer clicks a revenue figure on a dashboard. The whence hex sways in the centre. On the right, a panel lists where the rows went, one step at a time." width="800" height="320" class="figure-img"></figure>
-<p>It started with a box count.</p>
-<p>A friend sells plants online. It is a small shop: she takes the photos, answers the emails, and packs every order herself. Last spring I built her a small Shiny dashboard over a weekend. It showed orders, revenue and the best sellers for each month.</p>
-<p>A few weeks later she sent me a screenshot. The dashboard said 412 orders for April. Under it she had written: “I packed more than 600 boxes.”</p>
-<p>The number was not wrong. I knew that before I looked. The pipeline under it removed test orders, then refunds, then orders that were never paid, and then it cut the month at midnight in UTC, not in her time zone. Each step was right. Together, they made a number that she did not recognise.</p>
-<p>So I opened R and ran the pipeline one step at a time. I counted the rows after each step and wrote the counts in a message:</p>
-<pre class="text"><code>640 orders in April
-598 after the test orders
-431 after refunds and unpaid orders
-412 after the cut at midnight UTC</code></pre>
-<p>She read it and replied: “OK, that makes sense. Can the dashboard tell me that?”</p>
-<p>It could not. That question became whence.</p>
-<section id="the-question-every-dashboard-gets" class="level2">
-<h2 class="anchored" data-anchor-id="the-question-every-dashboard-gets">The question every dashboard gets</h2>
-<p>Every dashboard I have built has met some version of it. Someone looks at a number and expects a different one. They do not doubt the arithmetic. They want to know what was left out.</p>
+<p>Sooner or later, someone looks at a number on a dashboard and says: “That seems low.”</p>
+<p>The number is usually right. Somewhere in the pipeline, a filter removed rows that the viewer did not know about: test records, a date cut-off, a region. Each step is correct. Together, they make a number that the viewer does not recognise.</p>
+<p>The usual answer is for the developer to open R, run the pipeline one step at a time, and count the rows after each step:</p>
+<pre class="text"><code>18,442 rows in sales
+ 3,180 after region == "APAC"
+ 1,204 after year &gt;= 2023
+     1 row after summarise()</code></pre>
+<p>Then they send the counts in a message, and the viewer nods.</p>
+<p>whence puts those counts in the dashboard, next to the number, so the viewer can see them for themselves.</p>
+<section id="what-the-viewer-sees" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-viewer-sees">What the viewer sees</h2>
 <p>The person who asks is usually not the person who wrote the code. They cannot read the pipeline. Even if they could, a row count is not in the code. It only exists when the code runs.</p>
-<p>whence puts the answer next to the number. The viewer clicks it, and a panel opens:</p>
+<p>When the viewer clicks the number, a panel opens:</p>
 <pre class="text"><code>$4,281,330
 
   Where the rows went
@@ -510,7 +507,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="problem-four-which-rows" class="level2">
 <h2 class="anchored" data-anchor-id="problem-four-which-rows">Problem four: which rows</h2>
-<p>“View the rows” shows the rows of the source that make the value. A click on a removed count shows the rows that the step removed. In the story at the top, that is where the 167 refunds and unpaid orders would be.</p>
+<p>“View the rows” shows the rows of the source that make the value. A click on a removed count shows the rows that the step removed.</p>
 <p>This could be slow, so it happens only when the viewer asks. The steps then run again on a copy of the source with a hidden id column, and the ids that survive are the rows that count.</p>
 <p>Some steps break that link. After <code>distinct()</code>, <code>pivot_longer()</code>, <code>pivot_wider()</code> or a step that whence does not know, a row of the result is no longer one row of the source. The panel then says so. The waterfall still works, because counts survive any step.</p>
 </section>
@@ -534,7 +531,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Live demo, in your browser: <a href="https://tenmeh.github.io/whence/articles/live-demo.html" class="uri">https://tenmeh.github.io/whence/articles/live-demo.html</a></li>
 <li>Source: <a href="https://github.com/tenmeh/whence" class="uri">https://github.com/tenmeh/whence</a></li>
 </ul>
-<p>My friend still opens her dashboard on the first of each month. These days, when a number looks low, she clicks it.</p>
+<p>The next time someone says a number seems low, they can click it.</p>
 
 
 </section>
