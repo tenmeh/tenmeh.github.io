@@ -17,7 +17,623 @@
 <width>144</width>
 </image>
 <generator>quarto-1.11.9</generator>
-<lastBuildDate>Mon, 26 Oct 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Fri, 06 Nov 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>A Quarto feed that R-bloggers can republish</title>
+  <dc:creator>Tanmay Chanda</dc:creator>
+  <link>https://tenmeh.github.io/posts/2026-11-06-quarto-feed-for-r-bloggers/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-11-06-quarto-feed-for-r-bloggers/hero.png" alt="A blog post on the left, with a relative link, an SVG picture and a video. In the middle, an RSS feed passes through feed.mjs. On the right, the copy in the feed has an absolute link, a PNG picture and a still image." width="800" height="320" class="figure-img"></figure>
+<p>This blog is now on its way to R-bloggers. Before I filled in their form, I read their rules. Most of them are about the content: posts about R, in English, with real substance. A few of them are about the feed itself:</p>
+<ul>
+<li>The feed must hold the full text of each post, not a summary.</li>
+<li>The HTML must be well formatted.</li>
+<li>Images should be PNG or a similar format.</li>
+<li>The blog must link back to R-bloggers.</li>
+</ul>
+<p>The full text was easy. In Quarto, <code>feed: true</code> on a listing gives the full text of each post. The link back is one line in the footer.</p>
+<p>The other two made me look at my feed in a new way. R-bloggers does not link to a post. It copies the HTML of the post out of the feed and shows it on its own site, with none of my stylesheets or scripts around it. So the question was not “does my blog look right?” It was “does this HTML still make sense on someone else’s page?”</p>
+<section id="what-i-found" class="level2">
+<h2 class="anchored" data-anchor-id="what-i-found">What I found</h2>
+<p>I read the feed with a short script and listed every link, image and video in each post. For three posts, it found three kinds of problem:</p>
+<ul>
+<li><strong>One relative link.</strong> The rewind 0.3.0 post links to my first post as <code>../../posts/2026-08-27-undo-for-shiny/index.html</code>. On my blog, that works. On R-bloggers, it points at a page of R-bloggers that does not exist.</li>
+<li><strong>Three SVG pictures.</strong> Each post opens with a small animated illustration, an SVG with CSS animation. R-bloggers asks for PNG or a similar format.</li>
+<li><strong>Three videos.</strong> Each post has a short demo video. On the page, a small script starts it, or shows the controls if the browser refuses. In another site’s page, or in a feed reader, I cannot count on the video element or the script.</li>
+</ul>
+<p>The page version of each post was right. Only the copy in the feed needed to change.</p>
+</section>
+<section id="a-script-after-the-render" class="level2">
+<h2 class="anchored" data-anchor-id="a-script-after-the-render">A script after the render</h2>
+<p>Quarto writes the feed, <code>index.xml</code>, as part of the render. It also runs scripts that a project names before and after the render. A <code>post-render</code> script runs once the whole site, the feed included, is in <code>_site</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">project</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span></span>
+<span id="cb1-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">type</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> website</span></span>
+<span id="cb1-3"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pre-render</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> scripts/node-step.ts covers.mjs</span></span>
+<span id="cb1-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">  </span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">post-render</span><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">:</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"> scripts/node-step.ts feed.mjs</span></span></code></pre></div></div>
+<p><code>feed.mjs</code> reads the feed, finds each <code>&lt;item&gt;</code>, and changes the HTML inside its <code>&lt;description&gt;</code>. It does not touch the pages. The <code>node-step.ts</code> in front of it comes later in this post.</p>
+<section id="the-relative-link" class="level3">
+<h3 class="anchored" data-anchor-id="the-relative-link">The relative link</h3>
+<p>Each item in the feed has a <code>&lt;link&gt;</code>: the address of the post. A relative URL inside the post is relative to that address. JavaScript’s <code>URL</code> does the rest:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">const</span> absolute <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (url<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> base) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">=&gt;</span> {</span>
+<span id="cb2-2">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^([a-z][a-z0-9+.-]*</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">#</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|\/\/)</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/i</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">test</span>(url)) <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> url<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb2-3">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">new</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">URL</span>(url<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> base)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">href</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb2-4">}<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb2-5"></span>
+<span id="cb2-6">html <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> html<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">replace</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/&lt;</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[a-z][^&gt;]*</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">&gt;/gi</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> (tag) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">=&gt;</span></span>
+<span id="cb2-7">  tag<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">replace</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\b(</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">href</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">src</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">poster</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">="</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">([^"]*)</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"/g</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb2-8">    (_<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> name<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> url) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">=&gt;</span> <span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">${</span>name<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">="</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">${</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">absolute</span>(url<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> link)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"`</span>))<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span></code></pre></div></div>
+<p>A URL that already has a scheme, such as <code>https:</code> or <code>mailto:</code>, stays as it is. So does a link to a heading on the same page, such as <code>#try-it</code>. The outer <code>replace()</code> limits the change to HTML tags. The reason for that comes later in this post.</p>
+<p>The pictures and videos never had this problem. A Lua filter writes them into the page, and it gives them absolute URLs from the start. It reads <code>site-url</code> from <code>_quarto.yml</code>, because Quarto does not pass that value to filters.</p>
+</section>
+<section id="the-svg-picture" class="level3">
+<h3 class="anchored" data-anchor-id="the-svg-picture">The SVG picture</h3>
+<p>The page keeps its animated SVG. The feed gets a PNG of its first frame.</p>
+<p>The PNG comes from the step before the render. A Node script already draws a share image for each post with <code>resvg</code>, so it draws the still of the hero at the same time, at twice the width of the page. A little simplified:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">render</span>(svg<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> width) {</span>
+<span id="cb3-2">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">const</span> resvg <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">new</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Resvg</span>(svg<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> {</span>
+<span id="cb3-3">    <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">fitTo</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span> { <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">mode</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"width"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">value</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span> width }<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb3-4">    <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">font</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span> { <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">fontFiles</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">Object</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">values</span>(fontFiles)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">loadSystemFonts</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">false</span> }<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb3-5">  })<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb3-6">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> resvg<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">render</span>()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">asPng</span>()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb3-7">}</span>
+<span id="cb3-8"></span>
+<span id="cb3-9"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">writeFileSync</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">join</span>(postsDir<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> slug<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"hero.png"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">render</span>(heroSvg<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1600</span>))<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span></code></pre></div></div>
+<p><code>resvg</code> does not run CSS animations. It draws the picture as it is before any animation starts. So each hero needs a first frame that makes sense on its own. For one hero, it did not: the knob of a slider sat at one end and its coloured bar was full. I drew that one again, with the knob where the bar ends.</p>
+<p><code>resvg</code> also needs real font files, and it does not read a web font from Google. The fonts of the blog are in the repository for that reason.</p>
+<p><code>feed.mjs</code> then swaps the file name in the feed, but only when the PNG is really there:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb4-1">html <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> html<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">replace</span>(</span>
+<span id="cb4-2">  <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">(</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">&lt;figure class="post-hero</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[^"]*</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"&gt;</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\s*</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">&lt;img </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[^&gt;]*</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">src="</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">)([^"]+)\.</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">svg"/g</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span></span>
+<span id="cb4-3">  (whole<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> head<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> stem) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">=&gt;</span> {</span>
+<span id="cb4-4">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">const</span> file <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">localFile</span>(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">${</span>stem<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">.png`</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> siteUrl)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb4-5">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> file <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;&amp;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">existsSync</span>(file) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">?</span> <span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">${</span>head<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}${</span>stem<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">.png"`</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span> whole<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb4-6">  })<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span></code></pre></div></div>
+</section>
+<section id="the-video" class="level3">
+<h3 class="anchored" data-anchor-id="the-video">The video</h3>
+<p>The feed gets the poster of the video, the still that shows before it plays. The poster is a link to the post, and the caption ends with “Watch the video in the post.” The script after the video goes too.</p>
+<p>A reader on R-bloggers thus sees a picture of the demo, and one click takes them to the real thing.</p>
+</section>
+<section id="a-second-run-does-nothing" class="level3">
+<h3 class="anchored" data-anchor-id="a-second-run-does-nothing">A second run does nothing</h3>
+<p>Each change leaves a fixed feed as it is. An absolute link stays absolute. A PNG is not an SVG. A poster with no video around it does not match the pattern for a video. So the script can run on every render, and on a feed that it already fixed, with no harm.</p>
+</section>
+</section>
+<section id="the-bug-this-post-found" class="level2">
+<h2 class="anchored" data-anchor-id="the-bug-this-post-found">The bug this post found</h2>
+<p>The first version of the script changed <code>href="</code>, <code>src="</code> and <code>poster="</code> anywhere in the HTML of a post. For six posts, that was fine.</p>
+<p>This post was the first to show the script’s own code. The code block for the picture, with <code>src="</code> in its regular expression, is HTML text too. The script found <code>src="</code> in it and made it absolute. In the feed, the code block came out as:</p>
+<pre class="text"><code>/(&lt;figure class="post-hero[^"]*"&gt;\s*&lt;img [^&gt;]*src="https://tenmeh.github.io/posts/...</code></pre>
+<p>The page was fine. Only the copy in the feed was broken, and that is the copy that R-bloggers shows.</p>
+<p>The fix is the outer <code>replace()</code> in the code for links. It finds each HTML tag, and changes attributes only inside one. In a highlighted code block, the text <code>src="</code> sits between tags, never inside one, so it stays as written.</p>
+<p>I found it by comparing the text of each code block in the feed with the same block on the page. That comparison is now part of the check below.</p>
+</section>
+<section id="how-i-checked-it" class="level2">
+<h2 class="anchored" data-anchor-id="how-i-checked-it">How I checked it</h2>
+<p>A small Python script reads the rendered feed and reports, for each post, the number of relative links, SVG images and video elements. All three are zero. It also compares the text of each code block in the feed with the same block on the page, and they match for all seven posts. It parses the feed as XML too, so a broken tag would stop it.</p>
+<p>Then I did what R-bloggers asks for, and loaded the feed in the <a href="https://simplepie.org/demo/">SimplePie demo</a>. It read the feed, and each post showed in full, with “Watch the video in the post.” where each video was.</p>
+</section>
+<section id="a-second-problem-the-build-that-only-works-with-node" class="level2">
+<h2 class="anchored" data-anchor-id="a-second-problem-the-build-that-only-works-with-node">A second problem: the build that only works with Node</h2>
+<p>The share images and the PNG stills need Node, and three npm packages. The GitHub workflow that publishes this blog installs them before the render.</p>
+<p>Posit Connect Cloud also publishes this repository on each push. After I added the share images, every publish there failed. The email said only: “Unable to render”.</p>
+<p>The reason was the <code>pre-render</code> step. Connect Cloud renders with Quarto, but it does not install npm packages. So <code>node scripts/covers.mjs</code> stopped at its first <code>import</code>, and Quarto stopped the whole render. I could make the same failure on my own machine: a fresh clone, with no <code>node_modules</code>, gave exit status 1 and no site at all.</p>
+<p>A missing share image should not stop a blog from rendering. So each Node step now runs through a small wrapper. Quarto runs a <code>.ts</code> script with its own copy of Deno, so the wrapper needs no Node to start. The core of it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode ts code-with-copy"><code class="sourceCode typescript"><span id="cb6-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">const</span> skip <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (why<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">string</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">=&gt;</span> {</span>
+<span id="cb6-2">  <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">console</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">warn</span>(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`WARNING: skipped scripts/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">${</span>script<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">: </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">${</span>why<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">.`</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb6-3">  Deno<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exit</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb6-4">}<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb6-5"></span>
+<span id="cb6-6"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">try</span> {</span>
+<span id="cb6-7">  Deno<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">statSync</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"node_modules"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb6-8">} <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">catch</span> {</span>
+<span id="cb6-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">skip</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"node_modules is missing"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb6-10">}</span>
+<span id="cb6-11"></span>
+<span id="cb6-12"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">let</span> status<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb6-13"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">try</span> {</span>
+<span id="cb6-14">  status <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">await</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">new</span> Deno<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Command</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"node"</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> { args<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span> [<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`scripts/</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">${</span>script<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span>] })<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">output</span>()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb6-15">} <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">catch</span> {</span>
+<span id="cb6-16">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">skip</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Node is not installed"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb6-17">}</span>
+<span id="cb6-18"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">// A step that starts and then fails is a real error: stop the render.</span></span>
+<span id="cb6-19">Deno<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exit</span>(status<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">code</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span></code></pre></div></div>
+<p>With Node and its packages, the step runs as before. Without them, it is skipped with a warning, and the site renders without the generated pictures. A fresh clone with no <code>node_modules</code> now gives exit status 0 and two warnings.</p>
+<p>The last line matters. A script that starts and then fails is a real bug, and it should still stop the render.</p>
+</section>
+<section id="the-limits" class="level2">
+<h2 class="anchored" data-anchor-id="the-limits">The limits</h2>
+<ul>
+<li><strong>The script edits HTML with regular expressions.</strong> That works because the HTML comes from my own Lua filter, in a shape that I know. It is not a general tool for any feed.</li>
+<li><strong>The feed covers the whole site.</strong> R-bloggers wants posts about R only. This post and every other post here is about R. Before I write one that is not, the blog needs a second feed for the R category alone.</li>
+<li><strong>The PNG is one frame.</strong> An animation that tells a story over time loses it in the feed. For a hero picture, that is a fair trade.</li>
+</ul>
+</section>
+<section id="try-it" class="level2">
+<h2 class="anchored" data-anchor-id="try-it">Try it</h2>
+<p>The scripts are in the repository of this blog:</p>
+<ul>
+<li><a href="https://github.com/tenmeh/tenmeh.github.io/blob/main/scripts/feed.mjs"><code>scripts/feed.mjs</code></a> fixes the feed.</li>
+<li><a href="https://github.com/tenmeh/tenmeh.github.io/blob/main/scripts/node-step.ts"><code>scripts/node-step.ts</code></a> runs a Node step only where Node is there.</li>
+<li><a href="https://github.com/tenmeh/tenmeh.github.io/blob/main/scripts/covers.mjs"><code>scripts/covers.mjs</code></a> draws the share images and the PNG stills.</li>
+</ul>
+<p>If your Quarto blog goes to R-bloggers too, read your own feed once, as HTML with nothing around it. That is how it will arrive.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>Quarto</category>
+  <guid>https://tenmeh.github.io/posts/2026-11-06-quarto-feed-for-r-bloggers/</guid>
+  <pubDate>Fri, 06 Nov 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://tenmeh.github.io/posts/2026-11-06-quarto-feed-for-r-bloggers/cover.png" medium="image" type="image/png" height="76" width="144"/>
+</item>
 <item>
   <title>bones is on CRAN: two things the review caught</title>
   <dc:creator>Tanmay Chanda</dc:creator>

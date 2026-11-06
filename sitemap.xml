@@ -2,38 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://tenmeh.github.io/index.html</loc>
-    <lastmod>2026-11-06T16:50:51.963Z</lastmod>
+    <lastmod>2026-11-06T17:47:51.413Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/work-with-me.html</loc>
-    <lastmod>2026-11-06T16:50:51.969Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/index.html</loc>
-    <lastmod>2026-11-06T16:50:51.964Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/index.html</loc>
-    <lastmod>2026-11-06T16:50:51.968Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-10-13-recording-shiny-demos/index.html</loc>
-    <lastmod>2026-11-06T16:50:51.967Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/index.html</loc>
-    <lastmod>2026-11-06T16:50:51.966Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/index.html</loc>
-    <lastmod>2026-11-06T16:50:51.968Z</lastmod>
+    <lastmod>2026-11-06T17:47:51.419Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-09-28-how-bones-began/index.html</loc>
-    <lastmod>2026-11-06T16:50:51.965Z</lastmod>
+    <lastmod>2026-11-06T17:47:51.415Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/index.html</loc>
+    <lastmod>2026-11-06T17:47:51.418Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/index.html</loc>
+    <lastmod>2026-11-06T17:47:51.416Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-10-13-recording-shiny-demos/index.html</loc>
+    <lastmod>2026-11-06T17:47:51.417Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/index.html</loc>
+    <lastmod>2026-11-06T17:47:51.418Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/index.html</loc>
+    <lastmod>2026-11-06T17:47:51.414Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-11-06-quarto-feed-for-r-bloggers/index.html</loc>
+    <lastmod>2026-11-06T17:47:51.418Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/about.html</loc>
-    <lastmod>2026-11-06T16:50:51.955Z</lastmod>
+    <lastmod>2026-11-06T17:47:51.405Z</lastmod>
   </url>
 </urlset>
