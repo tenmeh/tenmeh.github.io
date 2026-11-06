@@ -4,15 +4,17 @@
 //
 // Quarto runs this after each render (project: post-render in _quarto.yml),
 // once the feed is in _site. R-bloggers takes the full HTML of each post
-// from the feed and puts it on its own site, where three things in the page
-// version of a post break:
+// from the feed and puts it on its own site. Three things in the page
+// version of a post do not belong there:
 //
 // - A relative link points at R-bloggers, not at this blog. Each relative
 //   href and src is made absolute, from the link of its post.
-// - The hero is an animated SVG, and R-bloggers drops SVG images. The feed
-//   uses the PNG still that scripts/covers.mjs draws next to it.
-// - The demo video is a <video> with a script, and R-bloggers drops both.
-//   The feed shows the poster instead, as a link to the post.
+// - The hero is an animated SVG. R-bloggers asks for images in PNG or a
+//   similar format, so the feed uses the PNG still that scripts/covers.mjs
+//   draws next to it.
+// - The demo video is a <video> that a script starts. Another site or a
+//   feed reader may remove either, so the feed shows the poster instead, as
+//   a link to the post.
 //
 // The pages of the site are not changed. Only the feed is.
 
@@ -38,8 +40,11 @@ const localFile = (url, siteUrl) =>
   url.startsWith(siteUrl) ? join(site, decodeURIComponent(url.slice(siteUrl.length))) : null;
 
 function fixItem(html, link, siteUrl) {
-  // 1. Relative links and images.
-  html = html.replace(/\b(href|src|poster)="([^"]*)"/g, (_, name, url) => `${name}="${absolute(url, link)}"`);
+  // 1. Relative links and images. Only inside a tag: a code sample that
+  // shows the text src="..." is not a link, and must stay as it is.
+  html = html.replace(/<[a-z][^>]*>/gi, (tag) =>
+    tag.replace(/\b(href|src|poster)="([^"]*)"/g, (_, name, url) => `${name}="${absolute(url, link)}"`),
+  );
 
   // 2. The hero: the PNG still, when the render drew one.
   html = html.replace(/(<figure class="post-hero[^"]*">\s*<img [^>]*src=")([^"]+)\.svg"/g, (whole, head, stem) => {
