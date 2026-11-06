@@ -424,8 +424,8 @@ for (const slug of readdirSync(postsDir).sort()) {
   writeFileSync(join(postsDir, slug, "cover.png"), render(svg));
   console.log(`posts/${slug}/cover.png`);
 
-  // A still of the hero, for the feed. R-bloggers and many readers drop an
-  // SVG, so scripts/feed.mjs points the feed at this PNG. The page keeps the
+  // A still of the hero, for the feed. R-bloggers asks for images in PNG or
+  // a similar format, so scripts/feed.mjs points the feed at this PNG. The page keeps the
   // animated SVG. resvg draws the first frame, at twice the 800px width.
   if (fm.hero && fm.hero.endsWith(".svg") && existsSync(join(postsDir, slug, fm.hero))) {
     const still = fm.hero.replace(/\.svg$/, ".png");
