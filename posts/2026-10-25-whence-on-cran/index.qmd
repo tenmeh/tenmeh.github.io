@@ -11,6 +11,14 @@ package: whence
 image-alt: "Cover card with the post title, the date and the whence hex logo."
 hero: hero.svg
 hero-alt: "A pointer clicks a revenue figure on a dashboard. The whence hex sways in the centre. On the right, a panel lists where the rows went, one step at a time."
+preview: preview.mp4
+preview-alt: >
+  A recreated whence demo app. The pointer clicks the revenue figure of
+  $5,697,974, and a panel opens. Its steps light up in turn: 18,442 rows of
+  sales, 6,179 after the region APAC, 3,087 after the year 2023 and the
+  channels, then one row. Then the code that makes the value again is
+  outlined, and the panel closes.
+preview-caption: "A browser recreation of the whence demo app. The values and the code are the ones the live demo shows."
 ---
 
 Sooner or later, someone looks at a number on a dashboard and says: "That
@@ -35,6 +43,9 @@ Then they send the counts in a message, and the viewer nods.
 
 whence puts those counts in the dashboard, next to the number, so the
 viewer can see them for themselves.
+
+::: {.demo-video}
+:::
 
 ## What the viewer sees
 
