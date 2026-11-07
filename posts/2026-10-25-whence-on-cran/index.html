@@ -438,6 +438,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
      1 row after summarise()</code></pre>
 <p>Then they send the counts in a message, and the viewer nods.</p>
 <p>whence puts those counts in the dashboard, next to the number, so the viewer can see them for themselves.</p>
+<figure class="post-preview figure">
+<video src="https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/preview.mp4" poster="https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/preview.jpg" aria-label="A recreated whence demo app. The pointer clicks the revenue figure of $5,697,974, and a panel opens. Its steps light up in turn: 18,442 rows of sales, 6,179 after the region APAC, 3,087 after the year 2023 and the channels, then one row. Then the code that makes the value again is outlined, and the panel closes." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
+<figcaption>A browser recreation of the whence demo app. The values and the code are the ones the live demo shows.</figcaption>
+</figure>
+<script>
+(function () {
+  var video = document.currentScript.previousElementSibling.querySelector("video");
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  video.controls = false;
+  var started = video.play();
+  if (started && started.catch) started.catch(function () { video.controls = true; });
+})();
+</script>
 <section id="what-the-viewer-sees" class="level2">
 <h2 class="anchored" data-anchor-id="what-the-viewer-sees">What the viewer sees</h2>
 <p>The person who asks is usually not the person who wrote the code. They cannot read the pipeline. Even if they could, a row count is not in the code. It only exists when the code runs.</p>

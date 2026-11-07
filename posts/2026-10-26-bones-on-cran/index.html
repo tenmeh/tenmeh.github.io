@@ -428,9 +428,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/hero.svg" alt="The bones hex logo, alive: the bone bounces, a teal wave sweeps across the grey lines under it, and grey placeholders around it fill in with real content." width="800" height="320" class="figure-img"></figure>
 <p><strong>bones 0.1.1 is on CRAN.</strong> It was published on 16 October. It is my second package on CRAN, after rewind.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"bones"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>bones gives Shiny outputs loading placeholders in the shape of their content. <a href="../../posts/2026-09-28-how-bones-began/index.html">My first post</a> explains the idea. This one is about getting it through review.</p>
+<figure class="post-preview figure">
+<video src="https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/preview.mp4" poster="https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/preview.jpg" aria-label="A recreated Shiny dashboard. Grey placeholders in the shape of a bar chart and a table wave while the outputs load, then the real chart and table take their place. When the region changes, the old content stays and is dimmed until the new data arrives." muted="" loop="" playsinline="" preload="metadata" controls=""></video>
+<figcaption>The demo of bones from my first post: a browser recreation of the package at work.</figcaption>
+</figure>
+<script>
+(function () {
+  var video = document.currentScript.previousElementSibling.querySelector("video");
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  video.controls = false;
+  var started = video.play();
+  if (started && started.catch) started.catch(function () { video.controls = true; });
+})();
+</script>
 <p>I submitted 0.1.0 on 25 September. The automatic pre-tests on Windows and Debian passed with one NOTE: “New submission”. Every first submission gets that note.</p>
 <p>On 6 October, a reviewer sent two requests and ended with “Please fix and resubmit.”</p>
 <section id="a-package-name-keeps-its-case" class="level2">

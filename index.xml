@@ -644,6 +644,7 @@ font-style: inherit;">;</span></span></code></pre></div></div>
 
 
 
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/hero.png" alt="The bones hex logo, alive: the bone bounces, a teal wave sweeps across the grey lines under it, and grey placeholders around it fill in with real content." width="800" height="320" class="figure-img"></figure>
 <p><strong>bones 0.1.1 is on CRAN.</strong> It was published on 16 October. It is my second package on CRAN, after rewind.</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
 background-color: null;
@@ -651,6 +652,7 @@ font-style: inherit;">install.packages</span>(<span class="st" style="color: #20
 background-color: null;
 font-style: inherit;">"bones"</span>)</span></code></pre></div></div>
 <p>bones gives Shiny outputs loading placeholders in the shape of their content. <a href="https://tenmeh.github.io/posts/2026-09-28-how-bones-began/index.html">My first post</a> explains the idea. This one is about getting it through review.</p>
+<figure class="post-preview"><a href="https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/"><img src="https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/preview.jpg" alt="A recreated Shiny dashboard. Grey placeholders in the shape of a bar chart and a table wave while the outputs load, then the real chart and table take their place. When the region changes, the old content stays and is dimmed until the new data arrives." width="640" height="360"></a><figcaption>The demo of bones from my first post: a browser recreation of the package at work. <a href="https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/">Watch the video in the post.</a></figcaption></figure>
 <p>I submitted 0.1.0 on 25 September. The automatic pre-tests on Windows and Debian passed with one NOTE: “New submission”. Every first submission gets that note.</p>
 <p>On 6 October, a reviewer sent two requests and ended with “Please fix and resubmit.”</p>
 <section id="a-package-name-keeps-its-case" class="level2">
@@ -811,6 +813,7 @@ font-style: inherit;">"options\(|par\(|setwd\(|Sys\.setenv\("</span> R man inst 
      1 row after summarise()</code></pre>
 <p>Then they send the counts in a message, and the viewer nods.</p>
 <p>whence puts those counts in the dashboard, next to the number, so the viewer can see them for themselves.</p>
+<figure class="post-preview"><a href="https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/"><img src="https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/preview.jpg" alt="A recreated whence demo app. The pointer clicks the revenue figure of $5,697,974, and a panel opens. Its steps light up in turn: 18,442 rows of sales, 6,179 after the region APAC, 3,087 after the year 2023 and the channels, then one row. Then the code that makes the value again is outlined, and the panel closes." width="640" height="360"></a><figcaption>A browser recreation of the whence demo app. The values and the code are the ones the live demo shows. <a href="https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/">Watch the video in the post.</a></figcaption></figure>
 <section id="what-the-viewer-sees" class="level2">
 <h2 class="anchored" data-anchor-id="what-the-viewer-sees">What the viewer sees</h2>
 <p>The person who asks is usually not the person who wrote the code. They cannot read the pipeline. Even if they could, a row count is not in the code. It only exists when the code runs.</p>
