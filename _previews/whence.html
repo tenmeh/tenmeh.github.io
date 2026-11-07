@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>whence preview scene</title>
+<!-- The scene for the video of the whence post. It recreates the demo app of
+     whence and the panel that opens when the viewer clicks a number. The
+     labels, values and code are the ones the live demo shows for Revenue,
+     with Region APAC, From year 2023 and all three channels. Only the clock
+     is new: renderAt(ms) puts the page in the state of that time. -->
+<link rel="stylesheet" href="app.css">
+<style>
+  /* The app: the inputs in a well at the left, the numbers at the right. */
+  .well{position:absolute;left:14px;top:14px;width:236px;padding:12px;background:#f5f5f5;border:1px solid #e3e3e3;border-radius:4px}
+  h1{margin:0 0 10px;font-size:16px;font-weight:600}
+  .field{margin-bottom:10px}
+  .slider{position:relative;height:40px;padding-top:16px}
+  .line{height:6px;border-radius:6px;background:#ddd}
+  .bar{position:absolute;left:0;top:16px;height:6px;border-radius:6px 0 0 6px;background:#428bca}
+  .handle{position:absolute;top:11px;width:15px;height:15px;margin-left:-7.5px;border:1px solid #bbb;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+  .bubble{position:absolute;top:-4px;transform:translateX(-50%);padding:0 4px;border-radius:3px;background:#428bca;color:#fff;font-size:9.5px}
+  .end{position:absolute;top:27px;font-size:8.5px;color:#777}.end.r{right:0}
+  .chk{display:flex;align-items:center;gap:6px;margin:3px 0}
+  .box{display:inline-grid;place-items:center;width:12px;height:12px;border-radius:2px;background:#0d6efd}
+  .numbers{position:absolute;left:270px;top:16px;width:356px}
+  .hint{margin:0 0 12px;font-size:11px;color:#333}
+  .num{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;font-size:17px;color:#212529}
+  .val{border-bottom:2px dotted #444;line-height:1.15}
+  /* The panel, as whence draws it. */
+  #panel{position:absolute;left:286px;top:12px;width:340px;padding:10px 12px;background:#fff;border:1px solid rgba(0,0,0,.18);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.18);opacity:0;transform-origin:30% 0}
+  .p-head{display:flex;justify-content:space-between;font-weight:600;font-size:11.5px}
+  .p-close{font-size:13px;line-height:1;color:#555}
+  .p-value{margin:6px 0 8px;font-size:15px;font-weight:700}
+  .p-cap{margin:0 0 4px;font-size:8.5px;font-weight:700;letter-spacing:.06em;color:#555}
+  .row{display:flex;align-items:baseline;gap:6px;padding:3px 4px;border-bottom:1px solid #e9ecef;border-radius:3px;font-size:10.5px}
+  .row .i{width:10px;color:#888;font:8.5px/1.4 ui-monospace,Consolas,monospace}
+  .row .s{flex:1;font:8.5px/1.4 ui-monospace,Consolas,monospace;color:#333;white-space:nowrap;overflow:hidden}
+  .row .n{white-space:nowrap}
+  .row .d{white-space:nowrap;border-bottom:1px dotted #444}
+  .p-rep{display:flex;justify-content:space-between;align-items:center;margin:8px 0 4px}
+  .copy{padding:1px 7px;border-radius:3px;background:#eee;font-size:9.5px;color:#333}
+  pre{margin:0;padding:6px 8px;border-radius:3px;background:#eee;font:8.5px/1.45 ui-monospace,Consolas,monospace;color:#333;white-space:pre}
+  .btn{display:inline-block;margin-top:8px;padding:3px 8px;border-radius:3px;background:#eee;font-size:9.5px;color:#333}
+  .lit{background:rgba(87,88,168,.14)}
+  .ring{outline:2px solid rgba(87,88,168,.75);outline-offset:1px}
+</style>
+</head>
+<body>
+<div id="stage">
+<div class="well">
+  <h1>whence demo</h1>
+  <div class="field"><label>Region</label><div class="sel"><span>APAC</span></div></div>
+  <div class="field"><label>From year</label>
+    <div class="slider"><div class="line"></div><div class="bar" style="width:60%"></div>
+      <div class="handle" style="left:60%"></div><div class="bubble" style="left:60%">2023</div>
+      <span class="end">2020</span><span class="end r">2025</span></div>
+  </div>
+  <div class="field" style="margin-bottom:0"><label>Channel</label>
+    <div class="chk"><span class="box"><svg width="8" height="8" viewBox="0 0 8 8"><path d="M1.2 4.2l1.8 1.8 3.8-4" fill="none" stroke="#fff" stroke-width="1.5"/></svg></span>Direct</div>
+    <div class="chk"><span class="box"><svg width="8" height="8" viewBox="0 0 8 8"><path d="M1.2 4.2l1.8 1.8 3.8-4" fill="none" stroke="#fff" stroke-width="1.5"/></svg></span>Online</div>
+    <div class="chk"><span class="box"><svg width="8" height="8" viewBox="0 0 8 8"><path d="M1.2 4.2l1.8 1.8 3.8-4" fill="none" stroke="#fff" stroke-width="1.5"/></svg></span>Partner</div>
+  </div>
+</div>
+
+<div class="numbers">
+  <p class="hint">Click a number to see where it came from.</p>
+  <div class="num">Revenue <span class="val" id="revenue">$5,697,974</span></div>
+  <div class="num">Orders <span class="val">3,087</span></div>
+  <div class="num">Share of the top customer (%) <span class="val">22.2</span></div>
+  <div class="num">Customers <span class="val">5</span></div>
+</div>
+
+<div id="panel">
+  <div class="p-head"><span>Where Revenue came from</span><span class="p-close" id="close">&times;</span></div>
+  <div class="p-value">$5,697,974</div>
+  <p class="p-cap">WHERE THE ROWS WENT</p>
+  <div class="row" id="r0"><span class="i">0</span><span class="s">sales</span><span class="n">18,442 rows</span></div>
+  <div class="row" id="r1"><span class="i">1</span><span class="s">region == "APAC"</span><span class="n">6,179 rows</span><span class="d">&minus;12,263 rows (66%)</span></div>
+  <div class="row" id="r2"><span class="i">2</span><span class="s">year &gt;= 2023L</span><span class="n">3,087 rows</span><span class="d">&minus;3,092 rows (50%)</span></div>
+  <div class="row" id="r3"><span class="i">3</span><span class="s">channel %in% c("Direct", "Online", "Partner")</span><span class="n">3,087 rows</span></div>
+  <div class="row" id="r4"><span class="i">4</span><span class="s">aggregated to 1 row</span><span class="n">1 row</span></div>
+  <div class="p-rep"><span class="p-cap" style="margin:0">REPRODUCE</span><span class="copy">Copy</span></div>
+  <pre id="code">sales |&gt;
+  filter(region == "APAC") |&gt;
+  filter(year &gt;= 2023L) |&gt;
+  filter(channel %in% c("Direct", "Online", "Partner")) |&gt;
+  summarise(total = sum(revenue))</pre>
+  <span class="btn">View the rows</span>
+</div>
+
+<div id="caption"></div><div id="cursor"></div><div id="ripple"></div><div id="veil"></div>
+</div>
+<script src="scene.js"></script>
+<script>
+  const DURATION = 10000;
+  window.DURATION = DURATION;
+  window.POSTER_MS = 3900; // the panel open, with step 2 lit
+
+  const centre = (el) => {
+    const r = el.getBoundingClientRect();
+    return [r.left + r.width / 2, r.top + r.height / 2];
+  };
+  const [revX, revY] = centre(document.getElementById("revenue"));
+  const panel = document.getElementById("panel");
+  // Measure the close button with the panel in its open place.
+  panel.style.opacity = 1;
+  const [closeX, closeY] = centre(document.getElementById("close"));
+  panel.style.opacity = 0;
+
+  // When each step of the waterfall is lit: [from, to].
+  const STEPS = [[2100, 2900], [2900, 3700], [3700, 4500], [4500, 5300], [5300, 6100]];
+
+  window.renderAt = function (ms) {
+    // The panel opens after the click on the value, and closes after the
+    // click on the cross.
+    const open = tween(ms, 1450, 1700, 0, 1) * (1 - tween(ms, 8350, 8600, 0, 1));
+    panel.style.opacity = open;
+    panel.style.transform = `scale(${0.97 + 0.03 * open})`;
+    panel.style.visibility = open > 0 ? "visible" : "hidden";
+
+    // Each step lights up in turn, then the code that makes the value again.
+    STEPS.forEach(([a, b], i) => {
+      document.getElementById(`r${i}`).classList.toggle("lit", ms >= a && ms < b);
+    });
+    document.getElementById("code").classList.toggle("ring", ms >= 6300 && ms < 7900);
+
+    setCaption(ms, [
+      [450, 1900, "Click a number"],
+      [2050, 6150, "Each step, and the rows it removed"],
+      [6300, 7900, "The code that makes it again"],
+    ]);
+    setCursor(ms, [
+      [300, 120, 330], [1250, revX, revY], [1500, revX, revY],
+      [2000, 250, 300], [7700, 250, 300], [8150, closeX, closeY], [8450, closeX, closeY], [9200, 470, 320],
+    ], [1400, 8300]);
+    setVeil(ms, DURATION);
+  };
+
+  window.renderAt(0);
+</script>
+</body>
+</html>

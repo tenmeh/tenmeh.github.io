@@ -1,12 +1,13 @@
 // Records the preview videos of the posts, and their poster images.
 //
-//   node _previews/record.mjs            both scenes
+//   node _previews/record.mjs            every scene
 //   node _previews/record.mjs bones      one scene
 //
 // Needs Node, Playwright with a Chromium (npm i -g playwright), and ffmpeg
 // with libx264 (set FFMPEG to its path if it is not on the PATH).
 // Writes posts/<slug>/preview.mp4 and posts/<slug>/preview.jpg, which are
-// committed: the site build does not run this script.
+// committed: the site build does not run this script. A scene can name more
+// than one post; the files are then copied to each, so they never differ.
 //
 // The scenes are recreated in the browser, because the apps are R. They
 // are not filmed in real time. Each scene has window.renderAt(ms), which
@@ -16,7 +17,7 @@
 // pipes the pictures to ffmpeg.
 
 import { spawn, execSync } from "node:child_process";
-import { statSync } from "node:fs";
+import { copyFileSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -26,9 +27,10 @@ const FPS = 30;
 const ffmpeg = process.env.FFMPEG || "ffmpeg";
 
 const scenes = {
-  bones: "posts/2026-09-28-how-bones-began",
-  rewind: "posts/2026-08-27-undo-for-shiny",
-  "rewind-diff": "posts/2026-10-02-rewind-0-3-0",
+  bones: ["posts/2026-09-28-how-bones-began", "posts/2026-10-26-bones-on-cran"],
+  rewind: ["posts/2026-08-27-undo-for-shiny", "posts/2026-10-13-recording-shiny-demos"],
+  "rewind-diff": ["posts/2026-10-02-rewind-0-3-0"],
+  whence: ["posts/2026-10-25-whence-on-cran"],
 };
 
 async function loadPlaywright() {
@@ -48,7 +50,8 @@ const browser = await chromium.launch();
 
 for (const name of wanted) {
   if (!scenes[name]) throw new Error(`Unknown scene "${name}". Use: ${Object.keys(scenes).join(", ")}`);
-  const outDir = join(root, scenes[name]);
+  const [first, ...others] = scenes[name];
+  const outDir = join(root, first);
   const mp4 = join(outDir, "preview.mp4");
 
   const page = await browser.newPage({
@@ -93,7 +96,11 @@ for (const name of wanted) {
   await page.close();
 
   const kb = (f) => `${Math.round(statSync(f).size / 1024)} KB`;
-  console.log(`${name}: ${frames} frames, preview.mp4 ${kb(mp4)}, preview.jpg ${kb(join(outDir, "preview.jpg"))}`);
+  for (const other of others) {
+    for (const file of ["preview.mp4", "preview.jpg"]) copyFileSync(join(outDir, file), join(root, other, file));
+  }
+  console.log(`${name}: ${frames} frames, preview.mp4 ${kb(mp4)}, preview.jpg ${kb(join(outDir, "preview.jpg"))}` +
+    (others.length ? `, copied to ${others.length} more post${others.length > 1 ? "s" : ""}` : ""));
 }
 
 await browser.close();
