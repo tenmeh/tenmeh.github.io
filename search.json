@@ -1,10 +1,17 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Posts",
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
     "section": "",
-    "text": "R · Shiny · packages\n\nNotes on R, Shiny, and building things that other people use.\nThe problems that were harder than they looked, and the reasons behind a decision rather than only the decision.\n\n\n\n\n\n\n\n\nLatest post\n\n  \n    \n    \n    \n    RQuarto\n    A Quarto feed that R-bloggers can republish\n    \n    R-bloggers copies the full HTML of each post from your feed onto its own site. Three parts of my Quarto posts were not fit for that trip. A short post-render script now fixes the feed, and leaves the pages alone.\n\n    \n    6 November 2026·8 min read\n  \n\n\nMore posts\n\n\n\n  \n    \n    \n    \n    \n      bones is on CRAN: two things the review caught\n      \n      bones is on CRAN. The review caught a package name and a demo that left plot settings behind, and taught me to search beyond the named line.\n\n      \n      26 October 2026·4 min read\n    \n  \n\n\n\n  \n    \n    \n    \n    \n      Where did this number come from?\n      \n      Sooner or later, someone looks at a number on a Shiny dashboard and says it seems low. whence, now on CRAN, lets them click the number and see where the rows went.\n\n      \n      25 October 2026·6 min read\n    \n  \n\n\n\n  \n    \n    \n    \n    \n      Recording Shiny demos frame by frame\n      \n      The short videos at the top of my package posts look like screen recordings. They are not. Each frame is drawn from a clock, so every run gives the same video, and a change of colour or font takes one command.\n\n      \n      13 October 2026·9 min read\n    \n  \n\n\n\n  \n    \n    \n    \n    \n      rewind 0.3.0: show what changed\n      \n      rewind 0.3.0 is on CRAN. It adds value comparisons to the history, fixes a rail that scrolled the page, and makes undo work when enabled inside a module.\n\n      \n      2 October 2026·6 min read\n    \n  \n\n\n\n  \n    \n    \n    \n    \n      A spinner says wait. A skeleton says what is coming.\n      \n      A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.\n\n      \n      28 September 2026·7 min read\n    \n  \n\n\n\n  \n    \n    \n    \n    \n      Undo for Shiny, and the three problems that make it interesting\n      \n      Shiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R's lazy evaluation could produce.\n\n      \n      27 August 2026·5 min read\n    \n  \n\n\n\n\n\nNo matching items\n\n\n\nPackages\n\n  \n    \n    \n      rewind\n      on CRAN\n      Undo and redo for Shiny applications.\n    \n    \n      install.packages(\"rewind\")\n      \n    \n  \n  \n    \n    \n      bones\n      on CRAN\n      Content-shaped loading placeholders for Shiny outputs.\n    \n    \n      install.packages(\"bones\")\n      \n    \n  \n  \n    \n    \n      whence\n      on CRAN\n      Explain where a number came from in Shiny dashboards.\n    \n    \n      install.packages(\"whence\")\n      \n    \n  \n\n\n\n   Follow the blog\n  New posts go to the RSS feed with their full text. They also appear on R-bloggers.\n  Open the feed"
+    "text": "I am Tanmay Chanda. I build R and Shiny applications.\nI write here about the parts of that work that seem worth passing on: the problems that were harder than they looked, and the reasons behind a decision rather than only the decision.\nMy R packages:\nFind me on GitHub. To hire me, see Work with me."
+  },
+  {
+    "objectID": "about.html#blogroll",
+    "href": "about.html#blogroll",
+    "title": "About",
+    "section": "Blogroll",
+    "text": "Blogroll\n\nR-bloggers - a collection of blogs about R, and the place where most of the R community reads.\nR Weekly - a weekly list of what happened in R."
   },
   {
     "objectID": "work-with-me.html",
@@ -40,6 +47,174 @@
     "title": "Work with me",
     "section": "Get in touch",
     "text": "Get in touch\n\nEmail: tanmaychanda96@gmail.com\nLinkedIn: linkedin.com/in/tanmay-chanda\n\nTell me briefly what you are building, your timeline, and what blocks you. I reply within a few working days."
+  },
+  {
+    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html",
+    "href": "posts/2026-10-13-recording-shiny-demos/index.html",
+    "title": "Recording Shiny demos frame by frame",
+    "section": "",
+    "text": "Each of my package posts has a short video near the top. A pointer drags a slider, a menu opens, a caption explains the step. It looks like a screen recording.\nIt is not one. Nothing in the video was filmed. A script asks a web page for its state at 0 ms, then at 33 ms, then at 67 ms, and takes a picture each time. ffmpeg joins the pictures into a video.\nThis post is about how that works, and why I did it this way."
+  },
+  {
+    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#why-not-a-screen-recording",
+    "href": "posts/2026-10-13-recording-shiny-demos/index.html#why-not-a-screen-recording",
+    "title": "Recording Shiny demos frame by frame",
+    "section": "Why not a screen recording",
+    "text": "Why not a screen recording\nA screen recording records what happened. I wanted to describe what should happen, and then draw it.\nA recording has three problems for a demo that I want to keep:\n\nIt is never the same twice. The pointer moves at a slightly different speed. A plot takes a little longer to draw. If I record again next month, the video changes in ways I did not ask for.\nIt needs the real app running. The apps are R. To record them, I need R, the packages, the data, and a window of the right size, all at once.\nA small change means a new take. If I change the blog’s font, every video still shows the old one. With a recording, the only fix is to record again by hand.\n\nThe app in the video above is a few lines of R:\nlibrary(shiny)\nlibrary(rewind)\n\nui &lt;- fluidPage(\n  rewind_buttons(),\n  selectInput(\"region\", \"Region\", c(\"North\", \"South\", \"East\", \"West\")),\n  sliderInput(\"year\", \"Year\", 2018, 2026, 2024),\n  plotOutput(\"plot\")\n)\n\nserver &lt;- function(input, output, session) {\n  rewind_enable()\n\n  output$plot &lt;- renderPlot(plot_for(input$region, input$year))\n}\nThe video does not run this app. It shows a page that looks like it, and that page is a function of time."
+  },
+  {
+    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#a-scene-is-a-function-of-time",
+    "href": "posts/2026-10-13-recording-shiny-demos/index.html#a-scene-is-a-function-of-time",
+    "title": "Recording Shiny demos frame by frame",
+    "section": "A scene is a function of time",
+    "text": "A scene is a function of time\nEach video has one HTML page, which I call a scene. The scene defines one function, window.renderAt(ms). It puts the page in the state that it has at that moment, and it does nothing else. It does not start a timer, and it does not wait for anything.\nThis is the key rule. If the page depends only on ms, then frame 120 is the same picture on every run. The recorder can ask for the frames in any order, as fast or as slow as it likes.\nA scene describes its story as a timeline. Here is part of the rewind scene, a little simplified:\nwindow.renderAt = function (ms) {\n  // The drag runs from 1200 to 2200 ms. The region changes at 3650 ms.\n  // Ctrl+Z at 4750 ms puts it back.\n  const dragX = track(ms, [[1200, xOf(2024)], [2200, xOf(2020)]]);\n  let year = ms &lt; 1200 ? 2024 : yearAt(dragX);\n  let region = ms &gt;= 3650 ? \"East\" : \"North\";\n  if (ms &gt;= 4750) region = \"North\";\n\n  // The position in the history, as a list of steps.\n  const index = stepAt(ms, [[0, 0], [2600, 1], [4100, 2], [4750, 1]]);\n  document.querySelector(\".rewind-undo\").disabled = index === 0;\n\n  setCaption(ms, [\n    [900, 2900, \"One drag is one step\"],\n    [2950, 4350, \"Changing Region is another step\"],\n    [4450, 5700, \"Ctrl+Z steps back: Region is North again\"],\n  ]);\n  setVeil(ms, DURATION);\n};\nEvery value on the page is computed from ms. Nothing remembers the last frame."
+  },
+  {
+    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#small-helpers-for-time",
+    "href": "posts/2026-10-13-recording-shiny-demos/index.html#small-helpers-for-time",
+    "title": "Recording Shiny demos frame by frame",
+    "section": "Small helpers for time",
+    "text": "Small helpers for time\nA few small functions do most of the work. They all take the time first.\n// A value that goes from a to b between t0 and t1, with easing.\nconst tween = (ms, t0, t1, a, b) =&gt;\n  lerp(a, b, ease(clamp((ms - t0) / (t1 - t0))));\n\n// The value of a list of [time, value] keys at a time: eased between keys.\nfunction track(ms, keys) {\n  if (ms &lt;= keys[0][0]) return keys[0][1];\n  for (let i = 1; i &lt; keys.length; i++) {\n    if (ms &lt;= keys[i][0]) {\n      return tween(ms, keys[i - 1][0], keys[i][0], keys[i - 1][1], keys[i][1]);\n    }\n  }\n  return keys[keys.length - 1][1];\n}\n\n// The state of a list of steps, [time, value], at a time:\n// the last step that has started.\nfunction stepAt(ms, steps) {\n  let value = steps[0][1];\n  for (const [t, v] of steps) if (ms &gt;= t) value = v;\n  return value;\n}\ntrack() is for things that glide: the pointer, a slider handle. stepAt() is for things that jump: a menu that is open or closed, the position in the undo history. With these two, a scene reads like a script for a film: at this time, this happens.\nThe parts that are not the app are drawn the same way. The pointer follows a list of [time, x, y] keys and makes a ripple at each click time. The caption is a pill that fades in and out between two times. The keys of a shortcut, such as Ctrl and Z, appear in the corner and press down at their time.\nOne more piece makes the video loop well. A white sheet covers the scene in the first 350 ms and fades in again in the last 450 ms. The last frame and the first frame are then both white, so the loop has no jump."
+  },
+  {
+    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#things-that-move-on-their-own",
+    "href": "posts/2026-10-13-recording-shiny-demos/index.html#things-that-move-on-their-own",
+    "title": "Recording Shiny demos frame by frame",
+    "section": "Things that move on their own",
+    "text": "Things that move on their own\nThe rule “the page depends only on ms” is easy to break by accident. Three things can break it.\nCSS transitions. A transition runs in real time, between two frames that the recorder takes. The shared stylesheet turns them all off:\n*, *::before, *::after {\n  transition: none !important;\n}\nCSS animations. The bones skeleton has a wave that moves across the grey bars. It is a CSS animation, and it belongs in the video. So the scene does not turn it off. It sets its time instead:\n// Set the time of every running animation, and hold it there.\nfunction freezeAnimations(ms) {\n  for (const a of document.getAnimations()) {\n    a.pause();\n    a.currentTime = ms;\n  }\n}\ndocument.getAnimations() returns every animation on the page. Each one is paused and moved to the time of the frame. The wave is then exactly where it should be at that moment.\nThis matters for the bones scene in another way. Its markup and its CSS classes are the ones that withBones() writes, and its stylesheet is the real bones.css from the package:\nui &lt;- fluidPage(\n  withBones(plotOutput(\"chart\")),\n  withBones(tableOutput(\"results\"), rows = 8)\n)\nSo the skeleton in the video is drawn by the package, not copied by hand. Only the clock is new: renderAt(ms) sets the classes that the package’s JavaScript would set at that time.\nFonts. If the first frames are taken before the web font has loaded, they show a fallback font, and the text jumps a few frames in. The recorder waits for every weight of the font before it takes the first picture."
+  },
+  {
+    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#the-recorder",
+    "href": "posts/2026-10-13-recording-shiny-demos/index.html#the-recorder",
+    "title": "Recording Shiny demos frame by frame",
+    "section": "The recorder",
+    "text": "The recorder\nThe recorder is a Node script of about 100 lines. It uses Playwright to open the scene in Chromium, and ffmpeg to make the video.\nThe page is 640 by 360 pixels, at a device scale of 2. The pictures are then 1280 by 720, and the text is sharp. The script steps the clock 30 times a second and pipes each picture straight into ffmpeg:\nconst frames = Math.round((duration / 1000) * FPS);\nfor (let i = 0; i &lt; frames; i++) {\n  await page.evaluate((ms) =&gt; window.renderAt(ms), (i * 1000) / FPS);\n  const png = await page.screenshot({ type: \"png\" });\n  if (!encoder.stdin.write(png)) {\n    await new Promise((r) =&gt; encoder.stdin.once(\"drain\", r));\n  }\n}\nffmpeg reads the PNGs from its input and writes an H.264 file:\nffmpeg -f image2pipe -framerate 30 -i - \\\n  -c:v libx264 -preset slow -crf 21 -tune animation \\\n  -pix_fmt yuv420p -movflags +faststart -an preview.mp4\n-tune animation suits pictures with large flat areas, which is what a user interface is. -movflags +faststart puts the index at the front of the file, so the browser can start to play it before the whole file has arrived. -an means no sound.\nLast, the script calls renderAt() once more, at a time that the scene chooses, and saves that picture as a JPEG. That is the poster: the image that shows before the video plays. Each scene picks a moment that explains itself. For rewind, it is the moment of Ctrl+Z, with both buttons in use."
+  },
+  {
+    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#what-it-gives-me",
+    "href": "posts/2026-10-13-recording-shiny-demos/index.html#what-it-gives-me",
+    "title": "Recording Shiny demos frame by frame",
+    "section": "What it gives me",
+    "text": "What it gives me\nA video of 9 seconds is 270 frames. Each of my three videos is between 140 KB and 210 KB, smaller than most photos on a phone.\nThe best part came a few days ago. I changed the colours and the font of this blog. The videos had the old caption colour and the old font. I changed two stylesheets and ran one command. All three videos and their posters were recorded again in under a minute, and nothing else in them changed.\nOn the page, the video is muted and loops, and it plays by itself where the browser allows it. A reader who asks for less motion gets the poster and the play button instead. In the RSS feed, which other sites such as R-bloggers copy, there is no video at all: the feed shows the poster, with a link to the post."
+  },
+  {
+    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#the-limits",
+    "href": "posts/2026-10-13-recording-shiny-demos/index.html#the-limits",
+    "title": "Recording Shiny demos frame by frame",
+    "section": "The limits",
+    "text": "The limits\nThis is not the right tool for every demo.\n\nIt is a recreation. The video shows how the package behaves, not the R code running. If the package changes, the scene does not change with it. I have to keep them in step by hand.\nA scene takes time to write. The rewind scene is a few hundred lines of HTML and JavaScript. A screen recording takes a minute.\nIt cannot show real speed. A demo of how fast something is needs the real thing. Here, the scene decides how long everything takes.\n\nIf you want the real app on screen, shinytest2 can drive it and take screenshots of it. Then the timing belongs to the app, not to a clock. For a demo that I want to keep, change and record again, the clock wins."
+  },
+  {
+    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#try-it",
+    "href": "posts/2026-10-13-recording-shiny-demos/index.html#try-it",
+    "title": "Recording Shiny demos frame by frame",
+    "section": "Try it",
+    "text": "Try it\nThe scenes and the recorder are in the repository of this blog, in the _previews folder. You need Node, Playwright with Chromium, and ffmpeg. Then:\nnode _previews/record.mjs          # all scenes\nnode _previews/record.mjs bones    # one scene\nIf you make a demo this way, I would like to see it."
+  },
+  {
+    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html",
+    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html",
+    "title": "A Quarto feed that R-bloggers can republish",
+    "section": "",
+    "text": "This blog is now on its way to R-bloggers. Before I filled in their form, I read their rules. Most of them are about the content: posts about R, in English, with real substance. A few of them are about the feed itself:\nThe full text was easy. In Quarto, feed: true on a listing gives the full text of each post. The link back is one line in the footer.\nThe other two made me look at my feed in a new way. R-bloggers does not link to a post. It copies the HTML of the post out of the feed and shows it on its own site, with none of my stylesheets or scripts around it. So the question was not “does my blog look right?” It was “does this HTML still make sense on someone else’s page?”"
+  },
+  {
+    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#what-i-found",
+    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#what-i-found",
+    "title": "A Quarto feed that R-bloggers can republish",
+    "section": "What I found",
+    "text": "What I found\nI read the feed with a short script and listed every link, image and video in each post. For three posts, it found three kinds of problem:\n\nOne relative link. The rewind 0.3.0 post links to my first post as ../../posts/2026-08-27-undo-for-shiny/index.html. On my blog, that works. On R-bloggers, it points at a page of R-bloggers that does not exist.\nThree SVG pictures. Each post opens with a small animated illustration, an SVG with CSS animation. R-bloggers asks for PNG or a similar format.\nThree videos. Each post has a short demo video. On the page, a small script starts it, or shows the controls if the browser refuses. In another site’s page, or in a feed reader, I cannot count on the video element or the script.\n\nThe page version of each post was right. Only the copy in the feed needed to change."
+  },
+  {
+    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#a-script-after-the-render",
+    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#a-script-after-the-render",
+    "title": "A Quarto feed that R-bloggers can republish",
+    "section": "A script after the render",
+    "text": "A script after the render\nQuarto writes the feed, index.xml, as part of the render. It also runs scripts that a project names before and after the render. A post-render script runs once the whole site, the feed included, is in _site:\nproject:\n  type: website\n  pre-render: scripts/node-step.ts covers.mjs\n  post-render: scripts/node-step.ts feed.mjs\nfeed.mjs reads the feed, finds each &lt;item&gt;, and changes the HTML inside its &lt;description&gt;. It does not touch the pages. The node-step.ts in front of it comes later in this post.\n\nThe relative link\nEach item in the feed has a &lt;link&gt;: the address of the post. A relative URL inside the post is relative to that address. JavaScript’s URL does the rest:\nconst absolute = (url, base) =&gt; {\n  if (/^([a-z][a-z0-9+.-]*:|#|\\/\\/)/i.test(url)) return url;\n  return new URL(url, base).href;\n};\n\nhtml = html.replace(/&lt;[a-z][^&gt;]*&gt;/gi, (tag) =&gt;\n  tag.replace(/\\b(href|src|poster)=\"([^\"]*)\"/g,\n    (_, name, url) =&gt; `${name}=\"${absolute(url, link)}\"`));\nA URL that already has a scheme, such as https: or mailto:, stays as it is. So does a link to a heading on the same page, such as #try-it. The outer replace() limits the change to HTML tags. The reason for that comes later in this post.\nThe pictures and videos never had this problem. A Lua filter writes them into the page, and it gives them absolute URLs from the start. It reads site-url from _quarto.yml, because Quarto does not pass that value to filters.\n\n\nThe SVG picture\nThe page keeps its animated SVG. The feed gets a PNG of its first frame.\nThe PNG comes from the step before the render. A Node script already draws a share image for each post with resvg, so it draws the still of the hero at the same time, at twice the width of the page. A little simplified:\nfunction render(svg, width) {\n  const resvg = new Resvg(svg, {\n    fitTo: { mode: \"width\", value: width },\n    font: { fontFiles: Object.values(fontFiles), loadSystemFonts: false },\n  });\n  return resvg.render().asPng();\n}\n\nwriteFileSync(join(postsDir, slug, \"hero.png\"), render(heroSvg, 1600));\nresvg does not run CSS animations. It draws the picture as it is before any animation starts. So each hero needs a first frame that makes sense on its own. For one hero, it did not: the knob of a slider sat at one end and its coloured bar was full. I drew that one again, with the knob where the bar ends.\nresvg also needs real font files, and it does not read a web font from Google. The fonts of the blog are in the repository for that reason.\nfeed.mjs then swaps the file name in the feed, but only when the PNG is really there:\nhtml = html.replace(\n  /(&lt;figure class=\"post-hero[^\"]*\"&gt;\\s*&lt;img [^&gt;]*src=\")([^\"]+)\\.svg\"/g,\n  (whole, head, stem) =&gt; {\n    const file = localFile(`${stem}.png`, siteUrl);\n    return file && existsSync(file) ? `${head}${stem}.png\"` : whole;\n  });\n\n\nThe video\nThe feed gets the poster of the video, the still that shows before it plays. The poster is a link to the post, and the caption ends with “Watch the video in the post.” The script after the video goes too.\nA reader on R-bloggers thus sees a picture of the demo, and one click takes them to the real thing.\n\n\nA second run does nothing\nEach change leaves a fixed feed as it is. An absolute link stays absolute. A PNG is not an SVG. A poster with no video around it does not match the pattern for a video. So the script can run on every render, and on a feed that it already fixed, with no harm."
+  },
+  {
+    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#the-bug-this-post-found",
+    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#the-bug-this-post-found",
+    "title": "A Quarto feed that R-bloggers can republish",
+    "section": "The bug this post found",
+    "text": "The bug this post found\nThe first version of the script changed href=\", src=\" and poster=\" anywhere in the HTML of a post. For six posts, that was fine.\nThis post was the first to show the script’s own code. The code block for the picture, with src=\" in its regular expression, is HTML text too. The script found src=\" in it and made it absolute. In the feed, the code block came out as:\n/(&lt;figure class=\"post-hero[^\"]*\"&gt;\\s*&lt;img [^&gt;]*src=\"https://tenmeh.github.io/posts/...\nThe page was fine. Only the copy in the feed was broken, and that is the copy that R-bloggers shows.\nThe fix is the outer replace() in the code for links. It finds each HTML tag, and changes attributes only inside one. In a highlighted code block, the text src=\" sits between tags, never inside one, so it stays as written.\nI found it by comparing the text of each code block in the feed with the same block on the page. That comparison is now part of the check below."
+  },
+  {
+    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#how-i-checked-it",
+    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#how-i-checked-it",
+    "title": "A Quarto feed that R-bloggers can republish",
+    "section": "How I checked it",
+    "text": "How I checked it\nA small Python script reads the rendered feed and reports, for each post, the number of relative links, SVG images and video elements. All three are zero. It also compares the text of each code block in the feed with the same block on the page, and they match for all seven posts. It parses the feed as XML too, so a broken tag would stop it.\nThen I did what R-bloggers asks for, and loaded the feed in the SimplePie demo. It read the feed, and each post showed in full, with “Watch the video in the post.” where each video was."
+  },
+  {
+    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#a-second-problem-the-build-that-only-works-with-node",
+    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#a-second-problem-the-build-that-only-works-with-node",
+    "title": "A Quarto feed that R-bloggers can republish",
+    "section": "A second problem: the build that only works with Node",
+    "text": "A second problem: the build that only works with Node\nThe share images and the PNG stills need Node, and three npm packages. The GitHub workflow that publishes this blog installs them before the render.\nPosit Connect Cloud also publishes this repository on each push. After I added the share images, every publish there failed. The email said only: “Unable to render”.\nThe reason was the pre-render step. Connect Cloud renders with Quarto, but it does not install npm packages. So node scripts/covers.mjs stopped at its first import, and Quarto stopped the whole render. I could make the same failure on my own machine: a fresh clone, with no node_modules, gave exit status 1 and no site at all.\nA missing share image should not stop a blog from rendering. So each Node step now runs through a small wrapper. Quarto runs a .ts script with its own copy of Deno, so the wrapper needs no Node to start. The core of it:\nconst skip = (why: string) =&gt; {\n  console.warn(`WARNING: skipped scripts/${script}: ${why}.`);\n  Deno.exit(0);\n};\n\ntry {\n  Deno.statSync(\"node_modules\");\n} catch {\n  skip(\"node_modules is missing\");\n}\n\nlet status;\ntry {\n  status = await new Deno.Command(\"node\", { args: [`scripts/${script}`] }).output();\n} catch {\n  skip(\"Node is not installed\");\n}\n// A step that starts and then fails is a real error: stop the render.\nDeno.exit(status!.code);\nWith Node and its packages, the step runs as before. Without them, it is skipped with a warning, and the site renders without the generated pictures. A fresh clone with no node_modules now gives exit status 0 and two warnings.\nThe last line matters. A script that starts and then fails is a real bug, and it should still stop the render."
+  },
+  {
+    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#the-limits",
+    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#the-limits",
+    "title": "A Quarto feed that R-bloggers can republish",
+    "section": "The limits",
+    "text": "The limits\n\nThe script edits HTML with regular expressions. That works because the HTML comes from my own Lua filter, in a shape that I know. It is not a general tool for any feed.\nThe feed covers the whole site. R-bloggers wants posts about R only. This post and every other post here is about R. Before I write one that is not, the blog needs a second feed for the R category alone.\nThe PNG is one frame. An animation that tells a story over time loses it in the feed. For a hero picture, that is a fair trade."
+  },
+  {
+    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#try-it",
+    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#try-it",
+    "title": "A Quarto feed that R-bloggers can republish",
+    "section": "Try it",
+    "text": "Try it\nThe scripts are in the repository of this blog:\n\nscripts/feed.mjs fixes the feed.\nscripts/node-step.ts runs a Node step only where Node is there.\nscripts/covers.mjs draws the share images and the PNG stills.\n\nIf your Quarto blog goes to R-bloggers too, read your own feed once, as HTML with nothing around it. That is how it will arrive."
+  },
+  {
+    "objectID": "posts/2026-10-25-whence-on-cran/index.html",
+    "href": "posts/2026-10-25-whence-on-cran/index.html",
+    "title": "Where did this number come from?",
+    "section": "",
+    "text": "Sooner or later, someone looks at a number on a dashboard and says: “That seems low.”\nThe number is usually right. Somewhere in the pipeline, a filter removed rows that the viewer did not know about: test records, a date cut-off, a region. Each step is correct. Together, they make a number that the viewer does not recognise.\nThe usual answer is for the developer to open R, run the pipeline one step at a time, and count the rows after each step:\nThen they send the counts in a message, and the viewer nods.\nwhence puts those counts in the dashboard, next to the number, so the viewer can see them for themselves."
+  },
+  {
+    "objectID": "posts/2026-10-25-whence-on-cran/index.html#what-the-viewer-sees",
+    "href": "posts/2026-10-25-whence-on-cran/index.html#what-the-viewer-sees",
+    "title": "Where did this number come from?",
+    "section": "What the viewer sees",
+    "text": "What the viewer sees\nThe person who asks is usually not the person who wrote the code. They cannot read the pipeline. Even if they could, a row count is not in the code. It only exists when the code runs.\nWhen the viewer clicks the number, a panel opens:\n$4,281,330\n\n  Where the rows went\n    sales                 18,442 rows\n      region == \"APAC\"     3,180 rows   -15,262 rows (83%)\n      year &gt;= 2023         1,204 rows    -1,976 rows (62%)\n      aggregated to 1 row      1 row\n\n  Reproduce                                        [Copy]\n    sales |&gt;\n      filter(region == \"APAC\") |&gt;\n      filter(year &gt;= 2023) |&gt;\n      summarise(total = sum(revenue))\n\n  [View the rows]\nThat is an attrition waterfall: each step, the rows that were left after it, and how many it removed. Under it is the code that makes the number again, with the values of the inputs filled in.\nIn the app, you change two function names and nothing else:\nlibrary(shiny)\nlibrary(dplyr)\nlibrary(whence)\n\nui &lt;- fluidPage(\n  selectInput(\"region\", \"Region\", c(\"APAC\", \"EMEA\")),\n  whenceOutput(\"total\", label = \"Revenue\")\n)\n\nserver &lt;- function(input, output, session) {\n  output$total &lt;- renderWhence(\n    sales |&gt;\n      filter(region == input$region) |&gt;\n      filter(year &gt;= 2023) |&gt;\n      summarise(total = sum(revenue)),\n    format = scales::label_dollar()\n  )\n}\nwhenceOutput() and renderWhence() take the place of textOutput() and renderText(). The pipeline stays as it was. There are also versions for a summary table, where each row explains itself, and for a ‘ggplot2’ plot of one, where each bar does.\nLike the grey boxes of bones, it looked like a small idea. Four parts of it were harder than they looked."
+  },
+  {
+    "objectID": "posts/2026-10-25-whence-on-cran/index.html#problem-one-the-pipe-leaves-no-trace",
+    "href": "posts/2026-10-25-whence-on-cran/index.html#problem-one-the-pipe-leaves-no-trace",
+    "title": "Where did this number come from?",
+    "section": "Problem one: the pipe leaves no trace",
+    "text": "Problem one: the pipe leaves no trace\nTo count the rows after each step, whence has to find the steps. With the native pipe, that is harder than it sounds. The pipe is gone by the time R sees the code:\nquote(x |&gt; f() |&gt; g())\n#&gt; g(f(x))\nThere is no list of steps, only calls inside calls. So whence knows a list of verbs, such as filter(), mutate(), summarise() and slice_max(). For a call to one of them, the first argument is the data from upstream. whence walks inward from the outer call until it reaches the source, and the steps fall out in order. The magrittr pipe %&gt;% works the same way.\nEach step then runs once, in order, in the environment of the render. It reads the same inputs as the whole expression would. That is the same work as running the pipeline in one piece."
+  },
+  {
+    "objectID": "posts/2026-10-25-whence-on-cran/index.html#problem-two-a-summary-is-not-a-loss",
+    "href": "posts/2026-10-25-whence-on-cran/index.html#problem-two-a-summary-is-not-a-loss",
+    "title": "Where did this number come from?",
+    "section": "Problem two: a summary is not a loss",
+    "text": "Problem two: a summary is not a loss\nThis one is a question of meaning, not of code. summarise() turns 1,204 rows into one. A plain waterfall would say “-1,203 rows (99.9%)”.\nThat is true, and it is also wrong. No row was removed. They were all used. A viewer who reads “-99.9%” thinks the step threw almost everything away.\nSo a summary step is not shown as attrition. The waterfall says “aggregated to 1 row”, and the share is only shown for steps that drop rows."
+  },
+  {
+    "objectID": "posts/2026-10-25-whence-on-cran/index.html#problem-three-one-row-of-a-table",
+    "href": "posts/2026-10-25-whence-on-cran/index.html#problem-three-one-row-of-a-table",
+    "title": "Where did this number come from?",
+    "section": "Problem three: one row of a table",
+    "text": "Problem three: one row of a table\nA table of revenue by region is a single pipeline that ends in group_by(region) |&gt; summarise(...). A viewer clicks the APAC row. What should the waterfall show?\nThe easy answer is to run the pipeline again for APAC alone. That answer is wrong as soon as a step after the summary compares groups:\nsales |&gt;\n  group_by(region) |&gt;\n  summarise(total = sum(revenue)) |&gt;\n  mutate(share = total / sum(total))\nRun for APAC alone, share is always 100%.\nSo whence does not run the pipeline again for one group. It replays the steps of the whole table with a hidden id column, and reads the counts for the group from that. A step that compares groups keeps its true value. The code that it shows for a row is the code of the table, with one last filter() on the group."
+  },
+  {
+    "objectID": "posts/2026-10-25-whence-on-cran/index.html#problem-four-which-rows",
+    "href": "posts/2026-10-25-whence-on-cran/index.html#problem-four-which-rows",
+    "title": "Where did this number come from?",
+    "section": "Problem four: which rows",
+    "text": "Problem four: which rows\n“View the rows” shows the rows of the source that make the value. A click on a removed count shows the rows that the step removed.\nThis could be slow, so it happens only when the viewer asks. The steps then run again on a copy of the source with a hidden id column, and the ids that survive are the rows that count.\nSome steps break that link. After distinct(), pivot_longer(), pivot_wider() or a step that whence does not know, a row of the result is no longer one row of the source. The panel then says so. The waterfall still works, because counts survive any step."
+  },
+  {
+    "objectID": "posts/2026-10-25-whence-on-cran/index.html#try-it",
+    "href": "posts/2026-10-25-whence-on-cran/index.html#try-it",
+    "title": "Where did this number come from?",
+    "section": "Try it",
+    "text": "Try it\nwhence 0.1.0 is on CRAN:\ninstall.packages(\"whence\")\n\nshiny::runApp(system.file(\"examples\", \"demo\", package = \"whence\"))\nThe engine also works with no Shiny at all. whence_trace() takes a pipeline and returns the waterfall:\nlibrary(dplyr)\n\nwhence_trace(\n  mtcars |&gt;\n    filter(cyl == 4) |&gt;\n    filter(mpg &gt; 25) |&gt;\n    summarise(mean_hp = mean(hp))\n)\n\nDocumentation: https://tenmeh.github.io/whence/\nLive demo, in your browser: https://tenmeh.github.io/whence/articles/live-demo.html\nSource: https://github.com/tenmeh/whence\n\nThe next time someone says a number seems low, they can click it."
   },
   {
     "objectID": "posts/2026-09-28-how-bones-began/index.html",
@@ -119,6 +294,97 @@
     "text": "Try it\nUpdate, 16 October 2026: bones is now on CRAN.\ninstall.packages(\"bones\")\n\nshiny::runApp(system.file(\"examples/demo\", package = \"bones\"))\n\nDocumentation: https://tenmeh.github.io/bones/\nLive demo: https://tenmeh.github.io/bones/articles/live-demo.html\nSource: https://github.com/tenmeh/bones\n\nIssues and pull requests are welcome. I would especially like to hear about outputs that get the wrong shape, because each one is a shape that bones could learn."
   },
   {
+    "objectID": "posts/2026-11-14-rewind-0-4-0/index.html",
+    "href": "posts/2026-11-14-rewind-0-4-0/index.html",
+    "title": "rewind 0.4.0: only what the page can put back",
+    "section": "",
+    "text": "rewind 0.4.0 is on CRAN. It is the biggest update since the first release. Most of it came from one question: why does an undo sometimes seem to do nothing?\nMy first post explains what rewind does. In short, it adds undo and redo to a Shiny app with one call, rewind_enable(). It records the inputs as the user works, and puts them back at an undo."
+  },
+  {
+    "objectID": "posts/2026-11-14-rewind-0-4-0/index.html#only-what-the-page-can-put-back",
+    "href": "posts/2026-11-14-rewind-0-4-0/index.html#only-what-the-page-can-put-back",
+    "title": "rewind 0.4.0: only what the page can put back",
+    "section": "Only what the page can put back",
+    "text": "Only what the page can put back\nBy default, rewind now records only the inputs that the page can put back.\nBefore 0.4.0, rewind recorded every input of the session. Some inputs have nothing on the page to put back. The hover of a plot is the clearest case. plotOutput(hover = \"plot_hover\") sends the position of the pointer as an input, but no element on the page holds that value.\nSo each pause of the pointer over the plot became a step. The rail filled with plot_hover, and an undo of such a step changed nothing that the user could see:\n\n\n\n\n\nA browser recreation of the same app, first with rewind 0.3.0, then with 0.4.0.\n\nThe same was true of the values that DT keeps, such as _rows_current and _state, and of a plot’s click, dblclick and brush.\nThe fix asks the browser. Each input that the page can put back has a Shiny input binding on an element: a select, a slider, a text box. The browser now reports which inputs have one, and rewind records only those. Inputs that are only sent from JavaScript, such as the hover of a plot, have no binding, so they are left out.\nThe report arrives after the page has loaded. Until it does, rewind records every input, as before. That is also what happens in testServer(), which has no browser.\nThere are two ways to change the default:\n\nA list in inputs is used as it is. Name an input there to record it anyway: rewind_enable(inputs = c(\"region\", \"year\", \"plot_brush\")).\nrewind_exclude() leaves inputs out, from anywhere in the server. More on that below.\n\nThis is a change of behaviour. An app that relied on the old default to record a value with no binding now needs to name it in inputs. I think such apps are rare, because an undo of those values did nothing on the page."
+  },
+  {
+    "objectID": "posts/2026-11-14-rewind-0-4-0/index.html#why-did-an-undo-skip-this-input",
+    "href": "posts/2026-11-14-rewind-0-4-0/index.html#why-did-an-undo-skip-this-input",
+    "title": "rewind 0.4.0: only what the page can put back",
+    "section": "Why did an undo skip this input?",
+    "text": "Why did an undo skip this input?\nThe new rewind_status() answers that in one call. It lists what rewind records, and gives each other input the reason it is left out:\nrewind_status()$captured   # c(\"region\", \"year\")\nrewind_status()$skipped    # c(plot_hover = \"cannot be restored by the page\",\n                           #   pw = \"password field\")\nThe reasons are \"excluded\", \"password field\", \"not in inputs\", \"cannot be restored by the page\", \"action button\", \"file upload\" and \"NULL value\". The list also holds the groups registered with rewind_track(), and the size of the history and the current position.\nIt depends on the inputs, so it works well in a debug panel:\noutput$status &lt;- renderPrint(rewind_status())\nrewind_exclude() is the other half. It leaves inputs out of the history, at any time, and from inside a module:\nmod_filters_server &lt;- function(id) {\n  moduleServer(id, function(input, output, session) {\n    rewind_exclude(\"search\")   # the module's own name, not \"filters-search\"\n  })\n}\nIt works like shiny::setBookmarkExclude(). A second call adds to the list, and an input that the history already holds is removed from it."
+  },
+  {
+    "objectID": "posts/2026-11-14-rewind-0-4-0/index.html#a-view-that-is-not-a-step",
+    "href": "posts/2026-11-14-rewind-0-4-0/index.html#a-view-that-is-not-a-step",
+    "title": "rewind 0.4.0: only what the page can put back",
+    "section": "A view that is not a step",
+    "text": "A view that is not a step\nA saved view is a set of input values that the app loads in one go: from a bookmark, from a list of saved filters, or from the defaults of a user. Loading a view is not something the user did by hand, so it should not be a step.\nThe new rewind_unrecorded() runs a block of code whose changes are not a step:\nobserveEvent(input$load_view, {\n  rewind_unrecorded({\n    updateSelectInput(session, \"region\", selected = \"East\")\n    updateSliderInput(session, \"year\", value = 2020)\n  })\n})\nThe changes become part of the current state instead. An undo never goes back across them:\n\n\n\n\n\nA browser recreation. The app calls rewind_enable(labels = c(region = \"Region\", year = \"Year\")), so the rail says \"Year\".\n\n\nWhy a pause does not work\nThe help of rewind_pause() used to suggest a pause and a resume around code like this. That does not work, and finding out why was the most useful part of this release for me.\nrewind records in its own observer. That observer depends on every input, so it runs after the observer that made the change. By then, the resume has already run. The probe I wrote recorded the change as an ordinary step.\nThere is a second problem: update*Input() sends a message to the browser. The new value comes back as an input later, after the observer has ended.\nSo rewind_unrecorded() does not pause anything. After the block, it keeps a short window open, twice the grouping period by default. A change that arrives in that window replaces the current state, and does not make a new step. A change from the user that was still waiting becomes its own step first, so the loaded view never swallows it."
+  },
+  {
+    "objectID": "posts/2026-11-14-rewind-0-4-0/index.html#names-a-person-reads",
+    "href": "posts/2026-11-14-rewind-0-4-0/index.html#names-a-person-reads",
+    "title": "rewind 0.4.0: only what the page can put back",
+    "section": "Names a person reads",
+    "text": "Names a person reads\nThe rail and rewind_diff() used the input ID as the label of a step. An ID such as year is fine. An ID such as sel_trt_arm is not something a user should read.\nrewind_enable() now takes labels:\nrewind_enable(labels = c(region = \"Region\", trt = \"Treatment arm\"))\nThe rail shows the labels, and rewind_diff() has a new label column. It is the last column, so code that picks the six columns of 0.3.0 by position still gets the same ones."
+  },
+  {
+    "objectID": "posts/2026-11-14-rewind-0-4-0/index.html#the-smaller-things",
+    "href": "posts/2026-11-14-rewind-0-4-0/index.html#the-smaller-things",
+    "title": "rewind 0.4.0: only what the page can put back",
+    "section": "The smaller things",
+    "text": "The smaller things\n\nEvery argument is checked, with a message that names it. Some wrong values used to be accepted, and did the wrong thing with no message: shortcuts = \"yes\" turned the shortcuts off, depth = 2.5 became 2, and rewind_jump(1.9) moved to position 1.\nA typo gives a warning. A name in inputs that the page does not have, or a name in rewind_track(fields = ) that the values do not have, used to record nothing, with no message.\nA busy input no longer holds back every step. The grouping period started again whenever any input changed, also an input that is not recorded. A plot hover thus held back every step until the pointer stopped.\nPassword fields are never kept in the history. A passwordInput() sends a plain string, so rewind recorded it like any text box, and rewind_diff() could show it. The browser now reports which fields are passwords, and rewind leaves them out, even when inputs names them.\nrewind_enable(c(\"region\", \"year\")) put the names into session, the first argument, and failed with “$ operator is invalid for atomic vectors”. It now says that session must be a Shiny session, and points to inputs = c(...).\nrewind_example() runs the demo app. It replaces shiny::runApp(system.file(\"examples/demo\", package = \"rewind\")).\nThe help of rewind_track() has a new section on environments and R6 objects. rewind keeps those by reference, so a change inside such an object is not a step, and an undo cannot bring back its old contents. The section shows how to change a copy instead.\nThe help of rewind_enable() has a new section on text inputs: why slow typing can give several steps, and how textInput(updateOn = \"blur\") gives one step for each edit."
+  },
+  {
+    "objectID": "posts/2026-11-14-rewind-0-4-0/index.html#try-it",
+    "href": "posts/2026-11-14-rewind-0-4-0/index.html#try-it",
+    "title": "rewind 0.4.0: only what the page can put back",
+    "section": "Try it",
+    "text": "Try it\ninstall.packages(\"rewind\")\nrewind::rewind_example()\n\nDocumentation: https://tenmeh.github.io/rewind/\nChangelog: https://tenmeh.github.io/rewind/news/index.html\nSource: https://github.com/tenmeh/rewind\n\nIf an undo in your app still seems to do nothing, call rewind_status() and tell me what it says. That is exactly the kind of case this release is for."
+  },
+  {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "",
+    "text": "rewind 0.3.0 is on CRAN. I released it on 25 September. If you update from 0.2.0, you also get the changes in 0.2.1, which I released on GitHub only.\nMy first post was about adding undo to Shiny, and the problems behind it. This release makes the history more useful to read. It also fixes two bugs where the history worked, but the app around it did not."
+  },
+  {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#what-changed-not-only-which-input",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html#what-changed-not-only-which-input",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "What changed, not only which input",
+    "text": "What changed, not only which input\nThe new rewind_diff() tells you what a step changed. A history label such as \"region, year\" tells you which inputs changed. It does not tell you what they held before, or what they hold now.\nI wanted an app to be able to say \"North -&gt; South\".\n\n\nA browser recreation. The table compares the first step with the current step using rewind_diff(from = 1).\n\n\nInside a server with rewind_enable() already called, this compares two positions in the history:\nrewind_diff(from = 1, to = 3)\nSuppose position 1 holds region North and year 2024. At position 3, they hold South and 2020. The result has these six columns, in this order:\n\n\n\nfrom\nto\nname\nchange\nold\nnew\n\n\n\n\n1\n3\nregion\nNorth -&gt; South\nNorth\nSouth\n\n\n1\n3\nyear\n2024 -&gt; 2020\n2024\n2020\n\n\n\nThis table shows the contents of each cell. old and new are list columns, not text columns. The rows are sorted by name, and name holds the input ID, not the label beside the widget.\nThat choice matters. An input can hold a date range or a multiple selection. A tracked value can hold a whole data frame. Turning every value into text would lose its type and shape. A list column keeps the value itself. change gives a short description for a person to read.\nWithout arguments, rewind_diff() compares the current position with the one before it. At the first step, it returns no rows. It depends on the history, so an output can follow it:\noutput$changed &lt;- renderTable({\n  rewind_diff()[, c(\"name\", \"change\")]\n})\nThe video uses rewind_diff(from = 1) instead. Its table grows as inputs move away from the first step. Undo puts the year back, so that row goes away. The table is a comparison of states, not a record of every action.\n\nThis is not an audit trail\nI put this limit in the documents on purpose. The history lives in the memory of one session. When the session ends, it goes too. Once it passes depth, it drops the oldest entries. A new change after an undo drops the steps in front of the current position.\nThose are useful rules for undo. They are poor rules for a record that someone may need to inspect later.\nIf you need that record, write it as each change occurs and keep it somewhere else. Do not wait until the session ends and try to recover it from the undo history."
+  },
+  {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#the-rail-that-scrolled-the-page",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html#the-rail-that-scrolled-the-page",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "The rail that scrolled the page",
+    "text": "The rail that scrolled the page\nThe history rail now scrolls only itself. Before this fix, an app with rewind_ui() in a sidebar could seem to scroll by itself each time the history changed.\nI used this to keep the current step in view:\ncurrent.scrollIntoView({ block: \"nearest\" });\nThe name sounds like the right tool. But scrollIntoView() scrolls every scrollable ancestor, not only the nearest one. block: \"nearest\" limits how far each ancestor moves. It does not stop the sidebar or page moving.\nThe fix measures the step against the rail and sets the rail’s own scrollTop:\nvar top = current.getBoundingClientRect().top -\n  rail.getBoundingClientRect().top + rail.scrollTop;\nvar bottom = top + current.offsetHeight;\n\nif (top &lt; rail.scrollTop) {\n  rail.scrollTop = top;\n} else if (bottom &gt; rail.scrollTop + rail.clientHeight) {\n  rail.scrollTop = bottom - rail.clientHeight;\n}\nThe general lesson: when a control owns a small scrolling area, move that area directly. A browser method that promises to bring something into view may move more of the page than you expect."
+  },
+  {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#the-module-that-looked-half-alive",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html#the-module-that-looked-half-alive",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "The module that looked half alive",
+    "text": "The module that looked half alive\nUndo now works when rewind_enable() is called inside moduleServer(). Before the fix, capture worked and the rail filled up. But no button, shortcut or rail click reached that history.\nThe browser sends three global input IDs: rewind_undo, rewind_redo and rewind_jump. Inside a module, I watched those names through the module’s session. Shiny looked for the namespaced IDs instead. The sender and the observer were talking about different inputs.\nThe fix reads those controls from the root session. For undo, it is:\nroot &lt;- session$rootScope()\n\nobs_undo &lt;- shiny::observeEvent(root$input$rewind_undo, ctrl$undo(),\n                               ignoreInit = TRUE, domain = session)\nCapture still uses the module session. The controls come from the root.\nI find this bug useful to remember because the working half hid the broken half. A growing history looked like proof that the setup was right. When JavaScript sends an input ID, check that the R observer reads that exact ID, especially inside a module."
+  },
+  {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#the-smaller-things",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html#the-smaller-things",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "The smaller things",
+    "text": "The smaller things\nA few more changes come with this update:\n\nThe rail shows times in the viewer’s own time zone, instead of UTC. The time column of rewind_history() is unchanged.\ncoalesce_ms, restore_timeout and hold_ms now refuse NA, NaN and Inf, with a message that names the argument. Before this, Inf in coalesce_ms silently stopped all recording.\nrewind_diff() refuses a position such as 2.7. It used to truncate it to 2. The message for from is “from must be a single whole number.”\nFrom 0.2.1, rewind_enable() has restore_timeout, in seconds. It sets how long capture waits for the browser to finish a restore. The default is still 2 seconds.\nrewind_buttons() has button_class for classes on the buttons. Its class argument still applies to the container. The arrows are now SVG, so their shape does not depend on the browser’s font.\nThe redo tooltip says “Redo (Ctrl+Shift+Z or Ctrl+Y)”. Ctrl+Y already worked; the button now says so.\nThe fileInput() check tests column types as well as names. A user data frame with the same four names but different types stays in the history. The names are name, size, type and datapath. A frame that matches both the names and the types is still treated as a file input value."
+  },
+  {
+    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#try-it",
+    "href": "posts/2026-10-02-rewind-0-3-0/index.html#try-it",
+    "title": "rewind 0.3.0: show what changed",
+    "section": "Try it",
+    "text": "Try it\ninstall.packages(\"rewind\")\n\nDocumentation: https://tenmeh.github.io/rewind/\nChangelog: https://tenmeh.github.io/rewind/news/index.html\nSource: https://github.com/tenmeh/rewind\n\nI would especially like to hear how you use the comparisons. Undo can put a value back. Now an app can also tell the user what that step means."
+  },
+  {
     "objectID": "posts/2026-10-26-bones-on-cran/index.html",
     "href": "posts/2026-10-26-bones-on-cran/index.html",
     "title": "bones is on CRAN: two things the review caught",
@@ -166,160 +432,6 @@
     "title": "bones is on CRAN: two things the review caught",
     "section": "Try it",
     "text": "Try it\n\nDocumentation: https://tenmeh.github.io/bones/\nLive demo, in the browser: https://tenmeh.github.io/bones/articles/live-demo.html\nSource: https://github.com/tenmeh/bones"
-  },
-  {
-    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html",
-    "href": "posts/2026-10-02-rewind-0-3-0/index.html",
-    "title": "rewind 0.3.0: show what changed",
-    "section": "",
-    "text": "rewind 0.3.0 is on CRAN. I released it on 25 September. If you update from 0.2.0, you also get the changes in 0.2.1, which I released on GitHub only.\nMy first post was about adding undo to Shiny, and the problems behind it. This release makes the history more useful to read. It also fixes two bugs where the history worked, but the app around it did not."
-  },
-  {
-    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#what-changed-not-only-which-input",
-    "href": "posts/2026-10-02-rewind-0-3-0/index.html#what-changed-not-only-which-input",
-    "title": "rewind 0.3.0: show what changed",
-    "section": "What changed, not only which input",
-    "text": "What changed, not only which input\nThe new rewind_diff() tells you what a step changed. A history label such as \"region, year\" tells you which inputs changed. It does not tell you what they held before, or what they hold now.\nI wanted an app to be able to say \"North -&gt; South\".\n\n\nA browser recreation. The table compares the first step with the current step using rewind_diff(from = 1).\n\n\nInside a server with rewind_enable() already called, this compares two positions in the history:\nrewind_diff(from = 1, to = 3)\nSuppose position 1 holds region North and year 2024. At position 3, they hold South and 2020. The result has these six columns, in this order:\n\n\n\nfrom\nto\nname\nchange\nold\nnew\n\n\n\n\n1\n3\nregion\nNorth -&gt; South\nNorth\nSouth\n\n\n1\n3\nyear\n2024 -&gt; 2020\n2024\n2020\n\n\n\nThis table shows the contents of each cell. old and new are list columns, not text columns. The rows are sorted by name, and name holds the input ID, not the label beside the widget.\nThat choice matters. An input can hold a date range or a multiple selection. A tracked value can hold a whole data frame. Turning every value into text would lose its type and shape. A list column keeps the value itself. change gives a short description for a person to read.\nWithout arguments, rewind_diff() compares the current position with the one before it. At the first step, it returns no rows. It depends on the history, so an output can follow it:\noutput$changed &lt;- renderTable({\n  rewind_diff()[, c(\"name\", \"change\")]\n})\nThe video uses rewind_diff(from = 1) instead. Its table grows as inputs move away from the first step. Undo puts the year back, so that row goes away. The table is a comparison of states, not a record of every action.\n\nThis is not an audit trail\nI put this limit in the documents on purpose. The history lives in the memory of one session. When the session ends, it goes too. Once it passes depth, it drops the oldest entries. A new change after an undo drops the steps in front of the current position.\nThose are useful rules for undo. They are poor rules for a record that someone may need to inspect later.\nIf you need that record, write it as each change occurs and keep it somewhere else. Do not wait until the session ends and try to recover it from the undo history."
-  },
-  {
-    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#the-rail-that-scrolled-the-page",
-    "href": "posts/2026-10-02-rewind-0-3-0/index.html#the-rail-that-scrolled-the-page",
-    "title": "rewind 0.3.0: show what changed",
-    "section": "The rail that scrolled the page",
-    "text": "The rail that scrolled the page\nThe history rail now scrolls only itself. Before this fix, an app with rewind_ui() in a sidebar could seem to scroll by itself each time the history changed.\nI used this to keep the current step in view:\ncurrent.scrollIntoView({ block: \"nearest\" });\nThe name sounds like the right tool. But scrollIntoView() scrolls every scrollable ancestor, not only the nearest one. block: \"nearest\" limits how far each ancestor moves. It does not stop the sidebar or page moving.\nThe fix measures the step against the rail and sets the rail’s own scrollTop:\nvar top = current.getBoundingClientRect().top -\n  rail.getBoundingClientRect().top + rail.scrollTop;\nvar bottom = top + current.offsetHeight;\n\nif (top &lt; rail.scrollTop) {\n  rail.scrollTop = top;\n} else if (bottom &gt; rail.scrollTop + rail.clientHeight) {\n  rail.scrollTop = bottom - rail.clientHeight;\n}\nThe general lesson: when a control owns a small scrolling area, move that area directly. A browser method that promises to bring something into view may move more of the page than you expect."
-  },
-  {
-    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#the-module-that-looked-half-alive",
-    "href": "posts/2026-10-02-rewind-0-3-0/index.html#the-module-that-looked-half-alive",
-    "title": "rewind 0.3.0: show what changed",
-    "section": "The module that looked half alive",
-    "text": "The module that looked half alive\nUndo now works when rewind_enable() is called inside moduleServer(). Before the fix, capture worked and the rail filled up. But no button, shortcut or rail click reached that history.\nThe browser sends three global input IDs: rewind_undo, rewind_redo and rewind_jump. Inside a module, I watched those names through the module’s session. Shiny looked for the namespaced IDs instead. The sender and the observer were talking about different inputs.\nThe fix reads those controls from the root session. For undo, it is:\nroot &lt;- session$rootScope()\n\nobs_undo &lt;- shiny::observeEvent(root$input$rewind_undo, ctrl$undo(),\n                               ignoreInit = TRUE, domain = session)\nCapture still uses the module session. The controls come from the root.\nI find this bug useful to remember because the working half hid the broken half. A growing history looked like proof that the setup was right. When JavaScript sends an input ID, check that the R observer reads that exact ID, especially inside a module."
-  },
-  {
-    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#the-smaller-things",
-    "href": "posts/2026-10-02-rewind-0-3-0/index.html#the-smaller-things",
-    "title": "rewind 0.3.0: show what changed",
-    "section": "The smaller things",
-    "text": "The smaller things\nA few more changes come with this update:\n\nThe rail shows times in the viewer’s own time zone, instead of UTC. The time column of rewind_history() is unchanged.\ncoalesce_ms, restore_timeout and hold_ms now refuse NA, NaN and Inf, with a message that names the argument. Before this, Inf in coalesce_ms silently stopped all recording.\nrewind_diff() refuses a position such as 2.7. It used to truncate it to 2. The message for from is “from must be a single whole number.”\nFrom 0.2.1, rewind_enable() has restore_timeout, in seconds. It sets how long capture waits for the browser to finish a restore. The default is still 2 seconds.\nrewind_buttons() has button_class for classes on the buttons. Its class argument still applies to the container. The arrows are now SVG, so their shape does not depend on the browser’s font.\nThe redo tooltip says “Redo (Ctrl+Shift+Z or Ctrl+Y)”. Ctrl+Y already worked; the button now says so.\nThe fileInput() check tests column types as well as names. A user data frame with the same four names but different types stays in the history. The names are name, size, type and datapath. A frame that matches both the names and the types is still treated as a file input value."
-  },
-  {
-    "objectID": "posts/2026-10-02-rewind-0-3-0/index.html#try-it",
-    "href": "posts/2026-10-02-rewind-0-3-0/index.html#try-it",
-    "title": "rewind 0.3.0: show what changed",
-    "section": "Try it",
-    "text": "Try it\ninstall.packages(\"rewind\")\n\nDocumentation: https://tenmeh.github.io/rewind/\nChangelog: https://tenmeh.github.io/rewind/news/index.html\nSource: https://github.com/tenmeh/rewind\n\nI would especially like to hear how you use the comparisons. Undo can put a value back. Now an app can also tell the user what that step means."
-  },
-  {
-    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html",
-    "href": "posts/2026-10-13-recording-shiny-demos/index.html",
-    "title": "Recording Shiny demos frame by frame",
-    "section": "",
-    "text": "Each of my package posts has a short video near the top. A pointer drags a slider, a menu opens, a caption explains the step. It looks like a screen recording.\nIt is not one. Nothing in the video was filmed. A script asks a web page for its state at 0 ms, then at 33 ms, then at 67 ms, and takes a picture each time. ffmpeg joins the pictures into a video.\nThis post is about how that works, and why I did it this way."
-  },
-  {
-    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#why-not-a-screen-recording",
-    "href": "posts/2026-10-13-recording-shiny-demos/index.html#why-not-a-screen-recording",
-    "title": "Recording Shiny demos frame by frame",
-    "section": "Why not a screen recording",
-    "text": "Why not a screen recording\nA screen recording records what happened. I wanted to describe what should happen, and then draw it.\nA recording has three problems for a demo that I want to keep:\n\nIt is never the same twice. The pointer moves at a slightly different speed. A plot takes a little longer to draw. If I record again next month, the video changes in ways I did not ask for.\nIt needs the real app running. The apps are R. To record them, I need R, the packages, the data, and a window of the right size, all at once.\nA small change means a new take. If I change the blog’s font, every video still shows the old one. With a recording, the only fix is to record again by hand.\n\nThe app in the video above is a few lines of R:\nlibrary(shiny)\nlibrary(rewind)\n\nui &lt;- fluidPage(\n  rewind_buttons(),\n  selectInput(\"region\", \"Region\", c(\"North\", \"South\", \"East\", \"West\")),\n  sliderInput(\"year\", \"Year\", 2018, 2026, 2024),\n  plotOutput(\"plot\")\n)\n\nserver &lt;- function(input, output, session) {\n  rewind_enable()\n\n  output$plot &lt;- renderPlot(plot_for(input$region, input$year))\n}\nThe video does not run this app. It shows a page that looks like it, and that page is a function of time."
-  },
-  {
-    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#a-scene-is-a-function-of-time",
-    "href": "posts/2026-10-13-recording-shiny-demos/index.html#a-scene-is-a-function-of-time",
-    "title": "Recording Shiny demos frame by frame",
-    "section": "A scene is a function of time",
-    "text": "A scene is a function of time\nEach video has one HTML page, which I call a scene. The scene defines one function, window.renderAt(ms). It puts the page in the state that it has at that moment, and it does nothing else. It does not start a timer, and it does not wait for anything.\nThis is the key rule. If the page depends only on ms, then frame 120 is the same picture on every run. The recorder can ask for the frames in any order, as fast or as slow as it likes.\nA scene describes its story as a timeline. Here is part of the rewind scene, a little simplified:\nwindow.renderAt = function (ms) {\n  // The drag runs from 1200 to 2200 ms. The region changes at 3650 ms.\n  // Ctrl+Z at 4750 ms puts it back.\n  const dragX = track(ms, [[1200, xOf(2024)], [2200, xOf(2020)]]);\n  let year = ms &lt; 1200 ? 2024 : yearAt(dragX);\n  let region = ms &gt;= 3650 ? \"East\" : \"North\";\n  if (ms &gt;= 4750) region = \"North\";\n\n  // The position in the history, as a list of steps.\n  const index = stepAt(ms, [[0, 0], [2600, 1], [4100, 2], [4750, 1]]);\n  document.querySelector(\".rewind-undo\").disabled = index === 0;\n\n  setCaption(ms, [\n    [900, 2900, \"One drag is one step\"],\n    [2950, 4350, \"Changing Region is another step\"],\n    [4450, 5700, \"Ctrl+Z steps back: Region is North again\"],\n  ]);\n  setVeil(ms, DURATION);\n};\nEvery value on the page is computed from ms. Nothing remembers the last frame."
-  },
-  {
-    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#small-helpers-for-time",
-    "href": "posts/2026-10-13-recording-shiny-demos/index.html#small-helpers-for-time",
-    "title": "Recording Shiny demos frame by frame",
-    "section": "Small helpers for time",
-    "text": "Small helpers for time\nA few small functions do most of the work. They all take the time first.\n// A value that goes from a to b between t0 and t1, with easing.\nconst tween = (ms, t0, t1, a, b) =&gt;\n  lerp(a, b, ease(clamp((ms - t0) / (t1 - t0))));\n\n// The value of a list of [time, value] keys at a time: eased between keys.\nfunction track(ms, keys) {\n  if (ms &lt;= keys[0][0]) return keys[0][1];\n  for (let i = 1; i &lt; keys.length; i++) {\n    if (ms &lt;= keys[i][0]) {\n      return tween(ms, keys[i - 1][0], keys[i][0], keys[i - 1][1], keys[i][1]);\n    }\n  }\n  return keys[keys.length - 1][1];\n}\n\n// The state of a list of steps, [time, value], at a time:\n// the last step that has started.\nfunction stepAt(ms, steps) {\n  let value = steps[0][1];\n  for (const [t, v] of steps) if (ms &gt;= t) value = v;\n  return value;\n}\ntrack() is for things that glide: the pointer, a slider handle. stepAt() is for things that jump: a menu that is open or closed, the position in the undo history. With these two, a scene reads like a script for a film: at this time, this happens.\nThe parts that are not the app are drawn the same way. The pointer follows a list of [time, x, y] keys and makes a ripple at each click time. The caption is a pill that fades in and out between two times. The keys of a shortcut, such as Ctrl and Z, appear in the corner and press down at their time.\nOne more piece makes the video loop well. A white sheet covers the scene in the first 350 ms and fades in again in the last 450 ms. The last frame and the first frame are then both white, so the loop has no jump."
-  },
-  {
-    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#things-that-move-on-their-own",
-    "href": "posts/2026-10-13-recording-shiny-demos/index.html#things-that-move-on-their-own",
-    "title": "Recording Shiny demos frame by frame",
-    "section": "Things that move on their own",
-    "text": "Things that move on their own\nThe rule “the page depends only on ms” is easy to break by accident. Three things can break it.\nCSS transitions. A transition runs in real time, between two frames that the recorder takes. The shared stylesheet turns them all off:\n*, *::before, *::after {\n  transition: none !important;\n}\nCSS animations. The bones skeleton has a wave that moves across the grey bars. It is a CSS animation, and it belongs in the video. So the scene does not turn it off. It sets its time instead:\n// Set the time of every running animation, and hold it there.\nfunction freezeAnimations(ms) {\n  for (const a of document.getAnimations()) {\n    a.pause();\n    a.currentTime = ms;\n  }\n}\ndocument.getAnimations() returns every animation on the page. Each one is paused and moved to the time of the frame. The wave is then exactly where it should be at that moment.\nThis matters for the bones scene in another way. Its markup and its CSS classes are the ones that withBones() writes, and its stylesheet is the real bones.css from the package:\nui &lt;- fluidPage(\n  withBones(plotOutput(\"chart\")),\n  withBones(tableOutput(\"results\"), rows = 8)\n)\nSo the skeleton in the video is drawn by the package, not copied by hand. Only the clock is new: renderAt(ms) sets the classes that the package’s JavaScript would set at that time.\nFonts. If the first frames are taken before the web font has loaded, they show a fallback font, and the text jumps a few frames in. The recorder waits for every weight of the font before it takes the first picture."
-  },
-  {
-    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#the-recorder",
-    "href": "posts/2026-10-13-recording-shiny-demos/index.html#the-recorder",
-    "title": "Recording Shiny demos frame by frame",
-    "section": "The recorder",
-    "text": "The recorder\nThe recorder is a Node script of about 100 lines. It uses Playwright to open the scene in Chromium, and ffmpeg to make the video.\nThe page is 640 by 360 pixels, at a device scale of 2. The pictures are then 1280 by 720, and the text is sharp. The script steps the clock 30 times a second and pipes each picture straight into ffmpeg:\nconst frames = Math.round((duration / 1000) * FPS);\nfor (let i = 0; i &lt; frames; i++) {\n  await page.evaluate((ms) =&gt; window.renderAt(ms), (i * 1000) / FPS);\n  const png = await page.screenshot({ type: \"png\" });\n  if (!encoder.stdin.write(png)) {\n    await new Promise((r) =&gt; encoder.stdin.once(\"drain\", r));\n  }\n}\nffmpeg reads the PNGs from its input and writes an H.264 file:\nffmpeg -f image2pipe -framerate 30 -i - \\\n  -c:v libx264 -preset slow -crf 21 -tune animation \\\n  -pix_fmt yuv420p -movflags +faststart -an preview.mp4\n-tune animation suits pictures with large flat areas, which is what a user interface is. -movflags +faststart puts the index at the front of the file, so the browser can start to play it before the whole file has arrived. -an means no sound.\nLast, the script calls renderAt() once more, at a time that the scene chooses, and saves that picture as a JPEG. That is the poster: the image that shows before the video plays. Each scene picks a moment that explains itself. For rewind, it is the moment of Ctrl+Z, with both buttons in use."
-  },
-  {
-    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#what-it-gives-me",
-    "href": "posts/2026-10-13-recording-shiny-demos/index.html#what-it-gives-me",
-    "title": "Recording Shiny demos frame by frame",
-    "section": "What it gives me",
-    "text": "What it gives me\nA video of 9 seconds is 270 frames. Each of my three videos is between 140 KB and 210 KB, smaller than most photos on a phone.\nThe best part came a few days ago. I changed the colours and the font of this blog. The videos had the old caption colour and the old font. I changed two stylesheets and ran one command. All three videos and their posters were recorded again in under a minute, and nothing else in them changed.\nOn the page, the video is muted and loops, and it plays by itself where the browser allows it. A reader who asks for less motion gets the poster and the play button instead. In the RSS feed, which other sites such as R-bloggers copy, there is no video at all: the feed shows the poster, with a link to the post."
-  },
-  {
-    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#the-limits",
-    "href": "posts/2026-10-13-recording-shiny-demos/index.html#the-limits",
-    "title": "Recording Shiny demos frame by frame",
-    "section": "The limits",
-    "text": "The limits\nThis is not the right tool for every demo.\n\nIt is a recreation. The video shows how the package behaves, not the R code running. If the package changes, the scene does not change with it. I have to keep them in step by hand.\nA scene takes time to write. The rewind scene is a few hundred lines of HTML and JavaScript. A screen recording takes a minute.\nIt cannot show real speed. A demo of how fast something is needs the real thing. Here, the scene decides how long everything takes.\n\nIf you want the real app on screen, shinytest2 can drive it and take screenshots of it. Then the timing belongs to the app, not to a clock. For a demo that I want to keep, change and record again, the clock wins."
-  },
-  {
-    "objectID": "posts/2026-10-13-recording-shiny-demos/index.html#try-it",
-    "href": "posts/2026-10-13-recording-shiny-demos/index.html#try-it",
-    "title": "Recording Shiny demos frame by frame",
-    "section": "Try it",
-    "text": "Try it\nThe scenes and the recorder are in the repository of this blog, in the _previews folder. You need Node, Playwright with Chromium, and ffmpeg. Then:\nnode _previews/record.mjs          # all scenes\nnode _previews/record.mjs bones    # one scene\nIf you make a demo this way, I would like to see it."
-  },
-  {
-    "objectID": "posts/2026-10-25-whence-on-cran/index.html",
-    "href": "posts/2026-10-25-whence-on-cran/index.html",
-    "title": "Where did this number come from?",
-    "section": "",
-    "text": "Sooner or later, someone looks at a number on a dashboard and says: “That seems low.”\nThe number is usually right. Somewhere in the pipeline, a filter removed rows that the viewer did not know about: test records, a date cut-off, a region. Each step is correct. Together, they make a number that the viewer does not recognise.\nThe usual answer is for the developer to open R, run the pipeline one step at a time, and count the rows after each step:\nThen they send the counts in a message, and the viewer nods.\nwhence puts those counts in the dashboard, next to the number, so the viewer can see them for themselves."
-  },
-  {
-    "objectID": "posts/2026-10-25-whence-on-cran/index.html#what-the-viewer-sees",
-    "href": "posts/2026-10-25-whence-on-cran/index.html#what-the-viewer-sees",
-    "title": "Where did this number come from?",
-    "section": "What the viewer sees",
-    "text": "What the viewer sees\nThe person who asks is usually not the person who wrote the code. They cannot read the pipeline. Even if they could, a row count is not in the code. It only exists when the code runs.\nWhen the viewer clicks the number, a panel opens:\n$4,281,330\n\n  Where the rows went\n    sales                 18,442 rows\n      region == \"APAC\"     3,180 rows   -15,262 rows (83%)\n      year &gt;= 2023         1,204 rows    -1,976 rows (62%)\n      aggregated to 1 row      1 row\n\n  Reproduce                                        [Copy]\n    sales |&gt;\n      filter(region == \"APAC\") |&gt;\n      filter(year &gt;= 2023) |&gt;\n      summarise(total = sum(revenue))\n\n  [View the rows]\nThat is an attrition waterfall: each step, the rows that were left after it, and how many it removed. Under it is the code that makes the number again, with the values of the inputs filled in.\nIn the app, you change two function names and nothing else:\nlibrary(shiny)\nlibrary(dplyr)\nlibrary(whence)\n\nui &lt;- fluidPage(\n  selectInput(\"region\", \"Region\", c(\"APAC\", \"EMEA\")),\n  whenceOutput(\"total\", label = \"Revenue\")\n)\n\nserver &lt;- function(input, output, session) {\n  output$total &lt;- renderWhence(\n    sales |&gt;\n      filter(region == input$region) |&gt;\n      filter(year &gt;= 2023) |&gt;\n      summarise(total = sum(revenue)),\n    format = scales::label_dollar()\n  )\n}\nwhenceOutput() and renderWhence() take the place of textOutput() and renderText(). The pipeline stays as it was. There are also versions for a summary table, where each row explains itself, and for a ‘ggplot2’ plot of one, where each bar does.\nLike the grey boxes of bones, it looked like a small idea. Four parts of it were harder than they looked."
-  },
-  {
-    "objectID": "posts/2026-10-25-whence-on-cran/index.html#problem-one-the-pipe-leaves-no-trace",
-    "href": "posts/2026-10-25-whence-on-cran/index.html#problem-one-the-pipe-leaves-no-trace",
-    "title": "Where did this number come from?",
-    "section": "Problem one: the pipe leaves no trace",
-    "text": "Problem one: the pipe leaves no trace\nTo count the rows after each step, whence has to find the steps. With the native pipe, that is harder than it sounds. The pipe is gone by the time R sees the code:\nquote(x |&gt; f() |&gt; g())\n#&gt; g(f(x))\nThere is no list of steps, only calls inside calls. So whence knows a list of verbs, such as filter(), mutate(), summarise() and slice_max(). For a call to one of them, the first argument is the data from upstream. whence walks inward from the outer call until it reaches the source, and the steps fall out in order. The magrittr pipe %&gt;% works the same way.\nEach step then runs once, in order, in the environment of the render. It reads the same inputs as the whole expression would. That is the same work as running the pipeline in one piece."
-  },
-  {
-    "objectID": "posts/2026-10-25-whence-on-cran/index.html#problem-two-a-summary-is-not-a-loss",
-    "href": "posts/2026-10-25-whence-on-cran/index.html#problem-two-a-summary-is-not-a-loss",
-    "title": "Where did this number come from?",
-    "section": "Problem two: a summary is not a loss",
-    "text": "Problem two: a summary is not a loss\nThis one is a question of meaning, not of code. summarise() turns 1,204 rows into one. A plain waterfall would say “-1,203 rows (99.9%)”.\nThat is true, and it is also wrong. No row was removed. They were all used. A viewer who reads “-99.9%” thinks the step threw almost everything away.\nSo a summary step is not shown as attrition. The waterfall says “aggregated to 1 row”, and the share is only shown for steps that drop rows."
-  },
-  {
-    "objectID": "posts/2026-10-25-whence-on-cran/index.html#problem-three-one-row-of-a-table",
-    "href": "posts/2026-10-25-whence-on-cran/index.html#problem-three-one-row-of-a-table",
-    "title": "Where did this number come from?",
-    "section": "Problem three: one row of a table",
-    "text": "Problem three: one row of a table\nA table of revenue by region is a single pipeline that ends in group_by(region) |&gt; summarise(...). A viewer clicks the APAC row. What should the waterfall show?\nThe easy answer is to run the pipeline again for APAC alone. That answer is wrong as soon as a step after the summary compares groups:\nsales |&gt;\n  group_by(region) |&gt;\n  summarise(total = sum(revenue)) |&gt;\n  mutate(share = total / sum(total))\nRun for APAC alone, share is always 100%.\nSo whence does not run the pipeline again for one group. It replays the steps of the whole table with a hidden id column, and reads the counts for the group from that. A step that compares groups keeps its true value. The code that it shows for a row is the code of the table, with one last filter() on the group."
-  },
-  {
-    "objectID": "posts/2026-10-25-whence-on-cran/index.html#problem-four-which-rows",
-    "href": "posts/2026-10-25-whence-on-cran/index.html#problem-four-which-rows",
-    "title": "Where did this number come from?",
-    "section": "Problem four: which rows",
-    "text": "Problem four: which rows\n“View the rows” shows the rows of the source that make the value. A click on a removed count shows the rows that the step removed.\nThis could be slow, so it happens only when the viewer asks. The steps then run again on a copy of the source with a hidden id column, and the ids that survive are the rows that count.\nSome steps break that link. After distinct(), pivot_longer(), pivot_wider() or a step that whence does not know, a row of the result is no longer one row of the source. The panel then says so. The waterfall still works, because counts survive any step."
-  },
-  {
-    "objectID": "posts/2026-10-25-whence-on-cran/index.html#try-it",
-    "href": "posts/2026-10-25-whence-on-cran/index.html#try-it",
-    "title": "Where did this number come from?",
-    "section": "Try it",
-    "text": "Try it\nwhence 0.1.0 is on CRAN:\ninstall.packages(\"whence\")\n\nshiny::runApp(system.file(\"examples\", \"demo\", package = \"whence\"))\nThe engine also works with no Shiny at all. whence_trace() takes a pipeline and returns the waterfall:\nlibrary(dplyr)\n\nwhence_trace(\n  mtcars |&gt;\n    filter(cyl == 4) |&gt;\n    filter(mpg &gt; 25) |&gt;\n    summarise(mean_hp = mean(hp))\n)\n\nDocumentation: https://tenmeh.github.io/whence/\nLive demo, in your browser: https://tenmeh.github.io/whence/articles/live-demo.html\nSource: https://github.com/tenmeh/whence\n\nThe next time someone says a number seems low, they can click it."
   },
   {
     "objectID": "posts/2026-08-27-undo-for-shiny/index.html",
@@ -371,73 +483,10 @@
     "text": "Try it\ninstall.packages(\"rewind\")\nshiny::runApp(system.file(\"examples/demo\", package = \"rewind\"))\n\nDocumentation: https://tenmeh.github.io/rewind/\nSource: https://github.com/tenmeh/rewind\nCRAN: https://cran.r-project.org/package=rewind\n\nIssues and pull requests are welcome. I am especially interested in reports from anyone running it inside a heavily modularised app, since that is where the interesting edge cases will be."
   },
   {
-    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html",
-    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html",
-    "title": "A Quarto feed that R-bloggers can republish",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Posts",
     "section": "",
-    "text": "This blog is now on its way to R-bloggers. Before I filled in their form, I read their rules. Most of them are about the content: posts about R, in English, with real substance. A few of them are about the feed itself:\nThe full text was easy. In Quarto, feed: true on a listing gives the full text of each post. The link back is one line in the footer.\nThe other two made me look at my feed in a new way. R-bloggers does not link to a post. It copies the HTML of the post out of the feed and shows it on its own site, with none of my stylesheets or scripts around it. So the question was not “does my blog look right?” It was “does this HTML still make sense on someone else’s page?”"
-  },
-  {
-    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#what-i-found",
-    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#what-i-found",
-    "title": "A Quarto feed that R-bloggers can republish",
-    "section": "What I found",
-    "text": "What I found\nI read the feed with a short script and listed every link, image and video in each post. For three posts, it found three kinds of problem:\n\nOne relative link. The rewind 0.3.0 post links to my first post as ../../posts/2026-08-27-undo-for-shiny/index.html. On my blog, that works. On R-bloggers, it points at a page of R-bloggers that does not exist.\nThree SVG pictures. Each post opens with a small animated illustration, an SVG with CSS animation. R-bloggers asks for PNG or a similar format.\nThree videos. Each post has a short demo video. On the page, a small script starts it, or shows the controls if the browser refuses. In another site’s page, or in a feed reader, I cannot count on the video element or the script.\n\nThe page version of each post was right. Only the copy in the feed needed to change."
-  },
-  {
-    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#a-script-after-the-render",
-    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#a-script-after-the-render",
-    "title": "A Quarto feed that R-bloggers can republish",
-    "section": "A script after the render",
-    "text": "A script after the render\nQuarto writes the feed, index.xml, as part of the render. It also runs scripts that a project names before and after the render. A post-render script runs once the whole site, the feed included, is in _site:\nproject:\n  type: website\n  pre-render: scripts/node-step.ts covers.mjs\n  post-render: scripts/node-step.ts feed.mjs\nfeed.mjs reads the feed, finds each &lt;item&gt;, and changes the HTML inside its &lt;description&gt;. It does not touch the pages. The node-step.ts in front of it comes later in this post.\n\nThe relative link\nEach item in the feed has a &lt;link&gt;: the address of the post. A relative URL inside the post is relative to that address. JavaScript’s URL does the rest:\nconst absolute = (url, base) =&gt; {\n  if (/^([a-z][a-z0-9+.-]*:|#|\\/\\/)/i.test(url)) return url;\n  return new URL(url, base).href;\n};\n\nhtml = html.replace(/&lt;[a-z][^&gt;]*&gt;/gi, (tag) =&gt;\n  tag.replace(/\\b(href|src|poster)=\"([^\"]*)\"/g,\n    (_, name, url) =&gt; `${name}=\"${absolute(url, link)}\"`));\nA URL that already has a scheme, such as https: or mailto:, stays as it is. So does a link to a heading on the same page, such as #try-it. The outer replace() limits the change to HTML tags. The reason for that comes later in this post.\nThe pictures and videos never had this problem. A Lua filter writes them into the page, and it gives them absolute URLs from the start. It reads site-url from _quarto.yml, because Quarto does not pass that value to filters.\n\n\nThe SVG picture\nThe page keeps its animated SVG. The feed gets a PNG of its first frame.\nThe PNG comes from the step before the render. A Node script already draws a share image for each post with resvg, so it draws the still of the hero at the same time, at twice the width of the page. A little simplified:\nfunction render(svg, width) {\n  const resvg = new Resvg(svg, {\n    fitTo: { mode: \"width\", value: width },\n    font: { fontFiles: Object.values(fontFiles), loadSystemFonts: false },\n  });\n  return resvg.render().asPng();\n}\n\nwriteFileSync(join(postsDir, slug, \"hero.png\"), render(heroSvg, 1600));\nresvg does not run CSS animations. It draws the picture as it is before any animation starts. So each hero needs a first frame that makes sense on its own. For one hero, it did not: the knob of a slider sat at one end and its coloured bar was full. I drew that one again, with the knob where the bar ends.\nresvg also needs real font files, and it does not read a web font from Google. The fonts of the blog are in the repository for that reason.\nfeed.mjs then swaps the file name in the feed, but only when the PNG is really there:\nhtml = html.replace(\n  /(&lt;figure class=\"post-hero[^\"]*\"&gt;\\s*&lt;img [^&gt;]*src=\")([^\"]+)\\.svg\"/g,\n  (whole, head, stem) =&gt; {\n    const file = localFile(`${stem}.png`, siteUrl);\n    return file && existsSync(file) ? `${head}${stem}.png\"` : whole;\n  });\n\n\nThe video\nThe feed gets the poster of the video, the still that shows before it plays. The poster is a link to the post, and the caption ends with “Watch the video in the post.” The script after the video goes too.\nA reader on R-bloggers thus sees a picture of the demo, and one click takes them to the real thing.\n\n\nA second run does nothing\nEach change leaves a fixed feed as it is. An absolute link stays absolute. A PNG is not an SVG. A poster with no video around it does not match the pattern for a video. So the script can run on every render, and on a feed that it already fixed, with no harm."
-  },
-  {
-    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#the-bug-this-post-found",
-    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#the-bug-this-post-found",
-    "title": "A Quarto feed that R-bloggers can republish",
-    "section": "The bug this post found",
-    "text": "The bug this post found\nThe first version of the script changed href=\", src=\" and poster=\" anywhere in the HTML of a post. For six posts, that was fine.\nThis post was the first to show the script’s own code. The code block for the picture, with src=\" in its regular expression, is HTML text too. The script found src=\" in it and made it absolute. In the feed, the code block came out as:\n/(&lt;figure class=\"post-hero[^\"]*\"&gt;\\s*&lt;img [^&gt;]*src=\"https://tenmeh.github.io/posts/...\nThe page was fine. Only the copy in the feed was broken, and that is the copy that R-bloggers shows.\nThe fix is the outer replace() in the code for links. It finds each HTML tag, and changes attributes only inside one. In a highlighted code block, the text src=\" sits between tags, never inside one, so it stays as written.\nI found it by comparing the text of each code block in the feed with the same block on the page. That comparison is now part of the check below."
-  },
-  {
-    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#how-i-checked-it",
-    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#how-i-checked-it",
-    "title": "A Quarto feed that R-bloggers can republish",
-    "section": "How I checked it",
-    "text": "How I checked it\nA small Python script reads the rendered feed and reports, for each post, the number of relative links, SVG images and video elements. All three are zero. It also compares the text of each code block in the feed with the same block on the page, and they match for all seven posts. It parses the feed as XML too, so a broken tag would stop it.\nThen I did what R-bloggers asks for, and loaded the feed in the SimplePie demo. It read the feed, and each post showed in full, with “Watch the video in the post.” where each video was."
-  },
-  {
-    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#a-second-problem-the-build-that-only-works-with-node",
-    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#a-second-problem-the-build-that-only-works-with-node",
-    "title": "A Quarto feed that R-bloggers can republish",
-    "section": "A second problem: the build that only works with Node",
-    "text": "A second problem: the build that only works with Node\nThe share images and the PNG stills need Node, and three npm packages. The GitHub workflow that publishes this blog installs them before the render.\nPosit Connect Cloud also publishes this repository on each push. After I added the share images, every publish there failed. The email said only: “Unable to render”.\nThe reason was the pre-render step. Connect Cloud renders with Quarto, but it does not install npm packages. So node scripts/covers.mjs stopped at its first import, and Quarto stopped the whole render. I could make the same failure on my own machine: a fresh clone, with no node_modules, gave exit status 1 and no site at all.\nA missing share image should not stop a blog from rendering. So each Node step now runs through a small wrapper. Quarto runs a .ts script with its own copy of Deno, so the wrapper needs no Node to start. The core of it:\nconst skip = (why: string) =&gt; {\n  console.warn(`WARNING: skipped scripts/${script}: ${why}.`);\n  Deno.exit(0);\n};\n\ntry {\n  Deno.statSync(\"node_modules\");\n} catch {\n  skip(\"node_modules is missing\");\n}\n\nlet status;\ntry {\n  status = await new Deno.Command(\"node\", { args: [`scripts/${script}`] }).output();\n} catch {\n  skip(\"Node is not installed\");\n}\n// A step that starts and then fails is a real error: stop the render.\nDeno.exit(status!.code);\nWith Node and its packages, the step runs as before. Without them, it is skipped with a warning, and the site renders without the generated pictures. A fresh clone with no node_modules now gives exit status 0 and two warnings.\nThe last line matters. A script that starts and then fails is a real bug, and it should still stop the render."
-  },
-  {
-    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#the-limits",
-    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#the-limits",
-    "title": "A Quarto feed that R-bloggers can republish",
-    "section": "The limits",
-    "text": "The limits\n\nThe script edits HTML with regular expressions. That works because the HTML comes from my own Lua filter, in a shape that I know. It is not a general tool for any feed.\nThe feed covers the whole site. R-bloggers wants posts about R only. This post and every other post here is about R. Before I write one that is not, the blog needs a second feed for the R category alone.\nThe PNG is one frame. An animation that tells a story over time loses it in the feed. For a hero picture, that is a fair trade."
-  },
-  {
-    "objectID": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#try-it",
-    "href": "posts/2026-11-06-quarto-feed-for-r-bloggers/index.html#try-it",
-    "title": "A Quarto feed that R-bloggers can republish",
-    "section": "Try it",
-    "text": "Try it\nThe scripts are in the repository of this blog:\n\nscripts/feed.mjs fixes the feed.\nscripts/node-step.ts runs a Node step only where Node is there.\nscripts/covers.mjs draws the share images and the PNG stills.\n\nIf your Quarto blog goes to R-bloggers too, read your own feed once, as HTML with nothing around it. That is how it will arrive."
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "I am Tanmay Chanda. I build R and Shiny applications.\nI write here about the parts of that work that seem worth passing on: the problems that were harder than they looked, and the reasons behind a decision rather than only the decision.\nMy R packages:\nFind me on GitHub. To hire me, see Work with me."
-  },
-  {
-    "objectID": "about.html#blogroll",
-    "href": "about.html#blogroll",
-    "title": "About",
-    "section": "Blogroll",
-    "text": "Blogroll\n\nR-bloggers - a collection of blogs about R, and the place where most of the R community reads.\nR Weekly - a weekly list of what happened in R."
+    "text": "R · Shiny · packages\n\nNotes on R, Shiny, and building things that other people use.\nThe problems that were harder than they looked, and the reasons behind a decision rather than only the decision.\n\n\n\n\n\n\n\n\nLatest post\n\n  \n    \n    \n    \n    RShinypackages\n    rewind 0.4.0: only what the page can put back\n    \n    rewind 0.4.0 is on CRAN. It stops recording inputs that an undo cannot put back, such as the hover of a plot, and adds a way to load a saved view without making it a step.\n\n    \n    14 November 2026·8 min read\n  \n\n\nMore posts\n\n\n\n  \n    \n    \n    \n    \n      A Quarto feed that R-bloggers can republish\n      \n      R-bloggers copies the full HTML of each post from your feed onto its own site. Three parts of my Quarto posts were not fit for that trip. A short post-render script now fixes the feed, and leaves the pages alone.\n\n      \n      6 November 2026·8 min read\n    \n  \n\n\n\n  \n    \n    \n    \n    \n      bones is on CRAN: two things the review caught\n      \n      bones is on CRAN. The review caught a package name and a demo that left plot settings behind, and taught me to search beyond the named line.\n\n      \n      26 October 2026·4 min read\n    \n  \n\n\n\n  \n    \n    \n    \n    \n      Where did this number come from?\n      \n      Sooner or later, someone looks at a number on a Shiny dashboard and says it seems low. whence, now on CRAN, lets them click the number and see where the rows went.\n\n      \n      25 October 2026·6 min read\n    \n  \n\n\n\n  \n    \n    \n    \n    \n      Recording Shiny demos frame by frame\n      \n      The short videos at the top of my package posts look like screen recordings. They are not. Each frame is drawn from a clock, so every run gives the same video, and a change of colour or font takes one command.\n\n      \n      13 October 2026·9 min read\n    \n  \n\n\n\n  \n    \n    \n    \n    \n      rewind 0.3.0: show what changed\n      \n      rewind 0.3.0 is on CRAN. It adds value comparisons to the history, fixes a rail that scrolled the page, and makes undo work when enabled inside a module.\n\n      \n      2 October 2026·6 min read\n    \n  \n\n\n\n  \n    \n    \n    \n    \n      A spinner says wait. A skeleton says what is coming.\n      \n      A short video about how websites use grey placeholders made me ask if Shiny had them. It did not, so I wrote bones. This is how it began, and the four problems that were harder than the grey boxes.\n\n      \n      28 September 2026·7 min read\n    \n  \n\n\n\n  \n    \n    \n    \n    \n      Undo for Shiny, and the three problems that make it interesting\n      \n      Shiny has no undo. Adding it means solving three problems: restoring a widget you have never heard of, stopping the echo loop, and a bug that only R's lazy evaluation could produce.\n\n      \n      27 August 2026·5 min read\n    \n  \n\n\n\n\n\nNo matching items\n\n\n\nPackages\n\n  \n    \n    \n      rewind\n      on CRAN\n      Undo and redo for Shiny applications.\n    \n    \n      install.packages(\"rewind\")\n      \n    \n  \n  \n    \n    \n      bones\n      on CRAN\n      Content-shaped loading placeholders for Shiny outputs.\n    \n    \n      install.packages(\"bones\")\n      \n    \n  \n  \n    \n    \n      whence\n      on CRAN\n      Explain where a number came from in Shiny dashboards.\n    \n    \n      install.packages(\"whence\")\n      \n    \n  \n\n\n\n   Follow the blog\n  New posts go to the RSS feed with their full text. They also appear on R-bloggers.\n  Open the feed"
   }
 ]

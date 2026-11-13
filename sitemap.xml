@@ -1,43 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://tenmeh.github.io/index.html</loc>
-    <lastmod>2026-11-07T17:18:14.895Z</lastmod>
+    <loc>https://tenmeh.github.io/about.html</loc>
+    <lastmod>2026-11-13T13:55:54.487Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/work-with-me.html</loc>
-    <lastmod>2026-11-07T17:18:14.906Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-09-28-how-bones-began/index.html</loc>
-    <lastmod>2026-11-07T17:18:14.897Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/index.html</loc>
-    <lastmod>2026-11-07T17:18:14.903Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/index.html</loc>
-    <lastmod>2026-11-07T17:18:14.899Z</lastmod>
+    <lastmod>2026-11-13T13:55:54.508Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-10-13-recording-shiny-demos/index.html</loc>
-    <lastmod>2026-11-07T17:18:14.900Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/index.html</loc>
-    <lastmod>2026-11-07T17:18:14.902Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/index.html</loc>
-    <lastmod>2026-11-07T17:18:14.896Z</lastmod>
+    <lastmod>2026-11-13T13:55:54.499Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-11-06-quarto-feed-for-r-bloggers/index.html</loc>
-    <lastmod>2026-11-07T17:18:14.905Z</lastmod>
+    <lastmod>2026-11-13T13:55:54.502Z</lastmod>
   </url>
   <url>
-    <loc>https://tenmeh.github.io/about.html</loc>
-    <lastmod>2026-11-07T17:18:14.886Z</lastmod>
+    <loc>https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/index.html</loc>
+    <lastmod>2026-11-13T13:55:54.500Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-09-28-how-bones-began/index.html</loc>
+    <lastmod>2026-11-13T13:55:54.497Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-11-14-rewind-0-4-0/index.html</loc>
+    <lastmod>2026-11-13T13:55:54.505Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/index.html</loc>
+    <lastmod>2026-11-13T13:55:54.498Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/index.html</loc>
+    <lastmod>2026-11-13T13:55:54.501Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/index.html</loc>
+    <lastmod>2026-11-13T13:55:54.496Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/index.html</loc>
+    <lastmod>2026-11-13T13:55:54.494Z</lastmod>
   </url>
 </urlset>

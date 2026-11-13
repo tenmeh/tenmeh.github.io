@@ -17,7 +17,209 @@
 <width>144</width>
 </image>
 <generator>quarto-1.11.9</generator>
-<lastBuildDate>Fri, 06 Nov 2026 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 14 Nov 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>rewind 0.4.0: only what the page can put back</title>
+  <dc:creator>Tanmay Chanda</dc:creator>
+  <link>https://tenmeh.github.io/posts/2026-11-14-rewind-0-4-0/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-11-14-rewind-0-4-0/hero.png" alt="The rewind hex sways and spins above a ground shadow, with a soft halo behind it. On the left, a pointer glides over a small bar chart. On the right, a Load view button sits over a short history rail whose first step stays marked. Dots and pluses move around the hex." width="800" height="320" class="figure-img"></figure>
+<p><strong>rewind 0.4.0 is on CRAN.</strong> It is the biggest update since the first release. Most of it came from one question: why does an undo sometimes seem to do nothing?</p>
+<p><a href="https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/index.html">My first post</a> explains what rewind does. In short, it adds undo and redo to a Shiny app with one call, <code>rewind_enable()</code>. It records the inputs as the user works, and puts them back at an undo.</p>
+<section id="only-what-the-page-can-put-back" class="level2">
+<h2 class="anchored" data-anchor-id="only-what-the-page-can-put-back">Only what the page can put back</h2>
+<p>By default, rewind now records only the inputs that the page can put back.</p>
+<p>Before 0.4.0, rewind recorded every input of the session. Some inputs have nothing on the page to put back. The hover of a plot is the clearest case. <code>plotOutput(hover = "plot_hover")</code> sends the position of the pointer as an input, but no element on the page holds that value.</p>
+<p>So each pause of the pointer over the plot became a step. The rail filled with <code>plot_hover</code>, and an undo of such a step changed nothing that the user could see:</p>
+<figure class="post-gif figure">
+<picture>
+<source srcset="https://tenmeh.github.io/posts/2026-11-14-rewind-0-4-0/hover-still.png" media="(prefers-reduced-motion: reduce)">
+<img src="https://tenmeh.github.io/posts/2026-11-14-rewind-0-4-0/hover.gif" width="960" height="540" loading="lazy" alt="A recreated Shiny app with Undo and Redo buttons, a Region select, a history rail and a bar chart whose hover is shown under it. First, with a badge that says rewind 0.3.0, the pointer pauses three times over the bars, and the rail gains three steps called plot_hover. Ctrl+Z moves the rail back one step, and nothing else on the page changes. Then, with a badge that says rewind 0.4.0, the same pointer moves add no step. A change of Region from North to East adds a step called Region, and Ctrl+Z puts North back." class="figure-img">
+</picture>
+<figcaption>A browser recreation of the same app, first with rewind 0.3.0, then with 0.4.0.</figcaption>
+</figure>
+<p>The same was true of the values that DT keeps, such as <code>_rows_current</code> and <code>_state</code>, and of a plot’s <code>click</code>, <code>dblclick</code> and <code>brush</code>.</p>
+<p>The fix asks the browser. Each input that the page can put back has a Shiny input binding on an element: a select, a slider, a text box. The browser now reports which inputs have one, and rewind records only those. Inputs that are only sent from JavaScript, such as the hover of a plot, have no binding, so they are left out.</p>
+<p>The report arrives after the page has loaded. Until it does, rewind records every input, as before. That is also what happens in <code>testServer()</code>, which has no browser.</p>
+<p>There are two ways to change the default:</p>
+<ul>
+<li>A list in <code>inputs</code> is used as it is. Name an input there to record it anyway: <code>rewind_enable(inputs = c("region", "year", "plot_brush"))</code>.</li>
+<li><code>rewind_exclude()</code> leaves inputs out, from anywhere in the server. More on that below.</li>
+</ul>
+<p>This is a change of behaviour. An app that relied on the old default to record a value with no binding now needs to name it in <code>inputs</code>. I think such apps are rare, because an undo of those values did nothing on the page.</p>
+</section>
+<section id="why-did-an-undo-skip-this-input" class="level2">
+<h2 class="anchored" data-anchor-id="why-did-an-undo-skip-this-input">Why did an undo skip this input?</h2>
+<p>The new <code>rewind_status()</code> answers that in one call. It lists what rewind records, and gives each other input the reason it is left out:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_status</span>()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>captured   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># c("region", "year")</span></span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_status</span>()<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>skipped    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># c(plot_hover = "cannot be restored by the page",</span></span>
+<span id="cb1-3">                           <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#   pw = "password field")</span></span></code></pre></div></div>
+<p>The reasons are <code>"excluded"</code>, <code>"password field"</code>, <code>"not in inputs"</code>, <code>"cannot be restored by the page"</code>, <code>"action button"</code>, <code>"file upload"</code> and <code>"NULL value"</code>. The list also holds the groups registered with <code>rewind_track()</code>, and the size of the history and the current position.</p>
+<p>It depends on the inputs, so it works well in a debug panel:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">output<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>status <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">renderPrint</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_status</span>())</span></code></pre></div></div>
+<p><code>rewind_exclude()</code> is the other half. It leaves inputs out of the history, at any time, and from inside a module:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">mod_filters_server <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(id) {</span>
+<span id="cb3-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">moduleServer</span>(id, <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(input, output, session) {</span>
+<span id="cb3-3">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_exclude</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"search"</span>)   <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># the module's own name, not "filters-search"</span></span>
+<span id="cb3-4">  })</span>
+<span id="cb3-5">}</span></code></pre></div></div>
+<p>It works like <code>shiny::setBookmarkExclude()</code>. A second call adds to the list, and an input that the history already holds is removed from it.</p>
+</section>
+<section id="a-view-that-is-not-a-step" class="level2">
+<h2 class="anchored" data-anchor-id="a-view-that-is-not-a-step">A view that is not a step</h2>
+<p>A saved view is a set of input values that the app loads in one go: from a bookmark, from a list of saved filters, or from the defaults of a user. Loading a view is not something the user did by hand, so it should not be a step.</p>
+<p>The new <code>rewind_unrecorded()</code> runs a block of code whose changes are not a step:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">observeEvent</span>(input<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>load_view, {</span>
+<span id="cb4-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_unrecorded</span>({</span>
+<span id="cb4-3">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">updateSelectInput</span>(session, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"region"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">selected =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"East"</span>)</span>
+<span id="cb4-4">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">updateSliderInput</span>(session, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"year"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">value =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2020</span>)</span>
+<span id="cb4-5">  })</span>
+<span id="cb4-6">})</span></code></pre></div></div>
+<p>The changes become part of the current state instead. An undo never goes back across them:</p>
+<figure class="post-gif figure">
+<picture>
+<source srcset="https://tenmeh.github.io/posts/2026-11-14-rewind-0-4-0/unrecorded-still.png" media="(prefers-reduced-motion: reduce)">
+<img src="https://tenmeh.github.io/posts/2026-11-14-rewind-0-4-0/unrecorded.gif" width="960" height="540" loading="lazy" alt="A recreated Shiny app with Undo and Redo buttons, a Region select, a Year slider, a Load view button, a history rail and a bar chart. A click on Load view sets Region to East and Year to 2020, and the rail still has one entry, Initial state. A drag of the year to 2022 adds a step called Year. Ctrl+Z puts 2020 back, and Region stays East: the undo goes back to the loaded view, not to the state before it." class="figure-img">
+</picture>
+<figcaption>A browser recreation. The app calls rewind_enable(labels = c(region = "Region", year = "Year")), so the rail says "Year".</figcaption>
+</figure>
+<section id="why-a-pause-does-not-work" class="level3">
+<h3 class="anchored" data-anchor-id="why-a-pause-does-not-work">Why a pause does not work</h3>
+<p>The help of <code>rewind_pause()</code> used to suggest a pause and a resume around code like this. That does not work, and finding out why was the most useful part of this release for me.</p>
+<p>rewind records in its own observer. That observer depends on every input, so it runs after the observer that made the change. By then, the resume has already run. The probe I wrote recorded the change as an ordinary step.</p>
+<p>There is a second problem: <code>update*Input()</code> sends a message to the browser. The new value comes back as an input later, after the observer has ended.</p>
+<p>So <code>rewind_unrecorded()</code> does not pause anything. After the block, it keeps a short window open, twice the grouping period by default. A change that arrives in that window replaces the current state, and does not make a new step. A change from the user that was still waiting becomes its own step first, so the loaded view never swallows it.</p>
+</section>
+</section>
+<section id="names-a-person-reads" class="level2">
+<h2 class="anchored" data-anchor-id="names-a-person-reads">Names a person reads</h2>
+<p>The rail and <code>rewind_diff()</code> used the input ID as the label of a step. An ID such as <code>year</code> is fine. An ID such as <code>sel_trt_arm</code> is not something a user should read.</p>
+<p><code>rewind_enable()</code> now takes <code>labels</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_enable</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">labels =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">region =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Region"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">trt =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Treatment arm"</span>))</span></code></pre></div></div>
+<p>The rail shows the labels, and <code>rewind_diff()</code> has a new <code>label</code> column. It is the last column, so code that picks the six columns of 0.3.0 by position still gets the same ones.</p>
+</section>
+<section id="the-smaller-things" class="level2">
+<h2 class="anchored" data-anchor-id="the-smaller-things">The smaller things</h2>
+<ul>
+<li><strong>Every argument is checked</strong>, with a message that names it. Some wrong values used to be accepted, and did the wrong thing with no message: <code>shortcuts = "yes"</code> turned the shortcuts off, <code>depth = 2.5</code> became 2, and <code>rewind_jump(1.9)</code> moved to position 1.</li>
+<li><strong>A typo gives a warning.</strong> A name in <code>inputs</code> that the page does not have, or a name in <code>rewind_track(fields = )</code> that the values do not have, used to record nothing, with no message.</li>
+<li><strong>A busy input no longer holds back every step.</strong> The grouping period started again whenever any input changed, also an input that is not recorded. A plot hover thus held back every step until the pointer stopped.</li>
+<li><strong>Password fields are never kept in the history.</strong> A <code>passwordInput()</code> sends a plain string, so rewind recorded it like any text box, and <code>rewind_diff()</code> could show it. The browser now reports which fields are passwords, and rewind leaves them out, even when <code>inputs</code> names them.</li>
+<li><strong><code>rewind_enable(c("region", "year"))</code></strong> put the names into <code>session</code>, the first argument, and failed with “$ operator is invalid for atomic vectors”. It now says that <code>session</code> must be a Shiny session, and points to <code>inputs = c(...)</code>.</li>
+<li><strong><code>rewind_example()</code></strong> runs the demo app. It replaces <code>shiny::runApp(system.file("examples/demo", package = "rewind"))</code>.</li>
+<li><strong>The help of <code>rewind_track()</code></strong> has a new section on environments and R6 objects. rewind keeps those by reference, so a change inside such an object is not a step, and an undo cannot bring back its old contents. The section shows how to change a copy instead.</li>
+<li><strong>The help of <code>rewind_enable()</code></strong> has a new section on text inputs: why slow typing can give several steps, and how <code>textInput(updateOn = "blur")</code> gives one step for each edit.</li>
+</ul>
+</section>
+<section id="try-it" class="level2">
+<h2 class="anchored" data-anchor-id="try-it">Try it</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">install.packages</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"rewind"</span>)</span>
+<span id="cb6-2">rewind<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rewind_example</span>()</span></code></pre></div></div>
+<ul>
+<li>Documentation: <a href="https://tenmeh.github.io/rewind/" class="uri">https://tenmeh.github.io/rewind/</a></li>
+<li>Changelog: <a href="https://tenmeh.github.io/rewind/news/index.html" class="uri">https://tenmeh.github.io/rewind/news/index.html</a></li>
+<li>Source: <a href="https://github.com/tenmeh/rewind" class="uri">https://github.com/tenmeh/rewind</a></li>
+</ul>
+<p>If an undo in your app still seems to do nothing, call <code>rewind_status()</code> and tell me what it says. That is exactly the kind of case this release is for.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>Shiny</category>
+  <category>packages</category>
+  <guid>https://tenmeh.github.io/posts/2026-11-14-rewind-0-4-0/</guid>
+  <pubDate>Sat, 14 Nov 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://tenmeh.github.io/posts/2026-11-14-rewind-0-4-0/cover.png" medium="image" type="image/png" height="76" width="144"/>
+</item>
 <item>
   <title>A Quarto feed that R-bloggers can republish</title>
   <dc:creator>Tanmay Chanda</dc:creator>
