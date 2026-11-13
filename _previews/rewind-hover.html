@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rewind hover preview scene</title>
+<!-- The scene for the first GIF of the rewind 0.4.0 post. The same app runs
+     twice: once as rewind 0.3.0 kept it, once as 0.4.0 keeps it. The app has
+     rewind_buttons(), a Region select, the history rail of rewind_ui(), and a
+     plot whose hover is shown under it. The buttons and the rail have the
+     markup that rewind writes, and their rules are from inst/www/rewind.css
+     of the rewind package (MIT, Copyright (c) 2026 Tanmay Chanda).
+
+     0.3.0 recorded the hover of a plot. Each pause of the pointer became a
+     step, labelled plot_hover, and an undo of it changed nothing on the page.
+     0.4.0 captures only inputs that the page can put back, so a hover is
+     never a step. -->
+<link rel="stylesheet" href="app.css">
+<style>
+  /* From rewind.css. */
+  .rewind-buttons { display: inline-flex; gap: 0.25rem; }
+  .rewind-buttons .btn { display: inline-flex; align-items: center; gap: 0.35em; }
+  .rewind-buttons .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+  .rewind-buttons .rewind-label { font-size: 0.95em; }
+  .rewind-buttons .rewind-icon { flex: none; }
+  .rewind-rail-wrap { font-size: 11px; }
+  .rewind-rail-title { font-weight: 600; margin-bottom: 0.35rem; opacity: 0.75; }
+  .rewind-rail {
+    list-style: none; margin: 0; padding: 0 0 0 0.75rem;
+    border-left: 2px solid rgba(128, 128, 128, 0.25);
+  }
+  .rewind-step {
+    position: relative; display: flex; align-items: baseline;
+    justify-content: space-between; gap: 0.75rem; padding: 0.3rem 0.45rem;
+    border-radius: 0.25rem; opacity: 0.7;
+  }
+  .rewind-step::before {
+    content: ""; position: absolute; left: -1.16rem; top: 0.75em;
+    width: 0.5rem; height: 0.5rem; border-radius: 50%;
+    background: rgba(128, 128, 128, 0.45);
+  }
+  .rewind-step.is-current { opacity: 1; font-weight: 600; background: rgba(128, 128, 128, 0.16); }
+  .rewind-step.is-current::before { background: currentColor; box-shadow: 0 0 0 3px rgba(128, 128, 128, 0.2); }
+  .rewind-step-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rewind-step-time { flex: none; font-variant-numeric: tabular-nums; font-size: 0.8em; opacity: 0.6; }
+
+  /* Bootstrap 3, which fluidPage() uses, at the size of this scene. */
+  .btn {
+    padding: 4px 10px; border: 1px solid transparent; border-radius: 4px;
+    font: inherit; line-height: 1.4; cursor: pointer;
+  }
+  .btn-default { border-color: #ccc; background: #fff; color: #333; }
+
+  .well {
+    position: absolute; left: 14px; top: 14px; width: 220px; height: 332px;
+    padding: 12px; border: 1px solid #e3e3e3; border-radius: 4px; background: #f5f5f5;
+  }
+  .well .field { margin-top: 12px; }
+  .well .field label { color: #333; }
+  .well .sel { background: #fff; }
+  .well .rewind-rail-wrap { margin-top: 16px; }
+
+  .main { position: absolute; left: 250px; top: 14px; width: 376px; }
+  .main svg { display: block; }
+  /* verbatimTextOutput() of input$plot_hover, as an app would show it. */
+  .readout {
+    margin-top: 4px; padding: 5px 8px; border: 1px solid #ccc; border-radius: 4px;
+    background: #f5f5f5; font: 11px/1.35 Consolas, "Courier New", monospace; color: #333;
+    white-space: pre;
+  }
+
+  /* The version that the act shows: not part of the app. */
+  #version {
+    position: absolute; right: 14px; top: 14px; padding: 3px 10px;
+    border-radius: 999px; background: #212529; color: #fff;
+    font-weight: 700; font-size: 11px; letter-spacing: 0.02em;
+  }
+  #version.new { background: #87560b; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="well">
+    <div class="rewind-buttons">
+      <button type="button" class="btn btn-default rewind-undo" disabled title="Undo (Ctrl+Z)" aria-label="Undo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="rewind-icon" aria-hidden="true" focusable="false"><path d="M5.5 3 2.5 6l3 3"/><path d="M2.5 6h7a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span class="rewind-label">Undo</span>
+      </button>
+      <button type="button" class="btn btn-default rewind-redo" disabled title="Redo (Ctrl+Shift+Z or Ctrl+Y)" aria-label="Redo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="rewind-icon" aria-hidden="true" focusable="false"><path d="M10.5 3 13.5 6l-3 3"/><path d="M13.5 6h-7a3.5 3.5 0 0 0 0 7H10"/></svg>
+        <span class="rewind-label">Redo</span>
+      </button>
+    </div>
+
+    <div class="field">
+      <label>Region</label>
+      <div class="sel" id="region"><span id="region-val">North</span>
+        <div class="sel-menu" id="menu" hidden>
+          <div>North</div><div>South</div><div>East</div><div>West</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rewind-rail-wrap">
+      <div class="rewind-rail-title">History</div>
+      <ol class="rewind-rail" id="rail"></ol>
+    </div>
+  </div>
+
+  <div class="main">
+    <div id="plot"></div>
+    <div class="readout" id="readout"></div>
+  </div>
+
+  <div id="version"></div>
+  <div id="caption"></div>
+  <div id="keys"></div>
+  <svg id="cursor"></svg>
+  <div id="ripple"></div>
+  <div id="veil"></div>
+</div>
+
+<script src="scene.js"></script>
+<script>
+  const DURATION = 14400;
+  window.DURATION = DURATION;
+  window.POSTER_MS = 4300; // 0.3.0, with three plot_hover steps on the rail
+  // The second act starts here. The veil hides the change of version.
+  const ACT2 = 6300;
+
+  const SHAPE = {
+    North: [55, 60, 68, 74, 80, 86, 90, 88, 82, 74, 66, 60],
+    East: [82, 74, 66, 58, 52, 50, 58, 70, 84, 92, 96, 90],
+  };
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  // The plot: 376 x 250, with the bars between L and R.
+  const W = 376, H = 250, L = 34, R = 366, T = 50, B = 222;
+  const slot = (R - L) / 12;
+  const yOf = (v) => B - (v / 100) * (B - T);
+
+  function plotSvg(region, hot) {
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="Geist Preview, Arial, sans-serif">`;
+    s += `<rect width="${W}" height="${H}" fill="#fff"/>`;
+    s += `<text x="${L}" y="22" font-size="13" font-weight="800" fill="#212529">Monthly revenue</text>`;
+    s += `<text x="${L}" y="38" font-size="10.5" fill="#6c757d">${region}, 2024</text>`;
+    for (const g of [0, 25, 50, 75, 100]) {
+      s += `<line x1="${L}" x2="${R}" y1="${yOf(g)}" y2="${yOf(g)}" stroke="${g === 0 ? "#6c757d" : "#e9ecef"}"/>`;
+      s += `<text x="${L - 6}" y="${yOf(g) + 3}" font-size="9" fill="#6c757d" text-anchor="end">${g}</text>`;
+    }
+    SHAPE[region].forEach((v, i) => {
+      const fill = i === hot ? "#2f5d8a" : "#4e79a7";
+      s += `<rect x="${L + i * slot + slot * 0.16}" y="${yOf(v)}" width="${slot * 0.68}" height="${B - yOf(v)}" rx="1.5" fill="${fill}"/>`;
+      s += `<text x="${L + i * slot + slot / 2}" y="${B + 13}" font-size="9" fill="#6c757d" text-anchor="middle">${MONTHS[i]}</text>`;
+    });
+    return s + "</svg>";
+  }
+
+  // Positions on the page.
+  const center = (el) => {
+    const r = el.getBoundingClientRect();
+    return [r.left + r.width / 2, r.top + r.height / 2];
+  };
+  const plotBox = document.getElementById("plot").getBoundingClientRect();
+  const barX = (i) => plotBox.left + L + i * slot + slot / 2;
+  const barY = (i, region) => plotBox.top + yOf(SHAPE[region][i]) + 14;
+  const [selX, selY] = center(document.getElementById("region"));
+  const menuItems = [...document.querySelectorAll("#menu div")];
+  document.getElementById("menu").hidden = false;
+  const [eastX, eastY] = center(menuItems[2]);
+  document.getElementById("menu").hidden = true;
+  const undoBtn = document.querySelector(".rewind-undo");
+
+  // The pointer path over the plot, the same in both acts: three moves, each
+  // followed by a pause. a is the start time of the act.
+  const hoverPath = (a, region) => [
+    [a + 500, barX(1) - 20, barY(1, region) + 40],
+    [a + 800, barX(1), barY(1, region)],
+    [a + 1500, barX(3), barY(3, region)],
+    [a + 2000, barX(3), barY(3, region)],
+    [a + 2600, barX(6), barY(6, region)],
+    [a + 3100, barX(6), barY(6, region)],
+    [a + 3600, barX(9), barY(9, region)],
+  ];
+
+  // The month under the pointer, or -1 when it is not over the bars.
+  const monthAt = (x) => {
+    const i = Math.floor((x - plotBox.left - L) / slot);
+    return i >= 0 && i < 12 ? i : -1;
+  };
+
+  // A rail entry: the label, and the time on a clock that starts at 10:02:00.
+  const clock = (ms) => {
+    const s = 2 * 60 + Math.floor(ms / 1000);
+    return `10:${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+  };
+
+  function setRail(entries, current) {
+    const html = entries.map(([label, t], i) =>
+      `<li class="rewind-step${i === current ? " is-current" : ""}"><span class="rewind-step-label">${label}</span><span class="rewind-step-time">${clock(t)}</span></li>`
+    ).join("");
+    const rail = document.getElementById("rail");
+    if (rail.dataset.html !== html) {
+      rail.dataset.html = html;
+      rail.innerHTML = html;
+    }
+  }
+
+  // The keys that the user presses, drawn at the bottom right.
+  function setKeys(ms, shows) {
+    const el = document.getElementById("keys");
+    const hit = shows.find((k) => ms >= k.from && ms < k.to);
+    if (!hit) {
+      el.style.opacity = 0;
+      return;
+    }
+    const down = ms >= hit.press[0] && ms < hit.press[1];
+    const html = hit.keys.map((k) => `<kbd class="${down ? "down" : ""}">${k}</kbd>`).join("<i>+</i>");
+    if (el.dataset.html !== html) {
+      el.dataset.html = html;
+      el.innerHTML = html;
+    }
+    el.style.opacity = pulse(ms, hit.from, hit.to, 120);
+  }
+
+  // A soft ring on a control that rewind has put back, so the eye finds it.
+  const ring = (ms, t0) => {
+    const p = clamp((ms - t0) / 900);
+    return ms >= t0 && p < 1 ? `0 0 0 3px rgba(135, 86, 11, ${0.55 * (1 - p)})` : "";
+  };
+
+  let shown = "";
+  window.renderAt = function (ms) {
+    const act2 = ms >= ACT2;
+    const a = act2 ? ACT2 : 0;
+
+    // The region: East from 10750 in the second act, and North again after
+    // the undo at 12450.
+    const region = ms >= 10750 && ms < 12450 ? "East" : "North";
+
+    // The pointer. In the first act it waits over the plot: the key press
+    // does the undo.
+    const path = act2
+      ? [...hoverPath(a, "North"), [10300, selX, selY], [10400, selX, selY], [10700, eastX, eastY], [10850, eastX, eastY], [11500, 470, 330]]
+      : [...hoverPath(a, "North"), [4200, barX(9), barY(9, "North")]];
+    const clicks = act2 ? [10350, 10750] : [];
+    setCursor(ms, path, clicks);
+
+    // What the pointer is over. The hover output follows it in both acts:
+    // the app reacts to the hover. Only the history differs.
+    const x = track(ms, path.map(([t, px]) => [t, px]));
+    const onPlot = ms >= path[1][0] && ms < (act2 ? a + 3700 : 6000);
+    const hot = onPlot ? monthAt(x) : -1;
+    const readout = document.getElementById("readout");
+    readout.textContent = hot >= 0
+      ? `plot_hover: x = ${MONTHS[hot]}, y = ${SHAPE.North[hot]}`
+      : "plot_hover: NULL";
+
+    // The history.
+    let entries, current;
+    if (!act2) {
+      // Each pause of the pointer ends the quiet period, and the hover is a
+      // step. The undo at 4800 moves back one, and nothing on the page moves.
+      entries = [["Initial state", 0]];
+      if (ms >= 1900) entries.push(["plot_hover", 1900]);
+      if (ms >= 3000) entries.push(["plot_hover", 3000]);
+      if (ms >= 4000) entries.push(["plot_hover", 4000]);
+      current = ms >= 4800 ? 2 : entries.length - 1;
+    } else {
+      // A hover is never a step. The change of Region is one.
+      entries = [["Initial state", a]];
+      if (ms >= 11150) entries.push(["Region", 11150]);
+      current = ms >= 12450 ? 0 : entries.length - 1;
+    }
+    setRail(entries, current);
+    undoBtn.disabled = current === 0;
+    document.querySelector(".rewind-redo").disabled = current >= entries.length - 1;
+
+    // The Region select.
+    document.getElementById("region-val").textContent = region;
+    const open = ms >= 10350 && ms < 10750;
+    document.getElementById("region").classList.toggle("open", open);
+    document.getElementById("menu").hidden = !open;
+    menuItems.forEach((d) => d.classList.toggle("hot", d.textContent === "East" && ms >= 10650));
+    document.getElementById("region").style.boxShadow = open ? "" : ring(ms, 12450);
+
+    const key = `${region} ${hot}`;
+    if (key !== shown) {
+      shown = key;
+      document.getElementById("plot").innerHTML = plotSvg(region, hot);
+    }
+
+    const version = document.getElementById("version");
+    version.textContent = act2 ? "rewind 0.4.0" : "rewind 0.3.0";
+    version.classList.toggle("new", act2);
+
+    setCaption(ms, [
+      [700, 2900, "0.3.0: each pause of the pointer is a step"],
+      [3000, 4450, "The rail fills with plot_hover"],
+      [4550, 5900, "Ctrl+Z steps back, and nothing on the page moves"],
+      [6800, 9950, "0.4.0: the same moves add no step"],
+      [10400, 12050, "Region is a step, as before"],
+      [12150, 13900, "Ctrl+Z puts Region back"],
+    ]);
+    setKeys(ms, [
+      { from: 4550, to: 5700, keys: ["Ctrl", "Z"], press: [4700, 4950] },
+      { from: 12150, to: 13300, keys: ["Ctrl", "Z"], press: [12300, 12550] },
+    ]);
+
+    // The veil: in at the start, out and in again at the change of act, and
+    // out at the end.
+    const veil = ms < 350 ? 1 - ms / 350
+      : ms < ACT2 - 400 ? 0
+      : ms < ACT2 ? (ms - (ACT2 - 400)) / 400
+      : ms < ACT2 + 400 ? 1 - (ms - ACT2) / 400
+      : clamp((ms - (DURATION - 450)) / 450);
+    document.getElementById("veil").style.opacity = veil;
+    freezeAnimations(ms);
+  };
+
+  window.renderAt(0);
+</script>
+</body>
+</html>
