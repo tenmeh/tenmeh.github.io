@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>rewind unrecorded preview scene</title>
+<!-- The scene for the second GIF of the rewind 0.4.0 post. A button loads a
+     saved view with update*Input(), inside rewind_unrecorded(). The change
+     is not a step: it becomes part of the current state. A later drag of the
+     year is a step, and an undo of it goes back to the loaded view, not to
+     the state before it. The app passes labels = c(region = "Region", year =
+     "Year") to rewind_enable(), so the rail says "Year".
+
+     The buttons and the rail have the markup that rewind writes, and their
+     rules are from inst/www/rewind.css of the rewind package (MIT,
+     Copyright (c) 2026 Tanmay Chanda). -->
+<link rel="stylesheet" href="app.css">
+<style>
+  /* From rewind.css. */
+  .rewind-buttons { display: inline-flex; gap: 0.25rem; }
+  .rewind-buttons .btn { display: inline-flex; align-items: center; gap: 0.35em; }
+  .rewind-buttons .btn[disabled] { opacity: 0.45; cursor: not-allowed; }
+  .rewind-buttons .rewind-label { font-size: 0.95em; }
+  .rewind-buttons .rewind-icon { flex: none; }
+  .rewind-rail-wrap { font-size: 11px; }
+  .rewind-rail-title { font-weight: 600; margin-bottom: 0.35rem; opacity: 0.75; }
+  .rewind-rail {
+    list-style: none; margin: 0; padding: 0 0 0 0.75rem;
+    border-left: 2px solid rgba(128, 128, 128, 0.25);
+  }
+  .rewind-step {
+    position: relative; display: flex; align-items: baseline;
+    justify-content: space-between; gap: 0.75rem; padding: 0.3rem 0.45rem;
+    border-radius: 0.25rem; opacity: 0.7;
+  }
+  .rewind-step::before {
+    content: ""; position: absolute; left: -1.16rem; top: 0.75em;
+    width: 0.5rem; height: 0.5rem; border-radius: 50%;
+    background: rgba(128, 128, 128, 0.45);
+  }
+  .rewind-step.is-current { opacity: 1; font-weight: 600; background: rgba(128, 128, 128, 0.16); }
+  .rewind-step.is-current::before { background: currentColor; box-shadow: 0 0 0 3px rgba(128, 128, 128, 0.2); }
+  .rewind-step-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rewind-step-time { flex: none; font-variant-numeric: tabular-nums; font-size: 0.8em; opacity: 0.6; }
+
+  /* Bootstrap 3, which fluidPage() uses, at the size of this scene. */
+  .btn {
+    padding: 4px 10px; border: 1px solid transparent; border-radius: 4px;
+    font: inherit; line-height: 1.4; cursor: pointer;
+  }
+  .btn-default { border-color: #ccc; background: #fff; color: #333; }
+  .btn-default.pressed { background: #e6e6e6; border-color: #adadad; }
+
+  .well {
+    position: absolute; left: 14px; top: 14px; width: 220px; height: 332px;
+    padding: 12px; border: 1px solid #e3e3e3; border-radius: 4px; background: #f5f5f5;
+  }
+  .well .field { margin-top: 10px; }
+  .well .field label { color: #333; }
+  .well .sel { background: #fff; }
+  .well .load { margin-top: 2px; }
+  .well .rewind-rail-wrap { margin-top: 14px; }
+
+  /* The year slider, in the look of the Shiny skin of ionRangeSlider. */
+  .irs { position: relative; height: 50px; margin: 0 -2px; }
+  .irs-line {
+    position: absolute; left: 0; right: 0; top: 24px; height: 8px;
+    border: 1px solid #ccc; border-radius: 8px; background: #ddd;
+  }
+  .irs-bar {
+    position: absolute; left: 0; top: 24px; height: 8px;
+    border: 1px solid #428bca; border-radius: 8px 0 0 8px; background: #428bca;
+  }
+  .irs-handle {
+    position: absolute; top: 20px; width: 16px; height: 16px; margin-left: -8px;
+    border: 1px solid #428bca; border-radius: 50%; background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  .irs-single, .irs-min, .irs-max {
+    position: absolute; top: 0; padding: 1px 5px; border-radius: 3px;
+    font-size: 10px; line-height: 1.3; white-space: nowrap;
+  }
+  .irs-single { background: #428bca; color: #fff; transform: translateX(-50%); }
+  .irs-min, .irs-max { background: #e1e4e9; color: #999; }
+  .irs-min { left: 0; }
+  .irs-max { right: 0; }
+
+  .main { position: absolute; left: 250px; top: 14px; width: 376px; height: 290px; }
+  .main svg { display: block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div class="well">
+    <div class="rewind-buttons">
+      <button type="button" class="btn btn-default rewind-undo" disabled title="Undo (Ctrl+Z)" aria-label="Undo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="rewind-icon" aria-hidden="true" focusable="false"><path d="M5.5 3 2.5 6l3 3"/><path d="M2.5 6h7a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <span class="rewind-label">Undo</span>
+      </button>
+      <button type="button" class="btn btn-default rewind-redo" disabled title="Redo (Ctrl+Shift+Z or Ctrl+Y)" aria-label="Redo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="rewind-icon" aria-hidden="true" focusable="false"><path d="M10.5 3 13.5 6l-3 3"/><path d="M13.5 6h-7a3.5 3.5 0 0 0 0 7H10"/></svg>
+        <span class="rewind-label">Redo</span>
+      </button>
+    </div>
+
+    <div class="field">
+      <label>Region</label>
+      <div class="sel" id="region"><span id="region-val">North</span></div>
+    </div>
+
+    <div class="field">
+      <label>Year</label>
+      <div class="irs" id="irs">
+        <span class="irs-min">2018</span><span class="irs-max">2026</span>
+        <span class="irs-single" id="irs-single">2024</span>
+        <span class="irs-line"></span>
+        <span class="irs-bar" id="irs-bar"></span>
+        <span class="irs-handle" id="irs-handle"></span>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-default load" id="load">Load view</button>
+
+    <div class="rewind-rail-wrap">
+      <div class="rewind-rail-title">History</div>
+      <ol class="rewind-rail" id="rail"></ol>
+    </div>
+  </div>
+
+  <div class="main" id="plot"></div>
+
+  <div id="caption"></div>
+  <div id="keys"></div>
+  <svg id="cursor"></svg>
+  <div id="ripple"></div>
+  <div id="veil"></div>
+</div>
+
+<script src="scene.js"></script>
+<script>
+  const DURATION = 9600;
+  window.DURATION = DURATION;
+  window.POSTER_MS = 5300; // the loaded view, and the Year step on the rail
+
+  const Y0 = 2018, Y1 = 2026;
+
+  // The slider: 2018 at the left end of the line, 2026 at the right end.
+  const irs = document.getElementById("irs");
+  const box = irs.getBoundingClientRect();
+  const TRACK_X0 = box.left + 8;
+  const TRACK_W = box.width - 16;
+  const xOf = (year) => TRACK_X0 + ((year - Y0) / (Y1 - Y0)) * TRACK_W;
+  const HANDLE_Y = box.top + 28;
+
+  const center = (el) => {
+    const r = el.getBoundingClientRect();
+    return [r.left + r.width / 2, r.top + r.height / 2];
+  };
+  const loadBtn = document.getElementById("load");
+  const [loadX, loadY] = center(loadBtn);
+
+  // The plot depends on both inputs, as in the first rewind scene.
+  const SHAPE = {
+    North: [55, 60, 68, 74, 80, 86, 90, 88, 82, 74, 66, 60],
+    East: [82, 74, 66, 58, 52, 50, 58, 70, 84, 92, 96, 90],
+  };
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+  function plotSvg(region, year) {
+    const W = 376, H = 290, L = 34, R = 366, T = 56, B = 258;
+    const f = 0.45 + 0.07 * (year - 2018);
+    const slot = (R - L) / 12;
+    const y = (v) => B - (v / 100) * (B - T);
+    let s = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" font-family="Geist Preview, Arial, sans-serif">`;
+    s += `<rect width="${W}" height="${H}" fill="#fff"/>`;
+    s += `<text x="${L}" y="22" font-size="13" font-weight="800" fill="#212529">Monthly revenue</text>`;
+    s += `<text x="${L}" y="38" font-size="10.5" fill="#6c757d">${region}, ${year}</text>`;
+    for (const g of [0, 25, 50, 75, 100]) {
+      s += `<line x1="${L}" x2="${R}" y1="${y(g)}" y2="${y(g)}" stroke="${g === 0 ? "#6c757d" : "#e9ecef"}"/>`;
+      s += `<text x="${L - 6}" y="${y(g) + 3}" font-size="9" fill="#6c757d" text-anchor="end">${g}</text>`;
+    }
+    SHAPE[region].forEach((v, i) => {
+      const h = v * f;
+      s += `<rect x="${L + i * slot + slot * 0.16}" y="${y(h)}" width="${slot * 0.68}" height="${B - y(h)}" rx="1.5" fill="#4e79a7"/>`;
+      s += `<text x="${L + i * slot + slot / 2}" y="${B + 13}" font-size="9" fill="#6c757d" text-anchor="middle">${MONTHS[i]}</text>`;
+    });
+    return s + "</svg>";
+  }
+
+  // A rail entry: the label, and the time on a clock that starts at 10:02:00.
+  const clock = (ms) => {
+    const s = 2 * 60 + Math.floor(ms / 1000);
+    return `10:${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+  };
+
+  function setRail(entries, current) {
+    const html = entries.map(([label, t], i) =>
+      `<li class="rewind-step${i === current ? " is-current" : ""}"><span class="rewind-step-label">${label}</span><span class="rewind-step-time">${clock(t)}</span></li>`
+    ).join("");
+    const rail = document.getElementById("rail");
+    if (rail.dataset.html !== html) {
+      rail.dataset.html = html;
+      rail.innerHTML = html;
+    }
+  }
+
+  // The keys that the user presses, drawn at the bottom right.
+  function setKeys(ms, shows) {
+    const el = document.getElementById("keys");
+    const hit = shows.find((k) => ms >= k.from && ms < k.to);
+    if (!hit) {
+      el.style.opacity = 0;
+      return;
+    }
+    const down = ms >= hit.press[0] && ms < hit.press[1];
+    const html = hit.keys.map((k) => `<kbd class="${down ? "down" : ""}">${k}</kbd>`).join("<i>+</i>");
+    if (el.dataset.html !== html) {
+      el.dataset.html = html;
+      el.innerHTML = html;
+    }
+    el.style.opacity = pulse(ms, hit.from, hit.to, 120);
+  }
+
+  // A soft ring on a control that has changed, so the eye finds it.
+  const ring = (ms, t0) => {
+    const p = clamp((ms - t0) / 900);
+    return ms >= t0 && p < 1 ? `0 0 0 3px rgba(135, 86, 11, ${0.55 * (1 - p)})` : "";
+  };
+
+  let shown = "";
+  window.renderAt = function (ms) {
+    // The click on Load view at 1200 sets East and 2020, inside
+    // rewind_unrecorded(). The drag from 3600 to 4400 moves the year to
+    // 2022. Ctrl+Z at 6200 puts 2020 back, and the region stays East.
+    const loaded = ms >= 1350;
+    const region = loaded ? "East" : "North";
+    const dragX = track(ms, [[3600, xOf(2020)], [4400, xOf(2022)]]);
+    const dragYear = Math.round(Y0 + ((dragX - TRACK_X0) / TRACK_W) * (Y1 - Y0));
+    let year = !loaded ? 2024 : ms < 3600 ? 2020 : dragYear;
+    if (ms >= 6300) year = 2020;
+
+    // The history. The loaded view is not a step: it replaces the current
+    // state, so the rail keeps one entry. The drag is a step after the quiet
+    // period. The undo goes back to the loaded view.
+    const entries = [["Initial state", 0]];
+    if (ms >= 4800) entries.push(["Year", 4800]);
+    const current = ms >= 6300 ? 0 : entries.length - 1;
+    setRail(entries, current);
+    document.querySelector(".rewind-undo").disabled = current === 0;
+    document.querySelector(".rewind-redo").disabled = current >= entries.length - 1;
+
+    document.getElementById("region-val").textContent = region;
+    document.getElementById("region").style.boxShadow = ring(ms, 1350);
+    loadBtn.classList.toggle("pressed", ms >= 1200 && ms < 1350);
+
+    const x = xOf(year) - box.left;
+    const handle = document.getElementById("irs-handle");
+    handle.style.left = `${x}px`;
+    handle.style.boxShadow = ring(ms, 1350) || ring(ms, 6300) || "0 1px 3px rgba(0, 0, 0, 0.3)";
+    document.getElementById("irs-bar").style.width = `${x}px`;
+    const single = document.getElementById("irs-single");
+    single.textContent = year;
+    single.style.left = `${x}px`;
+    const bubble = single.getBoundingClientRect();
+    for (const cls of ["irs-min", "irs-max"]) {
+      const el = document.querySelector(`.${cls}`);
+      const r = el.getBoundingClientRect();
+      el.style.visibility = bubble.left < r.right + 2 && bubble.right > r.left - 2 ? "hidden" : "";
+    }
+
+    const key = `${region} ${year}`;
+    if (key !== shown) {
+      shown = key;
+      document.getElementById("plot").innerHTML = plotSvg(region, year);
+    }
+
+    setCaption(ms, [
+      [1450, 3400, "Load view: the inputs change, and no step is added"],
+      [3500, 5800, "Moving Year is a step"],
+      [6000, 8900, "Ctrl+Z goes back to the loaded view, not before it"],
+    ]);
+    setKeys(ms, [{ from: 6000, to: 7200, keys: ["Ctrl", "Z"], press: [6150, 6400] }]);
+    setCursor(ms, [
+      [400, 470, 250], [1000, loadX, loadY], [1300, loadX, loadY],
+      [2600, loadX + 10, loadY + 30], [3400, xOf(2020), HANDLE_Y], [3600, xOf(2020), HANDLE_Y],
+      [4400, xOf(2022), HANDLE_Y], [4700, xOf(2022), HANDLE_Y], [5600, 470, 250],
+    ], [1200, 3500]);
+    setVeil(ms, DURATION);
+    freezeAnimations(ms);
+  };
+
+  window.renderAt(0);
+</script>
+</body>
+</html>

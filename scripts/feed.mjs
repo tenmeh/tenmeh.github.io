@@ -8,7 +8,8 @@
 // version of a post do not belong there:
 //
 // - A relative link points at R-bloggers, not at this blog. Each relative
-//   href and src is made absolute, from the link of its post.
+//   href, src and srcset is made absolute, from the link of its post. A
+//   srcset here holds one URL, the still of a GIF for reduced motion.
 // - The hero is an animated SVG. R-bloggers asks for images in PNG or a
 //   similar format, so the feed uses the PNG still that scripts/covers.mjs
 //   draws next to it.
@@ -43,7 +44,7 @@ function fixItem(html, link, siteUrl) {
   // 1. Relative links and images. Only inside a tag: a code sample that
   // shows the text src="..." is not a link, and must stay as it is.
   html = html.replace(/<[a-z][^>]*>/gi, (tag) =>
-    tag.replace(/\b(href|src|poster)="([^"]*)"/g, (_, name, url) => `${name}="${absolute(url, link)}"`),
+    tag.replace(/\b(href|src|srcset|poster)="([^"]*)"/g, (_, name, url) => `${name}="${absolute(url, link)}"`),
   );
 
   // 2. The hero: the PNG still, when the render drew one.

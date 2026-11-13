@@ -1,0 +1,220 @@
+---
+title: "rewind 0.4.0: only what the page can put back"
+description: >
+  rewind 0.4.0 is on CRAN. It stops recording inputs that an undo cannot
+  put back, such as the hover of a plot, and adds a way to load a saved view
+  without making it a step.
+author: "Tanmay Chanda"
+date: "2026-11-14"
+categories: [R, Shiny, packages]
+package: rewind
+image-alt: "Cover card with the post title, the date and the rewind hex logo."
+hero: hero.svg
+hero-alt: "The rewind hex sways and spins above a ground shadow, with a soft halo behind it. On the left, a pointer glides over a small bar chart. On the right, a Load view button sits over a short history rail whose first step stays marked. Dots and pluses move around the hex."
+---
+
+**rewind 0.4.0 is on CRAN.** It is the biggest update since the first
+release. Most of it came from one question: why does an undo sometimes seem
+to do nothing?
+
+[My first post](../2026-08-27-undo-for-shiny/index.qmd) explains what
+rewind does. In short, it adds undo and redo to a Shiny app with one call,
+`rewind_enable()`. It records the inputs as the user works, and puts them
+back at an undo.
+
+## Only what the page can put back
+
+By default, rewind now records only the inputs that the page can put back.
+
+Before 0.4.0, rewind recorded every input of the session. Some inputs have
+nothing on the page to put back. The hover of a plot is the clearest case.
+`plotOutput(hover = "plot_hover")` sends the position of the pointer as an
+input, but no element on the page holds that value.
+
+So each pause of the pointer over the plot became a step. The rail filled
+with `plot_hover`, and an undo of such a step changed nothing that the user
+could see:
+
+```{=html}
+<figure class="post-gif">
+<picture>
+<source srcset="hover-still.png" media="(prefers-reduced-motion: reduce)">
+<img src="hover.gif" width="960" height="540" loading="lazy" alt="A recreated Shiny app with Undo and Redo buttons, a Region select, a history rail and a bar chart whose hover is shown under it. First, with a badge that says rewind 0.3.0, the pointer pauses three times over the bars, and the rail gains three steps called plot_hover. Ctrl+Z moves the rail back one step, and nothing else on the page changes. Then, with a badge that says rewind 0.4.0, the same pointer moves add no step. A change of Region from North to East adds a step called Region, and Ctrl+Z puts North back.">
+</picture>
+<figcaption>A browser recreation of the same app, first with rewind 0.3.0, then with 0.4.0.</figcaption>
+</figure>
+```
+
+The same was true of the values that DT keeps, such as `_rows_current`
+and `_state`, and of a plot's `click`, `dblclick` and `brush`.
+
+The fix asks the browser. Each input that the page can put back has a Shiny
+input binding on an element: a select, a slider, a text box. The browser
+now reports which inputs have one, and rewind records only those. Inputs
+that are only sent from JavaScript, such as the hover of a plot, have no
+binding, so they are left out.
+
+The report arrives after the page has loaded. Until it does, rewind records
+every input, as before. That is also what happens in `testServer()`, which
+has no browser.
+
+There are two ways to change the default:
+
+- A list in `inputs` is used as it is. Name an input there to record it
+  anyway: `rewind_enable(inputs = c("region", "year", "plot_brush"))`.
+- `rewind_exclude()` leaves inputs out, from anywhere in the server. More
+  on that below.
+
+This is a change of behaviour. An app that relied on the old default to
+record a value with no binding now needs to name it in `inputs`. I think
+such apps are rare, because an undo of those values did nothing on the
+page.
+
+## Why did an undo skip this input?
+
+The new `rewind_status()` answers that in one call. It lists what rewind
+records, and gives each other input the reason it is left out:
+
+```r
+rewind_status()$captured   # c("region", "year")
+rewind_status()$skipped    # c(plot_hover = "cannot be restored by the page",
+                           #   pw = "password field")
+```
+
+The reasons are `"excluded"`, `"password field"`, `"not in inputs"`,
+`"cannot be restored by the page"`, `"action button"`, `"file upload"` and
+`"NULL value"`. The list also holds the groups registered with
+`rewind_track()`, and the size of the history and the current position.
+
+It depends on the inputs, so it works well in a debug panel:
+
+```r
+output$status <- renderPrint(rewind_status())
+```
+
+`rewind_exclude()` is the other half. It leaves inputs out of the history,
+at any time, and from inside a module:
+
+```r
+mod_filters_server <- function(id) {
+  moduleServer(id, function(input, output, session) {
+    rewind_exclude("search")   # the module's own name, not "filters-search"
+  })
+}
+```
+
+It works like `shiny::setBookmarkExclude()`. A second call adds to the
+list, and an input that the history already holds is removed from it.
+
+## A view that is not a step
+
+A saved view is a set of input values that the app loads in one go: from a
+bookmark, from a list of saved filters, or from the defaults of a user.
+Loading a view is not something the user did by hand, so it should not be
+a step.
+
+The new `rewind_unrecorded()` runs a block of code whose changes are not a
+step:
+
+```r
+observeEvent(input$load_view, {
+  rewind_unrecorded({
+    updateSelectInput(session, "region", selected = "East")
+    updateSliderInput(session, "year", value = 2020)
+  })
+})
+```
+
+The changes become part of the current state instead. An undo never goes
+back across them:
+
+```{=html}
+<figure class="post-gif">
+<picture>
+<source srcset="unrecorded-still.png" media="(prefers-reduced-motion: reduce)">
+<img src="unrecorded.gif" width="960" height="540" loading="lazy" alt="A recreated Shiny app with Undo and Redo buttons, a Region select, a Year slider, a Load view button, a history rail and a bar chart. A click on Load view sets Region to East and Year to 2020, and the rail still has one entry, Initial state. A drag of the year to 2022 adds a step called Year. Ctrl+Z puts 2020 back, and Region stays East: the undo goes back to the loaded view, not to the state before it.">
+</picture>
+<figcaption>A browser recreation. The app calls rewind_enable(labels = c(region = "Region", year = "Year")), so the rail says "Year".</figcaption>
+</figure>
+```
+
+### Why a pause does not work
+
+The help of `rewind_pause()` used to suggest a pause and a resume around
+code like this. That does not work, and finding out why was the most
+useful part of this release for me.
+
+rewind records in its own observer. That observer depends on every input,
+so it runs after the observer that made the change. By then, the resume
+has already run. The probe I wrote recorded the change as an ordinary step.
+
+There is a second problem: `update*Input()` sends a message to the browser.
+The new value comes back as an input later, after the observer has ended.
+
+So `rewind_unrecorded()` does not pause anything. After the block, it keeps
+a short window open, twice the grouping period by default. A change that
+arrives in that window replaces the current state, and does not make a new
+step. A change from the user that was still waiting becomes its own step
+first, so the loaded view never swallows it.
+
+## Names a person reads
+
+The rail and `rewind_diff()` used the input ID as the label of a step. An
+ID such as `year` is fine. An ID such as `sel_trt_arm` is not something a
+user should read.
+
+`rewind_enable()` now takes `labels`:
+
+```r
+rewind_enable(labels = c(region = "Region", trt = "Treatment arm"))
+```
+
+The rail shows the labels, and `rewind_diff()` has a new `label` column.
+It is the last column, so code that picks the six columns of 0.3.0 by
+position still gets the same ones.
+
+## The smaller things
+
+- **Every argument is checked**, with a message that names it. Some wrong
+  values used to be accepted, and did the wrong thing with no message:
+  `shortcuts = "yes"` turned the shortcuts off, `depth = 2.5` became 2, and
+  `rewind_jump(1.9)` moved to position 1.
+- **A typo gives a warning.** A name in `inputs` that the page does not
+  have, or a name in `rewind_track(fields = )` that the values do not
+  have, used to record nothing, with no message.
+- **A busy input no longer holds back every step.** The grouping period
+  started again whenever any input changed, also an input that is not
+  recorded. A plot hover thus held back every step until the pointer
+  stopped.
+- **Password fields are never kept in the history.** A `passwordInput()`
+  sends a plain string, so rewind recorded it like any text box, and
+  `rewind_diff()` could show it. The browser now reports which fields are
+  passwords, and rewind leaves them out, even when `inputs` names them.
+- **`rewind_enable(c("region", "year"))`** put the names into `session`,
+  the first argument, and failed with "$ operator is invalid for atomic
+  vectors". It now says that `session` must be a Shiny session, and points
+  to `inputs = c(...)`.
+- **`rewind_example()`** runs the demo app. It replaces
+  `shiny::runApp(system.file("examples/demo", package = "rewind"))`.
+- **The help of `rewind_track()`** has a new section on environments and
+  R6 objects. rewind keeps those by reference, so a change inside such an
+  object is not a step, and an undo cannot bring back its old contents.
+  The section shows how to change a copy instead.
+- **The help of `rewind_enable()`** has a new section on text inputs: why
+  slow typing can give several steps, and how
+  `textInput(updateOn = "blur")` gives one step for each edit.
+
+## Try it
+
+```r
+install.packages("rewind")
+rewind::rewind_example()
+```
+
+- Documentation: <https://tenmeh.github.io/rewind/>
+- Changelog: <https://tenmeh.github.io/rewind/news/index.html>
+- Source: <https://github.com/tenmeh/rewind>
+
+If an undo in your app still seems to do nothing, call `rewind_status()`
+and tell me what it says. That is exactly the kind of case this release
+is for.
