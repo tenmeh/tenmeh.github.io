@@ -1,0 +1,273 @@
+---
+title: "bones 0.2.0: a skeleton that learns the page"
+description: >
+  bones 0.2.0 is on CRAN. A skeleton now learns the shape of its content,
+  a failed output gets a calm panel with a retry button, and the colours
+  can be set from CSS, with or without Bootstrap.
+author: "Tanmay Chanda"
+date: "2026-11-13"
+categories: [R, Shiny, packages]
+package: bones
+image-alt: "Cover card with the post title, the date and the bones hex logo."
+hero: hero.svg
+hero-alt: "The bones hex logo, alive: the bone bounces, a teal wave sweeps across the grey lines under it, and grey placeholders around it fill in with real content."
+---
+
+**bones 0.2.0 is on CRAN.** CRAN accepted it on 13 November. It is the
+first update since [bones went on CRAN](../2026-10-26-bones-on-cran/index.qmd)
+in October.
+
+bones gives a Shiny output a loading placeholder in the shape of its
+content. You wrap the output, and that is all:
+
+```r
+withBones(tableOutput("results"))
+```
+
+Until now, the shape was a guess. bones read the type of the output, a
+table here, and drew a table of six rows. Most of this release came from
+one question: why guess, when the browser has seen the real content?
+
+## A skeleton that learns the page
+
+An output now learns the shape of its content. After a load, the browser
+records where each line of text, each image and each card is. On the next
+visit, the first skeleton has that shape, not the guess.
+
+The first visit still shows the built-in shape. From the second visit, a
+table of three narrow columns looks like a table of three narrow columns,
+and a summary card looks like that card.
+
+In this recreation, watch the skeleton before and after the reload:
+
+```{=html}
+<figure class="post-gif">
+<picture>
+<source srcset="learned-still.png" media="(prefers-reduced-motion: reduce)">
+<img src="learned.gif" width="960" height="540" loading="lazy" alt="A recreated Shiny app called Sales summary, with a badge that says First visit and a card called North region. On the first visit, the card shows three grey lines, the shape that bones guesses for a uiOutput. The content arrives: three cards, Revenue $48.2k, Orders 476 and Customers 38, and two lines of text, and the card grows to fit. The pointer clicks the reload button of the browser, and the badge says Next visit. Now the skeleton has the shape of the content: three grey frames with a short bar and a value bar in each, and two text bars under them, at the full height. The content arrives in the place of its skeleton, and nothing moves.">
+</picture>
+<figcaption>A browser recreation. The app wraps uiOutput("summary") with withBones(), and gives no shape.</figcaption>
+</figure>
+```
+
+It is on by default, with some limits:
+
+- **It stores only numbers.** The record holds the place and the size of
+  each box, never the text. It is kept in the browser of the user, in
+  `localStorage`, for that page and that output.
+- **It needs almost the same width.** A record from a wide window is not
+  used in a narrow one. The skeleton then has the built-in shape.
+- **You can still name the shape.** When you give `type`, `rows`, `cols`,
+  `lines`, `n` or `skeleton`, bones uses what you gave. Charts do not
+  learn either: their shape comes from the chart type.
+
+To turn it off for one output, or for the whole app:
+
+```r
+withBones(tableOutput("results"), learn = FALSE)
+bones_defaults(learn = FALSE)
+```
+
+`remember = FALSE` turns off both the remembered height and the learned
+shape.
+
+### What counts as a card
+
+The hard part was not to measure the page. It was to decide what to keep.
+
+Text is easy: each line of text becomes a bar. An image, a canvas or an
+input also becomes a bar. A card is harder. bones calls an element a
+frame if it has a border on all four sides, or a background of its own.
+A frame is drawn behind the bars in it.
+
+That rule found many false cards before it worked:
+
+- A striped table row has its own background. It is not a card. bones
+  skips the parts of a table, in a `<table>` and in a table made of
+  `<div>` elements with ARIA roles, as reactable makes.
+- A button has a background too. It is a bar already.
+- A clear background can be written `rgba(0, 0, 0, 0)` or
+  `color(srgb 1 0 0 / 0)`. Both are clear.
+- A box that scrolls hides rows under its edge. bones records only what
+  shows.
+
+One more rule: when one box covers most of the content, such as a map or a
+big canvas, nothing is stored. A single grey block gives no useful shape.
+
+## When an output fails
+
+A failed output now shows a calm panel in place of the red error text of
+Shiny:
+
+```r
+withBones(plotOutput("chart"), error = bones_error("The chart could not be loaded."))
+```
+
+`bones_error()` with no message says "This content could not be loaded."
+After a good load, the old content stays on the screen, dimmed, and the
+panel sits over it as a banner. The user keeps what they were reading.
+
+**This is a change of behaviour.** The panel is on by default, so an app
+that updates to 0.2.0 shows it at once. To keep the error text of Shiny:
+
+```r
+bones_defaults(error = FALSE)
+```
+
+A silent `req()` and a `validate()` message are not errors. They keep
+their usual behaviour.
+
+The raw error message stays hidden by default. `bones_error(detail = TRUE)`
+shows it under the panel. Use that in development only: a raw error can
+hold file paths, SQL or private data. A message from `safeError()` still
+shows, because you wrote it for the user.
+
+### Try again
+
+Give `retry` an input id, and the panel gets a "Try again" button:
+
+```r
+withBones(plotOutput("chart"), retry = "chart_retry")
+
+output$chart <- renderPlot({
+  input$chart_retry
+  make_chart(data())
+})
+```
+
+The button sets the input, and shows the skeleton while the output runs
+again. The output reads the input, so a click runs it again. bones does
+not run anything itself. That keeps the retry in the code of the app,
+where you can see it.
+
+Here a refresh fails, and the user tries again:
+
+```{=html}
+<figure class="post-gif">
+<picture>
+<source srcset="failed-still.png" media="(prefers-reduced-motion: reduce)">
+<img src="failed.gif" width="960" height="540" loading="lazy" alt="A recreated Shiny app called Top customers, with a Refresh button and a table of four customers in a card called North region. The pointer clicks Refresh, and the table stays on the screen, dimmed. The load fails. A panel appears above the dimmed table, with the text The table could not be loaded and a Try again button. The pointer clicks Try again. The table is replaced by a grey skeleton of a table while the output runs again. Then the new table arrives, with new numbers.">
+</picture>
+<figcaption>A browser recreation. The app calls withBones(tableOutput("table"), error = bones_error("The table could not be loaded."), retry = "table_retry").</figcaption>
+</figure>
+```
+
+## A skeleton before the output starts
+
+Sometimes an app does work before it updates an output. The user clicks
+"Refresh", the server fetches data for a second, and only then does the
+output start. For that second, the old content stayed on the screen, as if
+nothing had happened.
+
+`hold` shows the skeleton as soon as an input changes:
+
+```r
+withBones(textOutput("result"), hold = "refresh")
+```
+
+The skeleton keeps the space of the content, and the content comes back
+when the output has its new value.
+
+There is one case `hold` cannot cover. If the output changes later, after
+`later::later()` or a poll, Shiny is idle in the gap. bones lets a hold go
+at idle, so that a hold that never gets a value does not stay forever.
+For that case, start the hold from JavaScript:
+
+```js
+Bones.hold("result");     // shows the skeleton until the next value
+Bones.release("result");  // or until you end it
+```
+
+I chose a pair of verbs over one function with a flag, such as
+`Bones.hold(el, false)`. `Bones.release()` says what it does. A second
+argument to `Bones.hold()` now gives a warning in the console, so the old
+form does not fail in silence.
+
+## Colours from CSS
+
+The colours of a skeleton come from the theme. With a bslib theme, the
+bars take a faint tint of the text colour, and they turn light in a dark
+theme.
+
+An app with its own CSS can now set them too, with or without Bootstrap:
+
+```css
+:root {
+  --bones-text: #1d3557;
+  --bones-surface: #ffffff;
+  --bones-radius: 6px;
+}
+
+.dark-panel {
+  --bones-text: #f1faee;
+  --bones-surface: #1d3557;
+}
+```
+
+`--bones-text` is the colour that the bars are made from. `--bones-surface`
+is the background of the page. `--bones-color`, `--bones-highlight` and the
+others set one colour each.
+
+These properties existed before, but a value on `:root` did nothing. The
+reason was in my own stylesheet. bones declared `--bones-color` on each
+wrapper, so that each part of a page follows its own theme, such as a dark
+card on a light page. A custom property declared on an element is
+stronger than the value that it gets from its parent. My value on the
+wrapper won every time.
+
+The fix uses two sets of names. bones only reads `--bones-color` and the
+other public names, and never declares them. It computes its own private
+values, `--_bones-color` and the others, on each wrapper. Your value can
+then sit anywhere above the wrapper, and each part of the page still
+follows its own theme.
+
+If you publish CSS custom properties for other people to set, do not
+declare them yourself on the element that uses them. Read them, and keep
+your own values under other names.
+
+## A strict Content-Security-Policy
+
+bones now works on a page whose policy blocks inline styles, such as
+`style-src 'self'` with no `'unsafe-inline'`. Such a policy blocks every
+`style` attribute, and bones used them for the size of each bar.
+
+bones now writes the sizes into a `data-bones-style` attribute. Its script
+sets them in the browser, through the style object of each element, which
+the policy allows. The look does not change.
+
+## The smaller things
+
+- **Names must match exactly.** `type = "pi"` used to work, as a short
+  form of `"pie"`. It is now an error that says `Did you mean "pie"?`. The
+  same applies to `animation` and to the `shape` of `bones_block()`. A
+  short form could break the day a new name started with the same letters.
+- **An unused shape argument gives a warning.** `withBones(plotOutput("x"),
+  rows = 8)` passed `rows` to a chart, which has no rows, and said nothing.
+  `bones_auto()` does not give these warnings, because it passes the same
+  arguments to every output.
+- **`bones_shapes()` and `bones_animations()`** list the valid names.
+- **`speed` and `color`** now work on one output, as well as for the whole
+  app: `withBones(plotOutput("chart"), speed = 0.8, color = "#dbeafe")`.
+- **`bones_defaults()` with no arguments** returns the current values. The
+  signature of `withBones()` now shows the session options as its
+  defaults, so you can see where each default comes from.
+- **A custom skeleton keeps its own height.** It used to reserve the height
+  that bones guessed for the type of the output.
+- **`stale = FALSE` no longer flashes a blank box.** The old content now
+  stays until the skeleton appears.
+- **A misspelt argument of `bones_auto()`** gives a short error, with a
+  hint for the name you meant.
+
+## Try it
+
+```r
+install.packages("bones")
+```
+
+- Documentation: <https://tenmeh.github.io/bones/>
+- Changelog: <https://tenmeh.github.io/bones/news/index.html>
+- Source: <https://github.com/tenmeh/bones>
+
+If a learned skeleton in your app has the wrong shape, open an issue and
+tell me what the output holds. The rules for cards came from cases like
+that.
