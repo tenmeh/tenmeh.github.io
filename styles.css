@@ -833,6 +833,31 @@ body.quarto-dark :is(.lead-hero, .row-hero, .post-hero) img {
   color: var(--k-muted);
 }
 
+/* A GIF in the text of a post: the frame of the demo video. A reader who
+   asks for reduced motion gets the still, by a <source> in the picture. */
+.post-gif {
+  margin: 2rem 0 2.2rem;
+}
+
+.post-gif img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--k-rule);
+  border-radius: 0.9rem;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px -12px rgba(0, 0, 0, 0.18);
+}
+
+.post-gif figcaption {
+  margin: 0.8rem 0 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--k-muted);
+}
+
 /* --- Post: text ------------------------------------------------------------------ */
 
 main h2 {

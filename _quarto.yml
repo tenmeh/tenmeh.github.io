@@ -19,6 +19,10 @@ project:
     - posts/*/preview.jpg
     - posts/*/hero.svg
     - posts/*/hero.png
+    # The GIFs in the text of a post, and their stills for reduced motion.
+    # The post names them in raw HTML, which Quarto does not follow.
+    - posts/*/*.gif
+    - posts/*/*-still.png
 
 website:
   title: "Tanmay Chanda"
