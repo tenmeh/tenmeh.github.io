@@ -221,6 +221,297 @@ font-style: inherit;">rewind_example</span>()</span></code></pre></div></div>
   <media:content url="https://tenmeh.github.io/posts/2026-11-14-rewind-0-4-0/cover.png" medium="image" type="image/png" height="76" width="144"/>
 </item>
 <item>
+  <title>bones 0.2.0: a skeleton that learns the page</title>
+  <dc:creator>Tanmay Chanda</dc:creator>
+  <link>https://tenmeh.github.io/posts/2026-11-13-bones-0-2-0/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<figure class="post-hero figure"><img src="https://tenmeh.github.io/posts/2026-11-13-bones-0-2-0/hero.png" alt="The bones hex logo, alive: the bone bounces, a teal wave sweeps across the grey lines under it, and grey placeholders around it fill in with real content." width="800" height="320" class="figure-img"></figure>
+<p><strong>bones 0.2.0 is on CRAN.</strong> CRAN accepted it on 13 November. It is the first update since <a href="https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/index.html">bones went on CRAN</a> in October.</p>
+<p>bones gives a Shiny output a loading placeholder in the shape of its content. You wrap the output, and that is all:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">withBones</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tableOutput</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"results"</span>))</span></code></pre></div></div>
+<p>Until now, the shape was a guess. bones read the type of the output, a table here, and drew a table of six rows. Most of this release came from one question: why guess, when the browser has seen the real content?</p>
+<section id="a-skeleton-that-learns-the-page" class="level2">
+<h2 class="anchored" data-anchor-id="a-skeleton-that-learns-the-page">A skeleton that learns the page</h2>
+<p>An output now learns the shape of its content. After a load, the browser records where each line of text, each image and each card is. On the next visit, the first skeleton has that shape, not the guess.</p>
+<p>The first visit still shows the built-in shape. From the second visit, a table of three narrow columns looks like a table of three narrow columns, and a summary card looks like that card.</p>
+<p>In this recreation, watch the skeleton before and after the reload:</p>
+<figure class="post-gif figure">
+<picture>
+<source srcset="https://tenmeh.github.io/posts/2026-11-13-bones-0-2-0/learned-still.png" media="(prefers-reduced-motion: reduce)">
+<img src="https://tenmeh.github.io/posts/2026-11-13-bones-0-2-0/learned.gif" width="960" height="540" loading="lazy" alt="A recreated Shiny app called Sales summary, with a badge that says First visit and a card called North region. On the first visit, the card shows three grey lines, the shape that bones guesses for a uiOutput. The content arrives: three cards, Revenue $48.2k, Orders 476 and Customers 38, and two lines of text, and the card grows to fit. The pointer clicks the reload button of the browser, and the badge says Next visit. Now the skeleton has the shape of the content: three grey frames with a short bar and a value bar in each, and two text bars under them, at the full height. The content arrives in the place of its skeleton, and nothing moves." class="figure-img">
+</picture>
+<figcaption>A browser recreation. The app wraps uiOutput("summary") with withBones(), and gives no shape.</figcaption>
+</figure>
+<p>It is on by default, with some limits:</p>
+<ul>
+<li><strong>It stores only numbers.</strong> The record holds the place and the size of each box, never the text. It is kept in the browser of the user, in <code>localStorage</code>, for that page and that output.</li>
+<li><strong>It needs almost the same width.</strong> A record from a wide window is not used in a narrow one. The skeleton then has the built-in shape.</li>
+<li><strong>You can still name the shape.</strong> When you give <code>type</code>, <code>rows</code>, <code>cols</code>, <code>lines</code>, <code>n</code> or <code>skeleton</code>, bones uses what you gave. Charts do not learn either: their shape comes from the chart type.</li>
+</ul>
+<p>To turn it off for one output, or for the whole app:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">withBones</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tableOutput</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"results"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">learn =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span>
+<span id="cb2-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bones_defaults</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">learn =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span></code></pre></div></div>
+<p><code>remember = FALSE</code> turns off both the remembered height and the learned shape.</p>
+<section id="what-counts-as-a-card" class="level3">
+<h3 class="anchored" data-anchor-id="what-counts-as-a-card">What counts as a card</h3>
+<p>The hard part was not to measure the page. It was to decide what to keep.</p>
+<p>Text is easy: each line of text becomes a bar. An image, a canvas or an input also becomes a bar. A card is harder. bones calls an element a frame if it has a border on all four sides, or a background of its own. A frame is drawn behind the bars in it.</p>
+<p>That rule found many false cards before it worked:</p>
+<ul>
+<li>A striped table row has its own background. It is not a card. bones skips the parts of a table, in a <code>&lt;table&gt;</code> and in a table made of <code>&lt;div&gt;</code> elements with ARIA roles, as reactable makes.</li>
+<li>A button has a background too. It is a bar already.</li>
+<li>A clear background can be written <code>rgba(0, 0, 0, 0)</code> or <code>color(srgb 1 0 0 / 0)</code>. Both are clear.</li>
+<li>A box that scrolls hides rows under its edge. bones records only what shows.</li>
+</ul>
+<p>One more rule: when one box covers most of the content, such as a map or a big canvas, nothing is stored. A single grey block gives no useful shape.</p>
+</section>
+</section>
+<section id="when-an-output-fails" class="level2">
+<h2 class="anchored" data-anchor-id="when-an-output-fails">When an output fails</h2>
+<p>A failed output now shows a calm panel in place of the red error text of Shiny:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">withBones</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plotOutput</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"chart"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">error =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bones_error</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"The chart could not be loaded."</span>))</span></code></pre></div></div>
+<p><code>bones_error()</code> with no message says “This content could not be loaded.” After a good load, the old content stays on the screen, dimmed, and the panel sits over it as a banner. The user keeps what they were reading.</p>
+<p><strong>This is a change of behaviour.</strong> The panel is on by default, so an app that updates to 0.2.0 shows it at once. To keep the error text of Shiny:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bones_defaults</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">error =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span></code></pre></div></div>
+<p>A silent <code>req()</code> and a <code>validate()</code> message are not errors. They keep their usual behaviour.</p>
+<p>The raw error message stays hidden by default. <code>bones_error(detail = TRUE)</code> shows it under the panel. Use that in development only: a raw error can hold file paths, SQL or private data. A message from <code>safeError()</code> still shows, because you wrote it for the user.</p>
+<section id="try-again" class="level3">
+<h3 class="anchored" data-anchor-id="try-again">Try again</h3>
+<p>Give <code>retry</code> an input id, and the panel gets a “Try again” button:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">withBones</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plotOutput</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"chart"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">retry =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"chart_retry"</span>)</span>
+<span id="cb5-2"></span>
+<span id="cb5-3">output<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>chart <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">renderPlot</span>({</span>
+<span id="cb5-4">  input<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>chart_retry</span>
+<span id="cb5-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">make_chart</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data</span>())</span>
+<span id="cb5-6">})</span></code></pre></div></div>
+<p>The button sets the input, and shows the skeleton while the output runs again. The output reads the input, so a click runs it again. bones does not run anything itself. That keeps the retry in the code of the app, where you can see it.</p>
+<p>Here a refresh fails, and the user tries again:</p>
+<figure class="post-gif figure">
+<picture>
+<source srcset="https://tenmeh.github.io/posts/2026-11-13-bones-0-2-0/failed-still.png" media="(prefers-reduced-motion: reduce)">
+<img src="https://tenmeh.github.io/posts/2026-11-13-bones-0-2-0/failed.gif" width="960" height="540" loading="lazy" alt="A recreated Shiny app called Top customers, with a Refresh button and a table of four customers in a card called North region. The pointer clicks Refresh, and the table stays on the screen, dimmed. The load fails. A panel appears above the dimmed table, with the text The table could not be loaded and a Try again button. The pointer clicks Try again. The table is replaced by a grey skeleton of a table while the output runs again. Then the new table arrives, with new numbers." class="figure-img">
+</picture>
+<figcaption>A browser recreation. The app calls withBones(tableOutput("table"), error = bones_error("The table could not be loaded."), retry = "table_retry").</figcaption>
+</figure>
+</section>
+</section>
+<section id="a-skeleton-before-the-output-starts" class="level2">
+<h2 class="anchored" data-anchor-id="a-skeleton-before-the-output-starts">A skeleton before the output starts</h2>
+<p>Sometimes an app does work before it updates an output. The user clicks “Refresh”, the server fetches data for a second, and only then does the output start. For that second, the old content stayed on the screen, as if nothing had happened.</p>
+<p><code>hold</code> shows the skeleton as soon as an input changes:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">withBones</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">textOutput</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"result"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">hold =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"refresh"</span>)</span></code></pre></div></div>
+<p>The skeleton keeps the space of the content, and the content comes back when the output has its new value.</p>
+<p>There is one case <code>hold</code> cannot cover. If the output changes later, after <code>later::later()</code> or a poll, Shiny is idle in the gap. bones lets a hold go at idle, so that a hold that never gets a value does not stay forever. For that case, start the hold from JavaScript:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb7-1">Bones<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">hold</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"result"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span>     <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">// shows the skeleton until the next value</span></span>
+<span id="cb7-2">Bones<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">release</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"result"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span>  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">// or until you end it</span></span></code></pre></div></div>
+<p>I chose a pair of verbs over one function with a flag, such as <code>Bones.hold(el, false)</code>. <code>Bones.release()</code> says what it does. A second argument to <code>Bones.hold()</code> now gives a warning in the console, so the old form does not fail in silence.</p>
+</section>
+<section id="colours-from-css" class="level2">
+<h2 class="anchored" data-anchor-id="colours-from-css">Colours from CSS</h2>
+<p>The colours of a skeleton come from the theme. With a bslib theme, the bars take a faint tint of the text colour, and they turn light in a dark theme.</p>
+<p>An app with its own CSS can now set them too, with or without Bootstrap:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb8-1"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:root</span> {</span>
+<span id="cb8-2">  <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">--bones-text</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">#1d3557</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb8-3">  <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">--bones-surface</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">#ffffff</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb8-4">  <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">--bones-radius</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span><span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">px</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb8-5">}</span>
+<span id="cb8-6"></span>
+<span id="cb8-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">.dark-panel</span> {</span>
+<span id="cb8-8">  <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">--bones-text</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">#f1faee</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb8-9">  <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">--bones-surface</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">#1d3557</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb8-10">}</span></code></pre></div></div>
+<p><code>--bones-text</code> is the colour that the bars are made from. <code>--bones-surface</code> is the background of the page. <code>--bones-color</code>, <code>--bones-highlight</code> and the others set one colour each.</p>
+<p>These properties existed before, but a value on <code>:root</code> did nothing. The reason was in my own stylesheet. bones declared <code>--bones-color</code> on each wrapper, so that each part of a page follows its own theme, such as a dark card on a light page. A custom property declared on an element is stronger than the value that it gets from its parent. My value on the wrapper won every time.</p>
+<p>The fix uses two sets of names. bones only reads <code>--bones-color</code> and the other public names, and never declares them. It computes its own private values, <code>--_bones-color</code> and the others, on each wrapper. Your value can then sit anywhere above the wrapper, and each part of the page still follows its own theme.</p>
+<p>If you publish CSS custom properties for other people to set, do not declare them yourself on the element that uses them. Read them, and keep your own values under other names.</p>
+</section>
+<section id="a-strict-content-security-policy" class="level2">
+<h2 class="anchored" data-anchor-id="a-strict-content-security-policy">A strict Content-Security-Policy</h2>
+<p>bones now works on a page whose policy blocks inline styles, such as <code>style-src 'self'</code> with no <code>'unsafe-inline'</code>. Such a policy blocks every <code>style</code> attribute, and bones used them for the size of each bar.</p>
+<p>bones now writes the sizes into a <code>data-bones-style</code> attribute. Its script sets them in the browser, through the style object of each element, which the policy allows. The look does not change.</p>
+</section>
+<section id="the-smaller-things" class="level2">
+<h2 class="anchored" data-anchor-id="the-smaller-things">The smaller things</h2>
+<ul>
+<li><strong>Names must match exactly.</strong> <code>type = "pi"</code> used to work, as a short form of <code>"pie"</code>. It is now an error that says <code>Did you mean "pie"?</code>. The same applies to <code>animation</code> and to the <code>shape</code> of <code>bones_block()</code>. A short form could break the day a new name started with the same letters.</li>
+<li><strong>An unused shape argument gives a warning.</strong> <code>withBones(plotOutput("x"), rows = 8)</code> passed <code>rows</code> to a chart, which has no rows, and said nothing. <code>bones_auto()</code> does not give these warnings, because it passes the same arguments to every output.</li>
+<li><strong><code>bones_shapes()</code> and <code>bones_animations()</code></strong> list the valid names.</li>
+<li><strong><code>speed</code> and <code>color</code></strong> now work on one output, as well as for the whole app: <code>withBones(plotOutput("chart"), speed = 0.8, color = "#dbeafe")</code>.</li>
+<li><strong><code>bones_defaults()</code> with no arguments</strong> returns the current values. The signature of <code>withBones()</code> now shows the session options as its defaults, so you can see where each default comes from.</li>
+<li><strong>A custom skeleton keeps its own height.</strong> It used to reserve the height that bones guessed for the type of the output.</li>
+<li><strong><code>stale = FALSE</code> no longer flashes a blank box.</strong> The old content now stays until the skeleton appears.</li>
+<li><strong>A misspelt argument of <code>bones_auto()</code></strong> gives a short error, with a hint for the name you meant.</li>
+</ul>
+</section>
+<section id="try-it" class="level2">
+<h2 class="anchored" data-anchor-id="try-it">Try it</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">install.packages</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"bones"</span>)</span></code></pre></div></div>
+<ul>
+<li>Documentation: <a href="https://tenmeh.github.io/bones/" class="uri">https://tenmeh.github.io/bones/</a></li>
+<li>Changelog: <a href="https://tenmeh.github.io/bones/news/index.html" class="uri">https://tenmeh.github.io/bones/news/index.html</a></li>
+<li>Source: <a href="https://github.com/tenmeh/bones" class="uri">https://github.com/tenmeh/bones</a></li>
+</ul>
+<p>If a learned skeleton in your app has the wrong shape, open an issue and tell me what the output holds. The rules for cards came from cases like that.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>Shiny</category>
+  <category>packages</category>
+  <guid>https://tenmeh.github.io/posts/2026-11-13-bones-0-2-0/</guid>
+  <pubDate>Fri, 13 Nov 2026 00:00:00 GMT</pubDate>
+  <media:content url="https://tenmeh.github.io/posts/2026-11-13-bones-0-2-0/cover.png" medium="image" type="image/png" height="76" width="144"/>
+</item>
+<item>
   <title>A Quarto feed that R-bloggers can republish</title>
   <dc:creator>Tanmay Chanda</dc:creator>
   <link>https://tenmeh.github.io/posts/2026-11-06-quarto-feed-for-r-bloggers/</link>

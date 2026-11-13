@@ -2,46 +2,50 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://tenmeh.github.io/about.html</loc>
-    <lastmod>2026-11-13T13:55:54.487Z</lastmod>
+    <lastmod>2026-11-13T17:27:19.585Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/work-with-me.html</loc>
-    <lastmod>2026-11-13T13:55:54.508Z</lastmod>
+    <lastmod>2026-11-13T17:27:19.610Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-10-13-recording-shiny-demos/index.html</loc>
-    <lastmod>2026-11-13T13:55:54.499Z</lastmod>
+    <lastmod>2026-11-13T17:27:19.596Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-11-06-quarto-feed-for-r-bloggers/index.html</loc>
-    <lastmod>2026-11-13T13:55:54.502Z</lastmod>
+    <lastmod>2026-11-13T17:27:19.599Z</lastmod>
   </url>
   <url>
-    <loc>https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/index.html</loc>
-    <lastmod>2026-11-13T13:55:54.500Z</lastmod>
-  </url>
-  <url>
-    <loc>https://tenmeh.github.io/posts/2026-09-28-how-bones-began/index.html</loc>
-    <lastmod>2026-11-13T13:55:54.497Z</lastmod>
+    <loc>https://tenmeh.github.io/posts/2026-11-13-bones-0-2-0/index.html</loc>
+    <lastmod>2026-11-13T17:27:19.601Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-11-14-rewind-0-4-0/index.html</loc>
-    <lastmod>2026-11-13T13:55:54.505Z</lastmod>
+    <lastmod>2026-11-13T17:27:19.607Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-09-28-how-bones-began/index.html</loc>
+    <lastmod>2026-11-13T17:27:19.594Z</lastmod>
+  </url>
+  <url>
+    <loc>https://tenmeh.github.io/posts/2026-10-25-whence-on-cran/index.html</loc>
+    <lastmod>2026-11-13T17:27:19.597Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-10-02-rewind-0-3-0/index.html</loc>
-    <lastmod>2026-11-13T13:55:54.498Z</lastmod>
+    <lastmod>2026-11-13T17:27:19.595Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-10-26-bones-on-cran/index.html</loc>
-    <lastmod>2026-11-13T13:55:54.501Z</lastmod>
+    <lastmod>2026-11-13T17:27:19.598Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/posts/2026-08-27-undo-for-shiny/index.html</loc>
-    <lastmod>2026-11-13T13:55:54.496Z</lastmod>
+    <lastmod>2026-11-13T17:27:19.593Z</lastmod>
   </url>
   <url>
     <loc>https://tenmeh.github.io/index.html</loc>
-    <lastmod>2026-11-13T13:55:54.494Z</lastmod>
+    <lastmod>2026-11-13T17:27:19.592Z</lastmod>
   </url>
 </urlset>
