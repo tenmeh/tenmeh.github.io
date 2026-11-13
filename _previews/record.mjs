@@ -41,6 +41,8 @@ const scenes = {
 const gifs = {
   "rewind-hover": ["posts/2026-11-14-rewind-0-4-0", "hover"],
   "rewind-unrecorded": ["posts/2026-11-14-rewind-0-4-0", "unrecorded"],
+  "bones-learned": ["posts/2026-11-13-bones-0-2-0", "learned"],
+  "bones-failed": ["posts/2026-11-13-bones-0-2-0", "failed"],
 };
 const GIF_FPS = 15;
 

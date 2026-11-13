@@ -38,6 +38,18 @@ The first visit still shows the built-in shape. From the second visit, a
 table of three narrow columns looks like a table of three narrow columns,
 and a summary card looks like that card.
 
+In this recreation, watch the skeleton before and after the reload:
+
+```{=html}
+<figure class="post-gif">
+<picture>
+<source srcset="learned-still.png" media="(prefers-reduced-motion: reduce)">
+<img src="learned.gif" width="960" height="540" loading="lazy" alt="A recreated Shiny app called Sales summary, with a badge that says First visit and a card called North region. On the first visit, the card shows three grey lines, the shape that bones guesses for a uiOutput. The content arrives: three cards, Revenue $48.2k, Orders 476 and Customers 38, and two lines of text, and the card grows to fit. The pointer clicks the reload button of the browser, and the badge says Next visit. Now the skeleton has the shape of the content: three grey frames with a short bar and a value bar in each, and two text bars under them, at the full height. The content arrives in the place of its skeleton, and nothing moves.">
+</picture>
+<figcaption>A browser recreation. The app wraps uiOutput("summary") with withBones(), and gives no shape.</figcaption>
+</figure>
+```
+
 It is on by default, with some limits:
 
 - **It stores only numbers.** The record holds the place and the size of
@@ -127,6 +139,18 @@ The button sets the input, and shows the skeleton while the output runs
 again. The output reads the input, so a click runs it again. bones does
 not run anything itself. That keeps the retry in the code of the app,
 where you can see it.
+
+Here a refresh fails, and the user tries again:
+
+```{=html}
+<figure class="post-gif">
+<picture>
+<source srcset="failed-still.png" media="(prefers-reduced-motion: reduce)">
+<img src="failed.gif" width="960" height="540" loading="lazy" alt="A recreated Shiny app called Top customers, with a Refresh button and a table of four customers in a card called North region. The pointer clicks Refresh, and the table stays on the screen, dimmed. The load fails. A panel appears above the dimmed table, with the text The table could not be loaded and a Try again button. The pointer clicks Try again. The table is replaced by a grey skeleton of a table while the output runs again. Then the new table arrives, with new numbers.">
+</picture>
+<figcaption>A browser recreation. The app calls withBones(tableOutput("table"), error = bones_error("The table could not be loaded."), retry = "table_retry").</figcaption>
+</figure>
+```
 
 ## A skeleton before the output starts
 
